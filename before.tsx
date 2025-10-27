@@ -4,8 +4,8 @@ import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-nat
 
 type Language = 'en' | 'es' | 'fr' | 'zh';
 
-// Before appointment questions page
-const questionsEn = [
+// English questions and example responses
+const questionsEnglish = [
   "What brings you in today?",
   "List any current medications:",
   "List any allergies:",
@@ -14,7 +14,7 @@ const questionsEn = [
   "Consent: I agree to the office’s privacy and payment policies."
 ];
 
-const exampleAnswers = [
+const defaultResponsesEnglish = [
   "Annual check-up and mild back pain",
   "None",
   "No known allergies",
@@ -24,12 +24,12 @@ const exampleAnswers = [
 ];
 
 export default function BeforeAppointmentCondensed() {
-  const [language, setLanguage] = useState<Language>('en');
-  const [answers, setAnswers] = useState<{ [key: number]: string }>({});
-  const [showOutput, setShowOutput] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
+  const [userResponses, setUserResponses] = useState<{ [index: number]: string }>({});
+  const [isOutputVisible, setIsOutputVisible] = useState(false);
 
-  const questions: Record<Language, string[]> = {
-    en: questionsEn,
+  const localizedQuestions: Record<Language, string[]> = {
+    en: questionsEnglish,
     es: [
       "¿Cuál es el motivo de su visita?",
       "Lista de medicamentos actuales:",
@@ -56,76 +56,73 @@ export default function BeforeAppointmentCondensed() {
     ]
   };
 
-  const handleInputChange = (index: number, value: string) => {
-    setAnswers({ ...answers, [index]: value });
+  const updateUserResponse = (index: number, value: string) => {
+    setUserResponses({ ...userResponses, [index]: value });
   };
 
-  const handlePrint = async () => {
-    let htmlContent = `<h1 style="text-transform: uppercase; font-weight: bold;">BEFORE YOUR APPOINTMEN</h1>`;
-    questionsEn.forEach((q, i) => {
-      htmlContent += `<p><strong>${q}</strong><br/>${exampleAnswers[i]}</p>`;
+  const printDefaultResponses = async () => {
+    let htmlContent = `<h1 style="text-transform: uppercase; font-weight: bold;">BEFORE YOUR APPOINTMENT</h1>`;
+    questionsEnglish.forEach((question, index) => {
+      htmlContent += `<p><strong>${question}</strong><br/>${defaultResponsesEnglish[index]}</p>`;
     });
 
-    await Print.printAsync({
-      html: htmlContent,
-    });
+    await Print.printAsync({ html: htmlContent });
   };
 
-  // Output Screen
-  if (showOutput) {
+  // Output screen
+  if (isOutputVisible) {
     return (
       <ScrollView style={styles.container}>
         <Text style={styles.outputTitle}>Before Your Appointment</Text>
-        {questionsEn.map((q, i) => (
-          <View key={i} style={styles.questionBlock}>
-            <Text style={styles.outputQuestion}>{q}</Text>
-            <Text style={styles.answer}>{exampleAnswers[i]}</Text>
+        {questionsEnglish.map((question, index) => (
+          <View key={index} style={styles.questionBlock}>
+            <Text style={styles.outputQuestion}>{question}</Text>
+            <Text style={styles.answer}>{defaultResponsesEnglish[index]}</Text>
           </View>
         ))}
-
-        <Button title="Print to PDF" onPress={handlePrint} />
+        <Button title="Print to PDF" onPress={printDefaultResponses} />
         <View style={{ height: 10 }} />
-        <Button title="Back" onPress={() => setShowOutput(false)} />
+        <Button title="Back" onPress={() => setIsOutputVisible(false)} />
       </ScrollView>
     );
   }
 
-  // Form Screen
+  // Form screen
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>Before Your Appointment</Text>
 
       <Text style={styles.label}>Select Language:</Text>
       <View style={styles.languageMenu}>
-        <Button title="English" onPress={() => setLanguage('en')} />
-        <Button title="Español" onPress={() => setLanguage('es')} />
-        <Button title="Français" onPress={() => setLanguage('fr')} />
-        <Button title="中文" onPress={() => setLanguage('zh')} />
+        <Button title="English" onPress={() => setSelectedLanguage('en')} />
+        <Button title="Español" onPress={() => setSelectedLanguage('es')} />
+        <Button title="Français" onPress={() => setSelectedLanguage('fr')} />
+        <Button title="中文" onPress={() => setSelectedLanguage('zh')} />
       </View>
 
-      {questions[language].map((q, index) => (
+      {localizedQuestions[selectedLanguage].map((question, index) => (
         <View key={index} style={styles.questionBlock}>
-          <Text style={styles.question}>{q}</Text>
+          <Text style={styles.question}>{question}</Text>
           <TextInput
             style={styles.input}
             placeholder="Type here..."
-            value={answers[index] || ''}
-            onChangeText={(text) => handleInputChange(index, text)}
+            value={userResponses[index] || ''}
+            onChangeText={(text) => updateUserResponse(index, text)}
           />
         </View>
       ))}
 
       <Button
         title={
-          language === 'en'
+          selectedLanguage === 'en'
             ? 'Submit'
-            : language === 'es'
+            : selectedLanguage === 'es'
             ? 'Enviar'
-            : language === 'fr'
+            : selectedLanguage === 'fr'
             ? 'Soumettre'
             : '提交'
         }
-        onPress={() => setShowOutput(true)}
+        onPress={() => setIsOutputVisible(true)}
       />
       <View style={{ height: 50 }} />
     </ScrollView>

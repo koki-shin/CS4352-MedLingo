@@ -162,7 +162,7 @@ export default function BeforeAppointmentCondensed() {
             style={styles.input}
             placeholder={localizedUI[selectedLanguage].inputPlaceholder}
             value={userResponses[index] || ''}
-            onChangeText={(text) => updateUserResponse(index, text)}
+            onChangeText={(text: string) => updateUserResponse(index, text)}
           />
         </View>
       ))}

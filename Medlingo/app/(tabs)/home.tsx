@@ -17,7 +17,7 @@ export default function HomeScreen() {
         </Text>
       </Link>
 
-      <Link href="/before" style={styles.after_button}>
+      <Link href="/after" style={styles.after_button}>
         <Text style={styles.buttonText}>After Appointment{'\n'}
             <Text style={styles.buttonSubText}>Prepare for your visit</Text>
         </Text>

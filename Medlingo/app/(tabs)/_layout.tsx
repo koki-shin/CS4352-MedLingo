@@ -23,6 +23,13 @@
               tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
             }}
           />
+           <Tabs.Screen
+            name="during" // Corresponds to app/(tabs)/settings.tsx
+            options={{
+              title: 'During Appointment',
+              tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
+            }}
+          />
           {/* Add more Tabs.Screen components for each tab */}
         </Tabs>
       );

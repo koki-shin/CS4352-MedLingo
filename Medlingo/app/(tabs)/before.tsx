@@ -67,7 +67,12 @@ export default function BeforeScreen() {
             <View style={styles.resultBox}>
                 <Text style={styles.resultLabel}>Translation (English):</Text>
                 <Text style={[styles.resultText, !translated ? { color: '#888', fontStyle: 'italic' } : {}]}>
-                    {translated ?? 'No translation yet — press Translate to get a result.'}
+                    {translated ?? 
+                        (!API_KEY 
+                            ? 'Please add GOOGLE_TRANSLATE_API_KEY in app.json (expo.extra) to enable translation.'
+                            : 'No translation yet — press Translate to get a result.'
+                        )
+                    }
                 </Text>
             </View>
 

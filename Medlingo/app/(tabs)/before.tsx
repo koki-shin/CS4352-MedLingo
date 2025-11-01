@@ -3,28 +3,48 @@ import { Text, TextInput, View, ActivityIndicator, StyleSheet, Keyboard } from '
 import { useTranslation } from '../../hooks/translate';
 
 export default function BeforeScreen() {
-    const [sourceText, set_source] = useState('');
+    const [src_one, set_src_one] = useState('');
+    const [src_two, set_src_two] = useState('');
     const { translate, isLoading, hasApiKey } = useTranslation();
 
-    async function run_trans() {
+    async function run_trans_one() {
         Keyboard.dismiss();
-        const result = await translate(sourceText);
-        if (result) set_source(result);
+        const result = await translate(src_one);
+        if (result) set_src_one(result);
+    }
+
+    async function run_trans_two() {
+        Keyboard.dismiss();
+        const result = await translate(src_two);
+        if (result) set_src_two(result);
     }
 
     return (
         <View style={styles.container}>
             <Text style={styles.label}>Text to translate into English</Text>
             <TextInput
-                value={sourceText}
-                onChangeText={set_source}
+                value={src_one}
+                onChangeText={set_src_one}
                 placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
                 multiline={false}
                 returnKeyType="send"
-                onSubmitEditing={run_trans}
+                onSubmitEditing={run_trans_one}
                 style={styles.input}
                 editable={!isLoading}
             />
+
+            <Text style={styles.label}>Text to translate into English</Text>
+            <TextInput
+                value={src_two}
+                onChangeText={set_src_two}
+                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                returnKeyType="send"
+                onSubmitEditing={run_trans_two}
+                style={styles.input}
+                editable={!isLoading}
+            />
+
             {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
         </View>
     );

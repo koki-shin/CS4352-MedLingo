@@ -1,49 +1,15 @@
-// app/(tabs)/before.tsx
 import React, { useState } from 'react';
-import { Alert, Button, Text, TextInput, View, ActivityIndicator, StyleSheet, Keyboard } from 'react-native';
-import Constants from 'expo-constants';
+import { Text, TextInput, View, ActivityIndicator, StyleSheet, Keyboard } from 'react-native';
+import { useTranslation } from '../../hooks/translate';
 
 export default function BeforeScreen() {
-    const [sourceText, setSourceText] = useState('');
-    const [translated, setTranslated] = useState<string | null>(null);
-    const [loading, setLoading] = useState(false);
+    const [sourceText, set_source] = useState('');
+    const { translate, isLoading, hasApiKey } = useTranslation();
 
-    // Try multiple locations for the API key so the app is flexible for dev/prod
-    const API_KEY = (Constants.expoConfig && (Constants.expoConfig.extra as any)?.GOOGLE_TRANSLATE_API_KEY);
-
-    async function handleTranslate() {
+    async function run_trans() {
         Keyboard.dismiss();
-        setTranslated(null);
-
-        const text = sourceText.trim();
-
-        setLoading(true);
-        try {
-            const url = `https://translation.googleapis.com/language/translate/v2?key=${API_KEY}`;
-            const body = { q: text, target: 'en', format: 'text' };
-
-            const res = await fetch(url, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(body),
-            });
-
-            if (!res.ok) {
-                const textErr = await res.text();
-                throw new Error(`Translation API error: ${res.status} ${textErr}`);
-            }
-
-            const data = await res.json();
-            const translatedText = data?.data?.translations?.[0]?.translatedText;
-            if (!translatedText) throw new Error('No translation returned');
-
-            setTranslated(translatedText);
-        } catch (err: any) {
-            console.error('Translate error', err);
-            Alert.alert('Translation failed', err?.message || String(err));
-        } finally {
-            setLoading(false);
-        }
+        const result = await translate(sourceText);
+        if (result) set_source(result);
     }
 
     return (
@@ -51,34 +17,19 @@ export default function BeforeScreen() {
             <Text style={styles.label}>Text to translate into English</Text>
             <TextInput
                 value={sourceText}
-                onChangeText={setSourceText}
-                placeholder="Enter text in any language"
-                multiline
+                onChangeText={set_source}
+                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                returnKeyType="send"
+                onSubmitEditing={run_trans}
                 style={styles.input}
-                editable={!loading}
+                editable={!isLoading}
             />
-
-            <View style={styles.actions}>
-                <Button title="Translate" onPress={handleTranslate} disabled={loading} />
-            </View>
-
-            {loading && <ActivityIndicator style={{ marginTop: 12 }} />}
-
-            <View style={styles.resultBox}>
-                <Text style={styles.resultLabel}>Translation (English):</Text>
-                <Text style={[styles.resultText, !translated ? { color: '#888', fontStyle: 'italic' } : {}]}>
-                    {translated ?? 
-                        (!API_KEY 
-                            ? 'Please add GOOGLE_TRANSLATE_API_KEY in app.json (expo.extra) to enable translation.'
-                            : 'No translation yet — press Translate to get a result.'
-                        )
-                    }
-                </Text>
-            </View>
-
-            {/* No debug output shown in production UI */}
+            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
         </View>
     );
+
+    
 }
 
 const styles = StyleSheet.create({

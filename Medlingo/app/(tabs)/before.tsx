@@ -126,6 +126,25 @@ export default function BeforeAppointmentCondensed() {
     ]
   };
 
+  if(isOutputVisible){
+    return (
+      <ScrollView style={styles.container}>
+        <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
+        <Text style={styles.questionBlock}>{src_one}</Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][1]}</Text>
+        <Text style={styles.questionBlock}>{src_two}</Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
+        <Text style={styles.questionBlock}>{src_three}</Text>
+        
+        <Button title={localizedUI[selectedLanguage].back} onPress={() => setIsOutputVisible(false)} />
+      </ScrollView>
+    );
+  }
+
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
@@ -186,7 +205,7 @@ export default function BeforeAppointmentCondensed() {
 
       <Button
         title={localizedUI[selectedLanguage].submit}
-        onPress={() => translateAll()}
+        onPress={() => {translateAll(); setIsOutputVisible(true);}}
       />
       <View style={{ height: 50 }} />
     </ScrollView>

@@ -1,7 +1,9 @@
 import { Picker } from '@react-native-picker/picker';
 import * as Print from 'expo-print';
 import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Text, Keyboard, TextInput, View } from 'react-native';
+
+import { useTranslation } from '../../hooks/translate';
 
 type Language = 'en' | 'es' | 'fr' | 'zh';
 
@@ -13,15 +15,6 @@ const questionsEnglish = [
   "\nCONSENT (INITIAL): \n\nI consent to receive medical evaluation and treatment.",
   "I understand my health information will be kept confidential.",
   "I agree to the office’s privacy and payment policies."
-];
-
-const defaultResponsesEnglish = [
-  "My leg is detatched",
-  "N/A",
-  "Penut Butter",
-  "KW",
-  "KW",
-  "KW"
 ];
 
 // Page based on language
@@ -77,6 +70,33 @@ export default function BeforeAppointmentCondensed() {
   const [userResponses, setUserResponses] = useState<{ [index: number]: string }>({});
   const [isOutputVisible, setIsOutputVisible] = useState(false);
 
+    const [src_one, set_src_one] = useState('');
+    const [src_two, set_src_two] = useState('');
+    const [src_three, set_src_three] = useState('');
+    const { translate, isLoading, hasApiKey } = useTranslation();
+
+    async function translateAll() {
+        Keyboard.dismiss();
+        try {
+            if (src_one.trim().length > 0) {
+                const r1 = await translate(src_one);
+                if (r1) set_src_one(r1);
+            }
+
+            if (src_two.trim().length > 0) {
+                const r2 = await translate(src_two);
+                if (r2) set_src_two(r2);
+            }
+
+            if (src_three.trim().length > 0) {
+                const r3 = await translate(src_three);
+                if (r3) set_src_three(r3);
+            }
+        } catch (e) {
+            console.warn('translateAll error', e);
+        }
+    }
+
   // Questions based on Language
   const localizedQuestions: Record<Language, string[]> = {
     en: questionsEnglish,
@@ -106,37 +126,6 @@ export default function BeforeAppointmentCondensed() {
     ]
   };
 
-  const updateUserResponse = (index: number, value: string) => {
-    setUserResponses({ ...userResponses, [index]: value });
-  };
-
-  // add default
-  const printDefaultResponses = async () => {
-    let htmlContent = `<h1 style="text-transform: uppercase; font-weight: bold;">${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>`;
-    questionsEnglish.forEach((question, index) => {
-      htmlContent += `<p><strong>${question}</strong><br/>${defaultResponsesEnglish[index]}</p>`;
-    });
-
-    await Print.printAsync({ html: htmlContent });
-  };
-
-  if (isOutputVisible) {
-    return (
-      <ScrollView style={styles.container}>
-        <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
-        {questionsEnglish.map((question, index) => (
-          <View key={index} style={styles.questionBlock}>
-            <Text style={styles.outputQuestion}>{question}</Text>
-            <Text style={styles.answer}>{defaultResponsesEnglish[index]}</Text>
-          </View>
-        ))}
-        <Button title={localizedUI[selectedLanguage].print} onPress={printDefaultResponses} />
-        <View style={{ height: 10 }} />
-        <Button title={localizedUI[selectedLanguage].back} onPress={() => setIsOutputVisible(false)} />
-      </ScrollView>
-    );
-  }
-
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
@@ -155,17 +144,33 @@ export default function BeforeAppointmentCondensed() {
         </Picker>
       </View>
 
-      {localizedQuestions[selectedLanguage].map((question, index) => (
-        <View key={index} style={styles.questionBlock}>
-          <Text style={styles.question}>{question}</Text>
-          <TextInput
-            style={styles.input}
-            placeholder={localizedUI[selectedLanguage].inputPlaceholder}
-            value={userResponses[index] || ''}
-            onChangeText={(text: string) => updateUserResponse(index, text)}
-          />
-        </View>
-      ))}
+        <Text style={styles.label}>{localizedQuestions[selectedLanguage][0]}</Text>
+        <TextInput
+                value={src_one}
+                onChangeText={set_src_one}
+                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                style={styles.input}
+                editable={!isLoading}
+            />
+        <Text style={styles.label}>{localizedQuestions[selectedLanguage][1]}</Text>
+        <TextInput
+                value={src_two}
+                onChangeText={set_src_two}
+                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                style={styles.input}
+                editable={!isLoading}
+            />
+        <Text style={styles.label}>{localizedQuestions[selectedLanguage][2]}</Text>
+        <TextInput
+                value={src_three}
+                onChangeText={set_src_three}
+                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                style={styles.input}
+                editable={!isLoading}
+            />
 
       {/*AI Assistant*/}
       <View style={styles.aiContainer}>
@@ -181,7 +186,7 @@ export default function BeforeAppointmentCondensed() {
 
       <Button
         title={localizedUI[selectedLanguage].submit}
-        onPress={() => setIsOutputVisible(true)}
+        onPress={() => translateAll()}
       />
       <View style={{ height: 50 }} />
     </ScrollView>

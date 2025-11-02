@@ -147,8 +147,8 @@ Follow the steps below to explore the MedLingo prototype and test each of the th
 ## Roadmap
 
 - [ ] Project Scaffolding & Repo Setup  
-    - [ ] Initialize React project and folder structure  
-    - [ ] Create `.gitignore`, README, and initial commit  
+    - [X] Initialize React project and folder structure  
+    - [X] Create `.gitignore`, README, and initial commit  
     - [ ] Add TAs as collaborators  
     - [ ] Set up branches for each task (previsit, translation, recap)
 

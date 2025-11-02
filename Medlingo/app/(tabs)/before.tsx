@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View, ActivityIndicator, StyleSheet, Keyboard } from 'react-native';
+import { Text, TextInput, View, ActivityIndicator, StyleSheet, Keyboard, Button } from 'react-native';
 import { useTranslation } from '../../hooks/translate';
 
 export default function BeforeScreen() {
@@ -7,16 +7,21 @@ export default function BeforeScreen() {
     const [src_two, set_src_two] = useState('');
     const { translate, isLoading, hasApiKey } = useTranslation();
 
-    async function run_trans_one() {
+    async function translateAll() {
         Keyboard.dismiss();
-        const result = await translate(src_one);
-        if (result) set_src_one(result);
-    }
+        try {
+            if (src_one.trim().length > 0) {
+                const r1 = await translate(src_one);
+                if (r1) set_src_one(r1);
+            }
 
-    async function run_trans_two() {
-        Keyboard.dismiss();
-        const result = await translate(src_two);
-        if (result) set_src_two(result);
+            if (src_two.trim().length > 0) {
+                const r2 = await translate(src_two);
+                if (r2) set_src_two(r2);
+            }
+        } catch (e) {
+            console.warn('translateAll error', e);
+        }
     }
 
     return (
@@ -25,10 +30,8 @@ export default function BeforeScreen() {
             <TextInput
                 value={src_one}
                 onChangeText={set_src_one}
-                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                placeholder={hasApiKey ? "Enter text in any language" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
                 multiline={false}
-                returnKeyType="send"
-                onSubmitEditing={run_trans_one}
                 style={styles.input}
                 editable={!isLoading}
             />
@@ -37,15 +40,17 @@ export default function BeforeScreen() {
             <TextInput
                 value={src_two}
                 onChangeText={set_src_two}
-                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                placeholder={hasApiKey ? "Enter text in any language" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
                 multiline={false}
-                returnKeyType="send"
-                onSubmitEditing={run_trans_two}
                 style={styles.input}
                 editable={!isLoading}
             />
 
             {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
+
+            <View style={styles.actions}>
+                <Button title="Submit" onPress={translateAll} disabled={isLoading || !hasApiKey} />
+            </View>
         </View>
     );
 

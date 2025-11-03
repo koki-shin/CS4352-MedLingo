@@ -1,14 +1,14 @@
-import { Picker } from '@react-native-picker/picker';
 import * as Print from 'expo-print';
+
 import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, Keyboard, TextInput, View } from 'react-native';
-
+import Checkbox from 'expo-checkbox';
+import { useLanguage } from '../../hooks/LanguageContext';
+import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useTranslation } from '../../hooks/translate';
 
-type Language = 'en' | 'es' | 'fr' | 'zh';
-
 // Page based on language
-const localizedUI: Record<Language, any> = {
+const localizedUI: Record<Language, Record<string, string>> = {
   en: {
     beforeAppointmentTitle: "BEFORE YOUR APPOINTMENT",
     selectLanguage: "Select Language:",
@@ -56,14 +56,18 @@ const localizedUI: Record<Language, any> = {
 };
 
 export default function BeforeAppointmentCondensed() {
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
-  const [userResponses, setUserResponses] = useState<{ [index: number]: string }>({});
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
   const [isOutputVisible, setIsOutputVisible] = useState(false);
 
     const [src_one, set_src_one] = useState('');
     const [src_two, set_src_two] = useState('');
     const [src_three, set_src_three] = useState('');
+    const [consentGiven, setConsentGiven] = useState(false);
     const { translate, isLoading, hasApiKey } = useTranslation();
+
+    const [consentOne, setConsentOne] = useState(false);
+    const [consentTwo, setConsentTwo] = useState(false);
+    const [consentThree, setConsentThree] = useState(false);
 
     async function translateAll() {
         Keyboard.dismiss();
@@ -93,7 +97,7 @@ export default function BeforeAppointmentCondensed() {
         "\nGENERAL HEALTH QUESTIONS: \n\nWhat brings you in today?",
         "List any current medications:",
         "List any allergies:",
-        "\nCONSENT (INITIAL): \n\nI consent to receive medical evaluation and treatment.",
+        "\n CONSENT:\n\nI consent to receive medical evaluation and treatment.",
         "I understand my health information will be kept confidential.",
         "I agree to the office’s privacy and payment policies."
     ],
@@ -101,7 +105,7 @@ export default function BeforeAppointmentCondensed() {
         "\nPREGUNTAS GENERALES DE SALUD:\n\n¿Cuál es el motivo de su visita?",
         "Liste los medicamentos actuales:",
         "Liste las alergias:",
-        "\nCONSENTIMIENTO (INICIAL):\n\nConsiento recibir evaluación y tratamiento médico.",
+        "\n CONSIENTO:\n\nConsiento recibir evaluación y tratamiento médico.",
         "Entiendo que mi información médica se mantendrá confidencial.",
         "Acepto las políticas de privacidad y pago de la oficina."
     ],
@@ -109,7 +113,7 @@ export default function BeforeAppointmentCondensed() {
         "\nQUESTIONS GÉNÉRALES SUR LA SANTÉ:\n\nQuel est le motif de votre visite ?",
         "Liste des médicaments actuels :",
         "Liste des allergies :",
-        "\nCONSENTEMENT (INITIAL):\n\nJe consens à recevoir une évaluation et un traitement médical.",
+        "\n CONSENS:\n\nJe consens à recevoir une évaluation et un traitement médical.",
         "Je comprends que mes informations médicales resteront confidentielles.",
         "J'accepte les politiques de confidentialité et de paiement du cabinet."
     ],
@@ -117,49 +121,73 @@ export default function BeforeAppointmentCondensed() {
         "\n一般健康问题：\n\n您此次就诊的原因？",
         "当前药物列表：",
         "过敏列表：",
-        "\n同意（初始）：\n\n我同意接受医学评估和治疗。",
+        "\n 同意:\n\n我同意接受医学评估和治疗。",
         "我理解我的健康信息将被保密。",
         "我同意诊所的隐私和付款政策。"
     ]
   };
 
-  if(isOutputVisible){
-    return (
-      <ScrollView style={styles.container}>
-        <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
 
-        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
-        <Text style={styles.questionBlock}>{src_one}</Text>
+if (isOutputVisible) {
+  return (
+    <ScrollView style={styles.container}>
+      <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
 
-        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][1]}</Text>
-        <Text style={styles.questionBlock}>{src_two}</Text>
+      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
+      <Text style={styles.questionBlock}>{src_one}</Text>
 
-        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
-        <Text style={styles.questionBlock}>{src_three}</Text>
-        
-        <Button title={localizedUI[selectedLanguage].back} onPress={() => setIsOutputVisible(false)} />
-      </ScrollView>
-    );
-  }
+      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][1]}</Text>
+      <Text style={styles.questionBlock}>{src_two}</Text>
+
+      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
+      <Text style={styles.questionBlock}>{src_three}</Text>
+
+{/* Print Button */}
+<View style={{ marginVertical: 20 }}>
+  <Button
+    title={localizedUI[selectedLanguage].print}
+    onPress={async () => {
+      // Prepare HTML for printing
+      const consentHtml = `
+        <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
+        <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
+        <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
+      `;
+      const htmlContent = `
+        <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
+        <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
+        <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
+        <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
+        ${consentHtml}
+`;
+      if (typeof window !== 'undefined') {
+        // Web: native print dialog
+        const printWindow = window.open('', '_blank', 'width=600,height=600');
+        if (printWindow) {
+          printWindow.document.write(htmlContent);
+          printWindow.document.close();
+          printWindow.focus();
+          printWindow.print();
+          printWindow.close();
+        }
+      } else {
+        // Mobile: Expo Print
+        await Print.printAsync({ html: htmlContent });
+      }
+    }}
+  />
+</View>
+      <Button
+        title={localizedUI[selectedLanguage].back}
+        onPress={() => setIsOutputVisible(false)}
+      />
+    </ScrollView>
+  );
+}
 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
-
-      <Text style={styles.label}>{localizedUI[selectedLanguage].selectLanguage}</Text>
-      <View style={styles.dropdownContainer}>
-        <Picker
-          selectedValue={selectedLanguage}
-          onValueChange={(itemValue) => setSelectedLanguage(itemValue as Language)}
-          style={styles.picker}
-        >
-          <Picker.Item label="English" value="en" />
-          <Picker.Item label="Español" value="es" />
-          <Picker.Item label="Français" value="fr" />
-          <Picker.Item label="中文" value="zh" />
-        </Picker>
-      </View>
-
         <Text style={styles.label}>{localizedQuestions[selectedLanguage][0]}</Text>
         <TextInput
                 value={src_one}
@@ -187,6 +215,21 @@ export default function BeforeAppointmentCondensed() {
                 style={styles.input}
                 editable={!isLoading}
             />
+
+      {/* Consent Section */}
+      <View style={{ marginTop: 20, marginBottom: 10 }}>
+        {[3, 4, 5].map((i, index) => (
+          <View key={index} style={{ marginBottom: 10 }}>
+            <Text style={styles.label}>{localizedQuestions[selectedLanguage][i]}</Text>
+            <View style={{ marginTop: 8 }}>
+            <Checkbox
+              value={i === 3 ? consentOne : i === 4 ? consentTwo : consentThree}
+              onValueChange={i === 3 ? setConsentOne : i === 4 ? setConsentTwo : setConsentThree}
+            />
+          </View>
+        </View>
+        ))}
+      </View>
 
       {/*AI Assistant*/}
       <View style={styles.aiContainer}>
@@ -232,34 +275,13 @@ const styles = StyleSheet.create({
     fontSize: 16, 
     marginTop: 10 
   },
-  dropdownContainer: {
-    borderWidth: 1,
-    borderColor: '#aaa',
-    borderRadius: 8,
-    marginVertical: 10,
-    overflow: 'hidden',
-  },
-  picker: {
-    height: 50,
-    fontSize: 16,
-  },
   questionBlock: { 
     marginBottom: 15 
-  },
-  question: { 
-    fontSize: 16, 
-    marginBottom: 5, 
-    fontWeight: 'bold' 
   },
   outputQuestion: {
      fontSize: 16, 
      marginBottom: 5, 
      fontWeight: 'bold' 
-  },
-  answer: { 
-    fontSize: 16, 
-    marginLeft: 10, 
-    color: 'gray' 
   },
   input: { 
     borderWidth: 1, 

@@ -7,16 +7,6 @@ import { useTranslation } from '../../hooks/translate';
 
 type Language = 'en' | 'es' | 'fr' | 'zh';
 
-// English questions and example responses
-const questionsEnglish = [
-  "\nGENERAL HEALTH QUESTIONS: \n\nWhat brings you in today?",
-  "List any current medications:",
-  "List any allergies:",
-  "\nCONSENT (INITIAL): \n\nI consent to receive medical evaluation and treatment.",
-  "I understand my health information will be kept confidential.",
-  "I agree to the office’s privacy and payment policies."
-];
-
 // Page based on language
 const localizedUI: Record<Language, any> = {
   en: {
@@ -99,7 +89,14 @@ export default function BeforeAppointmentCondensed() {
 
   // Questions based on Language
   const localizedQuestions: Record<Language, string[]> = {
-    en: questionsEnglish,
+    en: [
+        "\nGENERAL HEALTH QUESTIONS: \n\nWhat brings you in today?",
+        "List any current medications:",
+        "List any allergies:",
+        "\nCONSENT (INITIAL): \n\nI consent to receive medical evaluation and treatment.",
+        "I understand my health information will be kept confidential.",
+        "I agree to the office’s privacy and payment policies."
+    ],
     es: [
         "\nPREGUNTAS GENERALES DE SALUD:\n\n¿Cuál es el motivo de su visita?",
         "Liste los medicamentos actuales:",

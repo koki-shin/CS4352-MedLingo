@@ -11,7 +11,7 @@ export default function HomeScreen() {
         </Text>
       </Link>
 
-      <Link href="/before" style={styles.during_button}>
+      <Link href="/during" style={styles.during_button}>
         <Text style={styles.buttonText}>During Appointment{'\n'}
             <Text style={styles.buttonSubText}>Real-time Translation</Text>
         </Text>

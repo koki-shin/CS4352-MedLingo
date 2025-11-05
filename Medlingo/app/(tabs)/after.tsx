@@ -1,7 +1,40 @@
-import React from 'react';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import {
+  ScrollView,
+  View,
+  Text,
+  StyleSheet,
+  Modal,
+  Pressable,
+} from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+
+const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
+const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
+
+const TIME_OPTIONS = Array.from({ length: 48 }, (_, index) => {
+  const totalMinutes = index * 30;
+  const hour24 = Math.floor(totalMinutes / 60);
+  const minute = totalMinutes % 60;
+
+  const hour12 = ((hour24 + 11) % 12) + 1; // 1–12
+  const ampm = hour24 < 12 ? 'AM' : 'PM';
+  const minuteStr = minute.toString().padStart(2, '0');
+
+  return `${hour12}:${minuteStr} ${ampm}`;
+});
 
 export default function SettingsScreen() {
+  const [selectedMedication, setSelectedMedication] = useState(
+    MEDICATION_OPTIONS[0]
+  );
+  const [selectedTime, setSelectedTime] = useState('8:00 AM');
+  const [selectedRepeat, setSelectedRepeat] = useState(REPEAT_OPTIONS[0]);
+
+  const [summaryVisible, setSummaryVisible] = useState(false);
+
+  const summaryText = `Reminder set for ${selectedMedication} at ${selectedTime}, ${selectedRepeat}.`;
+
   return (
     <ScrollView
       style={styles.container}
@@ -19,8 +52,8 @@ export default function SettingsScreen() {
         <View style={styles.summaryBubble}>
           <Text style={styles.bodyText}>
             <Text style={styles.inlineLabel}>English: </Text>
-            Mild pollen and dust mite allergy. Take daily antihistamine and nasal spray as
-            prescribed.{'\n\n'}
+            Mild pollen and dust mite allergy. Take daily antihistamine and
+            nasal spray as prescribed.{'\n\n'}
             <Text style={styles.inlineLabel}>Japanese: </Text>
             花粉とダニによる軽度のアレルギーです。指示どおりに抗ヒスタミン薬と点鼻薬を毎日使用してください。
           </Text>
@@ -39,7 +72,9 @@ export default function SettingsScreen() {
             <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
             <View>
               <Text style={styles.medName}>Ipratropium Bromide</Text>
-              <Text style={styles.medDetails}>1 spray in each nostril, 3× daily</Text>
+              <Text style={styles.medDetails}>
+                1 spray in each nostril, 3× daily
+              </Text>
             </View>
           </View>
 
@@ -47,7 +82,9 @@ export default function SettingsScreen() {
             <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
             <View>
               <Text style={styles.medName}>Ryaltis</Text>
-              <Text style={styles.medDetails}>2 sprays in each nostril, 2× daily</Text>
+              <Text style={styles.medDetails}>
+                2 sprays in each nostril, 2× daily
+              </Text>
             </View>
           </View>
         </View>
@@ -57,35 +94,64 @@ export default function SettingsScreen() {
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Set Medication Reminders</Text>
 
-        {/* LEFT = fields, RIGHT = tall green button */}
         <View style={styles.reminderWrapper}>
-          {/* Left side */}
+          {/* LEFT SIDE: dropdowns */}
           <View style={styles.reminderLeft}>
             <Text style={styles.label}>Medication Name</Text>
             <View style={styles.inputPill}>
-              <Text style={styles.inputText}>Ipratropium Bromide</Text>
+              <Picker
+                selectedValue={selectedMedication}
+                onValueChange={(value) => setSelectedMedication(value)}
+                style={styles.picker}
+                dropdownIconColor="#111827"
+              >
+                {MEDICATION_OPTIONS.map((med) => (
+                  <Picker.Item key={med} label={med} value={med} />
+                ))}
+              </Picker>
             </View>
 
             <View style={styles.reminderRow}>
               <View style={styles.reminderColumn}>
                 <Text style={styles.label}>Time</Text>
                 <View style={styles.inputPill}>
-                  <Text style={styles.inputText}>8:00 AM</Text>
+                  <Picker
+                    selectedValue={selectedTime}
+                    onValueChange={(value) => setSelectedTime(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#111827"
+                  >
+                    {TIME_OPTIONS.map((time) => (
+                      <Picker.Item key={time} label={time} value={time} />
+                    ))}
+                  </Picker>
                 </View>
               </View>
+
               <View style={styles.reminderColumn}>
                 <Text style={styles.label}>Repeat</Text>
                 <View style={styles.inputPill}>
-                  <Text style={styles.inputText}>Daily</Text>
+                  <Picker
+                    selectedValue={selectedRepeat}
+                    onValueChange={(value) => setSelectedRepeat(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#111827"
+                  >
+                    {REPEAT_OPTIONS.map((opt) => (
+                      <Picker.Item key={opt} label={opt} value={opt} />
+                    ))}
+                  </Picker>
                 </View>
               </View>
             </View>
           </View>
 
-          {/* Right side: tall button that spans whole section */}
-          <View style={styles.setReminderButtonTall}>
+          <Pressable
+            style={styles.setReminderButtonTall}
+            onPress={() => setSummaryVisible(true)}
+          >
             <Text style={styles.setReminderText}>Set{'\n'}Reminder</Text>
-          </View>
+          </Pressable>
         </View>
       </View>
 
@@ -95,19 +161,44 @@ export default function SettingsScreen() {
 
         <View style={styles.followRow}>
           <View style={styles.followButton}>
-            <Text style={styles.followText}>Telehealth{'\n'}Follow-up</Text>
+            <Text style={styles.followText}>
+              Telehealth{'\n'}Follow-up
+            </Text>
           </View>
           <View style={styles.followButton}>
-            <Text style={styles.followText}>Schedule{'\n'}Next Appointment</Text>
+            <Text style={styles.followText}>
+              Schedule{'\n'}Next Appointment
+            </Text>
           </View>
         </View>
       </View>
+
+      {/* Summary modal */}
+      <Modal
+        transparent
+        visible={summaryVisible}
+        animationType="fade"
+        onRequestClose={() => setSummaryVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Reminder Set</Text>
+            <Text style={styles.modalBody}>{summaryText}</Text>
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => setSummaryVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Continue</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  // overall layout
+  // layout
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',
@@ -196,11 +287,10 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
-  // reminder layout
   reminderWrapper: {
     flexDirection: 'row',
     marginTop: 6,
-    alignItems: 'stretch', // makes the button stretch full height
+    alignItems: 'stretch',
   },
   reminderLeft: {
     flex: 1,
@@ -218,14 +308,17 @@ const styles = StyleSheet.create({
   inputPill: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#C4C4C4',
-    backgroundColor: '#F5F6FF',
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    borderColor: '#D1D5DB',
+    backgroundColor: '#F5F6FF', // light, so picker looks like a pill
+    paddingHorizontal: 8,
+    paddingVertical: 2,
     justifyContent: 'center',
   },
-  inputText: {
-    fontSize: 14,
+  picker: {
+    width: '100%',
+    height: 34,
+    color: '#111827',
+    backgroundColor: 'transparent', // avoid dark fill
   },
 
   setReminderButtonTall: {
@@ -244,7 +337,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // follow-up care
   followRow: {
     flexDirection: 'row',
     marginTop: 10,
@@ -264,5 +356,44 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '600',
     textAlign: 'center',
+  },
+
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.35)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalCard: {
+    width: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 16,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: '#000000',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 8,
+  },
+  modalBody: {
+    fontSize: 14,
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  modalButton: {
+    alignSelf: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#000000',
+    backgroundColor: '#E0F2F1',
+  },
+  modalButtonText: {
+    fontSize: 14,
+    fontWeight: '600',
   },
 });

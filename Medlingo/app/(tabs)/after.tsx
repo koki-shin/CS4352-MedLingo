@@ -8,32 +8,51 @@ import {
   Pressable,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
+import { Calendar } from 'react-native-calendars';
 
+// dropdown options
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
 
-const TIME_OPTIONS = Array.from({ length: 48 }, (_, index) => {
-  const totalMinutes = index * 30;
-  const hour24 = Math.floor(totalMinutes / 60);
-  const minute = totalMinutes % 60;
-
+// --- 1-hour increments from 7:00 AM to 7:00 PM ---
+const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
+  const hour24 = 7 + index; // 7..19
   const hour12 = ((hour24 + 11) % 12) + 1; // 1–12
   const ampm = hour24 < 12 ? 'AM' : 'PM';
-  const minuteStr = minute.toString().padStart(2, '0');
-
-  return `${hour12}:${minuteStr} ${ampm}`;
+  return `${hour12}:00 ${ampm}`;
 });
 
+// helper to pretty-print YYYY-MM-DD
+const formatApptDate = (iso: string | null) => {
+  if (!iso) return '';
+  const date = new Date(iso + 'T00:00:00');
+  return date.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+};
+
 export default function SettingsScreen() {
+  // reminder state
   const [selectedMedication, setSelectedMedication] = useState(
     MEDICATION_OPTIONS[0]
   );
   const [selectedTime, setSelectedTime] = useState('8:00 AM');
   const [selectedRepeat, setSelectedRepeat] = useState(REPEAT_OPTIONS[0]);
-
   const [summaryVisible, setSummaryVisible] = useState(false);
 
-  const summaryText = `Reminder set for ${selectedMedication} at ${selectedTime}, ${selectedRepeat}.`;
+  // schedule next appointment state
+  const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
+  const [selectedApptDate, setSelectedApptDate] = useState<string | null>(null);
+  const [selectedApptTime, setSelectedApptTime] = useState<string | null>(null);
+  const [apptSummaryVisible, setApptSummaryVisible] = useState(false);
+
+  const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTime}, ${selectedRepeat}.`;
+  const appointmentSummaryText = `Appointment scheduled for ${formatApptDate(
+    selectedApptDate
+  )} at ${selectedApptTime}.`;
 
   return (
     <ScrollView
@@ -146,6 +165,7 @@ export default function SettingsScreen() {
             </View>
           </View>
 
+          {/* RIGHT SIDE: tall green button */}
           <Pressable
             style={styles.setReminderButtonTall}
             onPress={() => setSummaryVisible(true)}
@@ -165,15 +185,23 @@ export default function SettingsScreen() {
               Telehealth{'\n'}Follow-up
             </Text>
           </View>
-          <View style={styles.followButton}>
+
+          <Pressable
+            style={styles.followButton}
+            onPress={() => {
+              setSelectedApptDate(null);
+              setSelectedApptTime(null);
+              setScheduleModalVisible(true);
+            }}
+          >
             <Text style={styles.followText}>
               Schedule{'\n'}Next Appointment
             </Text>
-          </View>
+          </Pressable>
         </View>
       </View>
 
-      {/* Summary modal */}
+      {/* Reminder summary modal */}
       <Modal
         transparent
         visible={summaryVisible}
@@ -183,10 +211,106 @@ export default function SettingsScreen() {
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Reminder Set</Text>
-            <Text style={styles.modalBody}>{summaryText}</Text>
+            <Text style={styles.modalBody}>{reminderSummaryText}</Text>
             <Pressable
               style={styles.modalButton}
               onPress={() => setSummaryVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Continue</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Schedule next appointment modal (calendar + times) */}
+      <Modal
+        transparent
+        visible={scheduleModalVisible}
+        animationType="fade"
+        onRequestClose={() => setScheduleModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalCard, styles.modalCardLarge]}>
+            <Text style={styles.modalTitle}>Schedule Next Appointment</Text>
+
+            <Calendar
+              onDayPress={(day) => {
+                setSelectedApptDate(day.dateString); // YYYY-MM-DD
+              }}
+              markedDates={
+                selectedApptDate
+                  ? {
+                      [selectedApptDate]: {
+                        selected: true,
+                        selectedColor: '#3B82F6',
+                      },
+                    }
+                  : {}
+              }
+              style={styles.calendar}
+            />
+
+            <Text style={[styles.label, { marginTop: 12 }]}>
+              Available Times
+            </Text>
+
+            <View style={styles.timeGrid}>
+              {TIME_OPTIONS.map((time) => (
+                <Pressable
+                  key={time}
+                  style={[
+                    styles.timeSlot,
+                    selectedApptTime === time && styles.timeSlotSelected,
+                  ]}
+                  onPress={() => setSelectedApptTime(time)}
+                >
+                  <Text
+                    style={[
+                      styles.timeSlotText,
+                      selectedApptTime === time && styles.timeSlotTextSelected,
+                    ]}
+                  >
+                    {time}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Pressable
+              style={[
+                styles.modalButton,
+                styles.modalButtonFullWidth,
+                {
+                  marginTop: 18,
+                  opacity: selectedApptDate && selectedApptTime ? 1 : 0.5,
+                },
+              ]}
+              disabled={!selectedApptDate || !selectedApptTime}
+              onPress={() => {
+                setScheduleModalVisible(false);
+                setApptSummaryVisible(true);
+              }}
+            >
+              <Text style={styles.modalButtonText}>Schedule Appointment</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Appointment scheduled summary modal */}
+      <Modal
+        transparent
+        visible={apptSummaryVisible}
+        animationType="fade"
+        onRequestClose={() => setApptSummaryVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Appointment Scheduled</Text>
+            <Text style={styles.modalBody}>{appointmentSummaryText}</Text>
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => setApptSummaryVisible(false)}
             >
               <Text style={styles.modalButtonText}>Continue</Text>
             </Pressable>
@@ -287,6 +411,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
+  // reminder block
   reminderWrapper: {
     flexDirection: 'row',
     marginTop: 6,
@@ -309,16 +434,17 @@ const styles = StyleSheet.create({
     borderRadius: 18,
     borderWidth: 1,
     borderColor: '#D1D5DB',
-    backgroundColor: '#F5F6FF', // light, so picker looks like a pill
+    backgroundColor: '#FFFFFF',
     paddingHorizontal: 8,
     paddingVertical: 2,
     justifyContent: 'center',
+    overflow: 'hidden',
   },
   picker: {
     width: '100%',
     height: 34,
     color: '#111827',
-    backgroundColor: 'transparent', // avoid dark fill
+    backgroundColor: 'transparent',
   },
 
   setReminderButtonTall: {
@@ -337,6 +463,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // follow-up care
   followRow: {
     flexDirection: 'row',
     marginTop: 10,
@@ -358,6 +485,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
+  // modal shared styles
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -371,6 +499,9 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: '#000000',
+  },
+  modalCardLarge: {
+    maxHeight: '80%',
   },
   modalTitle: {
     fontSize: 18,
@@ -392,8 +523,44 @@ const styles = StyleSheet.create({
     borderColor: '#000000',
     backgroundColor: '#E0F2F1',
   },
+  modalButtonFullWidth: {
+    alignSelf: 'stretch',
+  },
   modalButtonText: {
     fontSize: 14,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+
+  // calendar + time slots
+  calendar: {
+    borderRadius: 12,
+    marginTop: 8,
+  },
+  timeGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 8,
+  },
+  timeSlot: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#D1D5DB',
+    backgroundColor: '#F9FAFB',
+    marginRight: 8,
+    marginBottom: 8,
+  },
+  timeSlotSelected: {
+    backgroundColor: '#3B82F6',
+    borderColor: '#1D4ED8',
+  },
+  timeSlotText: {
+    fontSize: 13,
+    color: '#111827',
+  },
+  timeSlotTextSelected: {
+    color: '#FFFFFF',
   },
 });

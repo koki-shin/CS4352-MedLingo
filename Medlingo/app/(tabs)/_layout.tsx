@@ -38,7 +38,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="after" // Corresponds to app/(tabs)/before.tsx
           options={{
-            title: "During Appointment",
+            title: "After Appointment",
             tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
           }}
         />

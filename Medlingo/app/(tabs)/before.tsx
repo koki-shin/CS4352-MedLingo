@@ -1,4 +1,5 @@
 import * as Print from 'expo-print';
+import * as Sharing from 'expo-sharing';
 
 import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Text, Keyboard, TextInput, View } from 'react-native';
@@ -131,8 +132,11 @@ export default function BeforeAppointmentCondensed() {
 if (isOutputVisible) {
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
+      <Text style={styles.outputTitle}>
+        {localizedUI[selectedLanguage].beforeAppointmentTitle}
+      </Text>
 
+      {/* General Health Questions */}
       <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
       <Text style={styles.questionBlock}>{src_one}</Text>
 
@@ -142,37 +146,61 @@ if (isOutputVisible) {
       <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
       <Text style={styles.questionBlock}>{src_three}</Text>
 
+      {/* Consent Section */}
+      <View style={{ marginTop: 25 }}>
+        <Text style={[styles.outputQuestion, { fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }]}>
+          {localizedQuestions[selectedLanguage][3].replace(/\n\s*/g, '').replace('I consent to receive medical evaluation and treatment.', '').trim()}
+        </Text>
+        {[3, 4, 5].map((i, index) => (
+          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
+            <Checkbox
+              value={i === 3 ? consentOne : i === 4 ? consentTwo : consentThree}
+              disabled={true}
+            />
+            <Text style={{ marginLeft: 10, flexShrink: 1 }}>
+              {localizedQuestions[selectedLanguage][i].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()}
+            </Text>
+          </View>
+        ))}
+      </View>
+
 {/* Print Button */}
 <View style={{ marginVertical: 20 }}>
   <Button
     title={localizedUI[selectedLanguage].print}
     onPress={async () => {
-      // Prepare HTML for printing
       const consentHtml = `
-        <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
-        <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
-        <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
+        <p><b>CONSENT:</b></p>
+        <ul>
+          <li>${localizedQuestions[selectedLanguage][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✅' : '⬜'}</li>
+          <li>${localizedQuestions[selectedLanguage][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✅' : '⬜'}</li>
+          <li>${localizedQuestions[selectedLanguage][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✅' : '⬜'}</li>
+        </ul>
       `;
+
       const htmlContent = `
-        <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
-        <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
-        <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
-        <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
-        ${consentHtml}
-`;
-      if (typeof window !== 'undefined') {
-        // Web: native print dialog
-        const printWindow = window.open('', '_blank', 'width=600,height=600');
-        if (printWindow) {
-          printWindow.document.write(htmlContent);
-          printWindow.document.close();
-          printWindow.focus();
-          printWindow.print();
-          printWindow.close();
+        <html>
+          <body style="font-family: Arial; padding: 20px;">
+            <h1 style="text-align: center;">${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
+            <p><strong>${localizedQuestions[selectedLanguage][0]}</strong><br>${src_one}</p>
+            <p><strong>${localizedQuestions[selectedLanguage][1]}</strong><br>${src_two}</p>
+            <p><strong>${localizedQuestions[selectedLanguage][2]}</strong><br>${src_three}</p>
+            ${consentHtml}
+          </body>
+        </html>
+      `;
+
+      try {
+        const { uri } = await Print.printToFileAsync({ html: htmlContent });
+        console.log('PDF saved to:', uri);
+
+        if (uri && (await Sharing.isAvailableAsync())) {
+          await Sharing.shareAsync(uri);
+        } else {
+          alert(`PDF created at: ${uri}`);
         }
-      } else {
-        // Mobile: Expo Print
-        await Print.printAsync({ html: htmlContent });
+      } catch (error) {
+
       }
     }}
   />

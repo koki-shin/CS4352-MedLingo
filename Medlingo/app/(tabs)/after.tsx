@@ -14,7 +14,6 @@ import { Calendar } from 'react-native-calendars';
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
 
-// --- 1-hour increments from 7:00 AM to 7:00 PM ---
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
   const hour24 = 7 + index; // 7..19
   const hour12 = ((hour24 + 11) % 12) + 1; // 1–12
@@ -22,7 +21,6 @@ const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
   return `${hour12}:00 ${ampm}`;
 });
 
-// helper to pretty-print YYYY-MM-DD
 const formatApptDate = (iso: string | null) => {
   if (!iso) return '';
   const date = new Date(iso + 'T00:00:00');
@@ -43,16 +41,32 @@ export default function SettingsScreen() {
   const [selectedRepeat, setSelectedRepeat] = useState(REPEAT_OPTIONS[0]);
   const [summaryVisible, setSummaryVisible] = useState(false);
 
-  // schedule next appointment state
+  // schedule next in-person appointment state (existing)
   const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedApptDate, setSelectedApptDate] = useState<string | null>(null);
   const [selectedApptTime, setSelectedApptTime] = useState<string | null>(null);
   const [apptSummaryVisible, setApptSummaryVisible] = useState(false);
 
+  const [telehealthScheduleModalVisible, setTelehealthScheduleModalVisible] =
+    useState(false);
+  const [selectedTelehealthDate, setSelectedTelehealthDate] = useState<
+    string | null
+  >(null);
+  const [selectedTelehealthTime, setSelectedTelehealthTime] = useState<
+    string | null
+  >(null);
+  const [telehealthSummaryVisible, setTelehealthSummaryVisible] =
+    useState(false);
+
   const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTime}, ${selectedRepeat}.`;
-  const appointmentSummaryText = `Appointment scheduled for ${formatApptDate(
+
+  const appointmentSummaryText = `In-person appointment scheduled for ${formatApptDate(
     selectedApptDate
   )} at ${selectedApptTime}.`;
+
+  const telehealthSummaryText = `Virtual appointment scheduled for ${formatApptDate(
+    selectedTelehealthDate
+  )} at ${selectedTelehealthTime}.`;
 
   return (
     <ScrollView
@@ -114,7 +128,6 @@ export default function SettingsScreen() {
         <Text style={styles.cardTitle}>Set Medication Reminders</Text>
 
         <View style={styles.reminderWrapper}>
-          {/* LEFT SIDE: dropdowns */}
           <View style={styles.reminderLeft}>
             <Text style={styles.label}>Medication Name</Text>
             <View style={styles.inputPill}>
@@ -164,8 +177,6 @@ export default function SettingsScreen() {
               </View>
             </View>
           </View>
-
-          {/* RIGHT SIDE: tall green button */}
           <Pressable
             style={styles.setReminderButtonTall}
             onPress={() => setSummaryVisible(true)}
@@ -180,11 +191,19 @@ export default function SettingsScreen() {
         <Text style={styles.cardTitle}>Follow-up Care</Text>
 
         <View style={styles.followRow}>
-          <View style={styles.followButton}>
+          {/* Telehealth Follow-up */}
+          <Pressable
+            style={styles.followButton}
+            onPress={() => {
+              setSelectedTelehealthDate(null);
+              setSelectedTelehealthTime(null);
+              setTelehealthScheduleModalVisible(true);
+            }}
+          >
             <Text style={styles.followText}>
               Telehealth{'\n'}Follow-up
             </Text>
-          </View>
+          </Pressable>
 
           <Pressable
             style={styles.followButton}
@@ -201,7 +220,6 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      {/* Reminder summary modal */}
       <Modal
         transparent
         visible={summaryVisible}
@@ -222,7 +240,6 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
-      {/* Schedule next appointment modal (calendar + times) */}
       <Modal
         transparent
         visible={scheduleModalVisible}
@@ -235,7 +252,7 @@ export default function SettingsScreen() {
 
             <Calendar
               onDayPress={(day) => {
-                setSelectedApptDate(day.dateString); // YYYY-MM-DD
+                setSelectedApptDate(day.dateString);
               }}
               markedDates={
                 selectedApptDate
@@ -297,7 +314,6 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
-      {/* Appointment scheduled summary modal */}
       <Modal
         transparent
         visible={apptSummaryVisible}
@@ -311,6 +327,105 @@ export default function SettingsScreen() {
             <Pressable
               style={styles.modalButton}
               onPress={() => setApptSummaryVisible(false)}
+            >
+              <Text style={styles.modalButtonText}>Continue</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        transparent
+        visible={telehealthScheduleModalVisible}
+        animationType="fade"
+        onRequestClose={() => setTelehealthScheduleModalVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={[styles.modalCard, styles.modalCardLarge]}>
+            <Text style={styles.modalTitle}>Schedule Telehealth Follow-up</Text>
+
+            <Calendar
+              onDayPress={(day) => {
+                setSelectedTelehealthDate(day.dateString); 
+              }}
+              markedDates={
+                selectedTelehealthDate
+                  ? {
+                      [selectedTelehealthDate]: {
+                        selected: true,
+                        selectedColor: '#3B82F6',
+                      },
+                    }
+                  : {}
+              }
+              style={styles.calendar}
+            />
+
+            <Text style={[styles.label, { marginTop: 12 }]}>
+              Available Times
+            </Text>
+
+            <View style={styles.timeGrid}>
+              {TIME_OPTIONS.map((time) => (
+                <Pressable
+                  key={time}
+                  style={[
+                    styles.timeSlot,
+                    selectedTelehealthTime === time &&
+                      styles.timeSlotSelected,
+                  ]}
+                  onPress={() => setSelectedTelehealthTime(time)}
+                >
+                  <Text
+                    style={[
+                      styles.timeSlotText,
+                      selectedTelehealthTime === time &&
+                        styles.timeSlotTextSelected,
+                    ]}
+                  >
+                    {time}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+
+            <Pressable
+              style={[
+                styles.modalButton,
+                styles.modalButtonFullWidth,
+                {
+                  marginTop: 18,
+                  opacity:
+                    selectedTelehealthDate && selectedTelehealthTime ? 1 : 0.5,
+                },
+              ]}
+              disabled={!selectedTelehealthDate || !selectedTelehealthTime}
+              onPress={() => {
+                setTelehealthScheduleModalVisible(false);
+                setTelehealthSummaryVisible(true);
+              }}
+            >
+              <Text style={styles.modalButtonText}>
+                Schedule Virtual Appointment
+              </Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        transparent
+        visible={telehealthSummaryVisible}
+        animationType="fade"
+        onRequestClose={() => setTelehealthSummaryVisible(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.modalCard}>
+            <Text style={styles.modalTitle}>Telehealth Visit Scheduled</Text>
+            <Text style={styles.modalBody}>{telehealthSummaryText}</Text>
+            <Pressable
+              style={styles.modalButton}
+              onPress={() => setTelehealthSummaryVisible(false)}
             >
               <Text style={styles.modalButtonText}>Continue</Text>
             </Pressable>
@@ -386,7 +501,6 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
 
-  // meds
   medList: {
     marginTop: 4,
   },
@@ -411,7 +525,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
-  // reminder block
   reminderWrapper: {
     flexDirection: 'row',
     marginTop: 6,
@@ -463,7 +576,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // follow-up care
   followRow: {
     flexDirection: 'row',
     marginTop: 10,
@@ -485,7 +597,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // modal shared styles
   modalBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.35)',
@@ -532,7 +643,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  // calendar + time slots
   calendar: {
     borderRadius: 12,
     marginTop: 8,

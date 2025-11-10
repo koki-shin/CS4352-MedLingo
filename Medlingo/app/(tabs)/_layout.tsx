@@ -1,12 +1,20 @@
-    // app/(tabs)/_layout.tsx
-    import { Tabs } from 'expo-router';
-    import { Ionicons } from '@expo/vector-icons'; // Example for icons
-
-    export default function TabLayout() {
-      return (
-        <Tabs
-          screenOptions={{
-            tabBarActiveTintColor: 'blue', // Customize active tab color
+import React from 'react';
+import { Tabs } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { LanguageProvider } from "../../hooks/LanguageContext"; 
+export default function TabLayout() {
+  return (
+    <LanguageProvider>
+      <Tabs
+        screenOptions={{
+          tabBarActiveTintColor: "blue", 
+        }}
+      >
+        <Tabs.Screen
+          name="home" 
+          options={{
+            title: "home",
+            tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
           }}
         >
           <Tabs.Screen

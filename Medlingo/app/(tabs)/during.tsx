@@ -1,14 +1,55 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import * as FileSystem from "expo-file-system";
+import { Audio } from "expo-av";
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const toggleRecording = () => {
+  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
+  const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
+
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      await stopAudioRecording();
+    } else {
+      await startAudioRecording();
+    }
     setIsRecording(!isRecording);
   };
+
+  const startAudioRecording = async () => {
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) return alert("Mic permission required.");
+
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      await recording.startAsync();
+
+      setAudioRecording(recording);
+    } catch (err) {
+      console.log("Error starting recording:", err);
+    }
+  };
+
+  const stopAudioRecording = async () => {
+    try {
+      if (!audioRecording) return;
+
+      await audioRecording.stopAndUnloadAsync();
+      const uri = audioRecording.getURI();
+      setAudioFileUri(uri);
+      setAudioRecording(null);
+    } catch (err) {
+      console.log("Error stopping recording:", err);
+    }
+  };
+
 
   const handleEndSession = () => {
     setIsRecording(false); // Reset back to Start Recording

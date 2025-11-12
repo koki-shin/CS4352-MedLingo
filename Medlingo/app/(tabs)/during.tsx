@@ -1,6 +1,6 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 
@@ -51,9 +51,41 @@ export default function SettingsScreen() {
   };
 
 
-  const handleEndSession = () => {
-    setIsRecording(false); // Reset back to Start Recording
-    setModalVisible(true); // Show modal
+  const handleEndSession = async () => {
+    setIsRecording(false);
+
+    try {
+      if (audioFileUri) {
+        const fileName = `visit_audio_${Date.now()}.m4a`;
+
+        if (Platform.OS === "web") {
+          // web download
+          const response = await fetch(audioFileUri);
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          console.log("audio downloaded to PC");
+        } else {
+          // native save
+          const dir = (FileSystem as any).documentDirectory;
+          if (dir) {
+            const newPath = `${dir}${fileName}`;
+            await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
+            console.log("audio saved locally at:", newPath);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("❌ Error saving/downloading audio:", err);
+    }
+
+    setModalVisible(true);
   };
 
   return (

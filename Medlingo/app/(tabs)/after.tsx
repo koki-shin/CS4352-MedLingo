@@ -15,8 +15,8 @@ const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
 
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
-  const hour24 = 7 + index; // 7..19
-  const hour12 = ((hour24 + 11) % 12) + 1; // 1–12
+  const hour24 = 7 + index; 
+  const hour12 = ((hour24 + 11) % 12) + 1;
   const ampm = hour24 < 12 ? 'AM' : 'PM';
   return `${hour12}:00 ${ampm}`;
 });
@@ -246,8 +246,21 @@ export default function SettingsScreen() {
         animationType="fade"
         onRequestClose={() => setScheduleModalVisible(false)}
       >
-        <View style={styles.modalBackdrop}>
+        <View style={styles.modalBackdrop} pointerEvents="box-none">
           <View style={[styles.modalCard, styles.modalCardLarge]}>
+            <Pressable
+              style={styles.closeBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              onPress={() => {
+                setScheduleModalVisible(false);
+                setSelectedApptDate(null);
+                setSelectedApptTime(null);
+              }}
+            >
+              <Text style={styles.closeTxt}>×</Text>
+            </Pressable>
             <Text style={styles.modalTitle}>Schedule Next Appointment</Text>
 
             <Calendar
@@ -340,8 +353,21 @@ export default function SettingsScreen() {
         animationType="fade"
         onRequestClose={() => setTelehealthScheduleModalVisible(false)}
       >
-        <View style={styles.modalBackdrop}>
+        <View style={styles.modalBackdrop} pointerEvents="box-none">
           <View style={[styles.modalCard, styles.modalCardLarge]}>
+            <Pressable
+              style={styles.closeBtn}
+              accessibilityRole="button"
+              accessibilityLabel="Close"
+              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+              onPress={() => {
+                setTelehealthScheduleModalVisible(false);
+                setSelectedTelehealthDate(null);
+                setSelectedTelehealthTime(null);
+              }}
+            >
+              <Text style={styles.closeTxt}>×</Text>
+            </Pressable>
             <Text style={styles.modalTitle}>Schedule Telehealth Follow-up</Text>
 
             <Calendar
@@ -610,9 +636,31 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1,
     borderColor: '#000000',
+    position: 'relative', 
+    overflow: 'visible',
   },
   modalCardLarge: {
     maxHeight: '80%',
+  },
+  closeBtn: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#000',
+    backgroundColor: '#F3F4F6',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000,
+    elevation: 10,
+  },
+  closeTxt: {
+    fontSize: 18,
+    fontWeight: '700',
+    lineHeight: 18,
   },
   modalTitle: {
     fontSize: 18,

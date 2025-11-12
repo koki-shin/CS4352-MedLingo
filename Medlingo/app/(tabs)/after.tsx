@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ScrollView,
   View,
@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Modal,
   Pressable,
+  TextInput,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
@@ -15,11 +16,25 @@ const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
 
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
-  const hour24 = 7 + index; 
+  const hour24 = 7 + index;
   const hour12 = ((hour24 + 11) % 12) + 1;
   const ampm = hour24 < 12 ? 'AM' : 'PM';
   return `${hour12}:00 ${ampm}`;
 });
+
+// medication presets: map medication name -> preset times and repeat
+const MED_PRESETS: Record<string, { times: string[]; repeat: string }> = {
+  'Ipratropium Bromide': {
+    // 3x daily as described in UI for demonstration (morning, midday, evening)
+    times: ['8:00 AM', '2:00 PM', '8:00 PM'],
+    repeat: 'Daily',
+  },
+  Ryaltis: {
+    // 2x daily
+    times: ['9:00 AM', '9:00 PM'],
+    repeat: 'Daily',
+  },
+};
 
 const formatApptDate = (iso: string | null) => {
   if (!iso) return '';
@@ -37,8 +52,20 @@ export default function SettingsScreen() {
   const [selectedMedication, setSelectedMedication] = useState(
     MEDICATION_OPTIONS[0]
   );
-  const [selectedTime, setSelectedTime] = useState('8:00 AM');
-  const [selectedRepeat, setSelectedRepeat] = useState(REPEAT_OPTIONS[0]);
+  // make medication options editable so users can add custom meds
+  const [medicationOptions, setMedicationOptions] = useState<string[]>(
+    MEDICATION_OPTIONS.slice()
+  );
+  const [newMedName, setNewMedName] = useState('');
+  // number of times per day for new custom medication
+  const [newMedDoses, setNewMedDoses] = useState<number>(1);
+  // support multiple times per medication
+  const [selectedTimes, setSelectedTimes] = useState<string[]>(
+    MED_PRESETS[MEDICATION_OPTIONS[0]]?.times ?? ['8:00 AM']
+  );
+  const [selectedRepeat, setSelectedRepeat] = useState(
+    MED_PRESETS[MEDICATION_OPTIONS[0]]?.repeat ?? REPEAT_OPTIONS[0]
+  );
   const [summaryVisible, setSummaryVisible] = useState(false);
 
   // schedule next in-person appointment state (existing)
@@ -58,7 +85,39 @@ export default function SettingsScreen() {
   const [telehealthSummaryVisible, setTelehealthSummaryVisible] =
     useState(false);
 
-  const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTime}, ${selectedRepeat}.`;
+  const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTimes.join(
+    ', '
+  )}, ${selectedRepeat}.`;
+
+  // add custom medication handler
+  const addCustomMedication = () => {
+    const name = newMedName.trim();
+    if (!name) return;
+    if (!medicationOptions.includes(name)) {
+      setMedicationOptions((prev) => [...prev, name]);
+    }
+    setSelectedMedication(name);
+    const preset = MED_PRESETS[name];
+    if (preset) {
+      setSelectedTimes(preset.times.slice());
+      setSelectedRepeat(preset.repeat);
+    } else {
+      // default times based on requested doses: pick first N times from TIME_OPTIONS
+      const times = TIME_OPTIONS.slice(0, Math.max(1, Math.min(newMedDoses, TIME_OPTIONS.length)));
+      setSelectedTimes(times.length ? times : ['8:00 AM']);
+      setSelectedRepeat(REPEAT_OPTIONS[0]);
+    }
+    setNewMedName('');
+  };
+
+  // apply presets when medication changes
+  useEffect(() => {
+    const preset = MED_PRESETS[selectedMedication];
+    if (preset) {
+      setSelectedTimes(preset.times.slice());
+      setSelectedRepeat(preset.repeat);
+    }
+  }, [selectedMedication]);
 
   const appointmentSummaryText = `In-person appointment scheduled for ${formatApptDate(
     selectedApptDate
@@ -137,27 +196,72 @@ export default function SettingsScreen() {
                 style={styles.picker}
                 dropdownIconColor="#111827"
               >
-                {MEDICATION_OPTIONS.map((med) => (
+                {medicationOptions.map((med) => (
                   <Picker.Item key={med} label={med} value={med} />
                 ))}
               </Picker>
             </View>
 
-            <View style={styles.reminderRow}>
-              <View style={styles.reminderColumn}>
-                <Text style={styles.label}>Time</Text>
-                <View style={styles.inputPill}>
+            {/* Add custom medication input */}
+            <Text style={[styles.label, { marginTop: 12 }]}>Add custom medication</Text>
+            <View style={{ marginTop: 6 }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}> 
+                  <TextInput
+                    placeholder="Medication name"
+                    value={newMedName}
+                    onChangeText={setNewMedName}
+                    style={{ height: 36, paddingHorizontal: 6 }}
+                    returnKeyType="done"
+                  />
+                </View>
+                <Pressable
+                  style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
+                  onPress={addCustomMedication}
+                >
+                  <Text style={[styles.setReminderText, { fontSize: 13 }]}>Add</Text>
+                </Pressable>
+              </View>
+
+              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                <Text style={{ marginRight: 10, fontSize: 13, fontWeight: '600' }}>Times per day</Text>
+                <View style={[styles.inputPill, { width: 120 }]}> 
                   <Picker
-                    selectedValue={selectedTime}
-                    onValueChange={(value) => setSelectedTime(value)}
+                    selectedValue={newMedDoses}
+                    onValueChange={(val) => setNewMedDoses(Number(val))}
                     style={styles.picker}
                     dropdownIconColor="#111827"
                   >
-                    {TIME_OPTIONS.map((time) => (
-                      <Picker.Item key={time} label={time} value={time} />
+                    {[1,2,3,4].map((n) => (
+                      <Picker.Item key={n} label={`${n}`} value={n} />
                     ))}
                   </Picker>
                 </View>
+              </View>
+            </View>
+
+            <View style={styles.reminderRow}>
+              <View style={styles.reminderColumn}>
+                <Text style={styles.label}>Time</Text>
+                {/* render a time picker for each selected time */}
+                {selectedTimes.map((time, idx) => (
+                  <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}> 
+                    <Picker
+                      selectedValue={time}
+                      onValueChange={(value) => {
+                        const next = [...selectedTimes];
+                        next[idx] = value;
+                        setSelectedTimes(next);
+                      }}
+                      style={styles.picker}
+                      dropdownIconColor="#111827"
+                    >
+                      {TIME_OPTIONS.map((t) => (
+                        <Picker.Item key={t} label={t} value={t} />
+                      ))}
+                    </Picker>
+                  </View>
+                ))}
               </View>
 
               <View style={styles.reminderColumn}>
@@ -177,6 +281,7 @@ export default function SettingsScreen() {
               </View>
             </View>
           </View>
+
           <Pressable
             style={styles.setReminderButtonTall}
             onPress={() => setSummaryVisible(true)}
@@ -185,6 +290,7 @@ export default function SettingsScreen() {
           </Pressable>
         </View>
       </View>
+      {/* Additional Modifications for useEffect can be added here */}
 
       {/* Follow-up Care */}
       <View style={styles.card}>
@@ -264,7 +370,7 @@ export default function SettingsScreen() {
             <Text style={styles.modalTitle}>Schedule Next Appointment</Text>
 
             <Calendar
-              onDayPress={(day) => {
+              onDayPress={(day: any) => {
                 setSelectedApptDate(day.dateString);
               }}
               markedDates={
@@ -371,7 +477,7 @@ export default function SettingsScreen() {
             <Text style={styles.modalTitle}>Schedule Telehealth Follow-up</Text>
 
             <Calendar
-              onDayPress={(day) => {
+              onDayPress={(day: any) => {
                 setSelectedTelehealthDate(day.dateString); 
               }}
               markedDates={

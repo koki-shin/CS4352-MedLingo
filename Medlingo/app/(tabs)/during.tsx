@@ -325,11 +325,12 @@ export default function SettingsScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    display: 'flex',
     backgroundColor: "#FFF",
     alignItems: "center",
     justifyContent: "center",
     gap: 20,
+    height: '100%'
   },
   box: {
     width: "85%",
@@ -474,7 +475,7 @@ const styles = StyleSheet.create({
 
   // Modal (come back to add visit summary info?)
   modalOverlay: {
-    flex: 1,
+    display: 'flex',
     backgroundColor: "rgba(0,0,0,0.4)",
     justifyContent: "center",
     alignItems: "center",

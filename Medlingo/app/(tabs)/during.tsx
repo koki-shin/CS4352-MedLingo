@@ -1,4 +1,4 @@
-// app/(tabs)/settings.tsx
+// app/(tabs)/during.tsx
 import React, { useState } from "react";
 import {
   Text,
@@ -172,7 +172,6 @@ export default function SettingsScreen() {
   const logEmotion = (emotion: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
-    console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
   // TODO: make it translate emotion bubbles and the actual text in the translation box, going to be static atm
   return (
@@ -473,7 +472,7 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
 
-  // Modal styles
+  // Modal (come back to add visit summary info?)
   modalOverlay: {
     flex: 1,
     backgroundColor: "rgba(0,0,0,0.4)",

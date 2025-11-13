@@ -61,7 +61,6 @@ export default function SettingsScreen() {
     { emotion: string; timestamp: string }[]
   >([]);
 
-  let savedUri: string | null;
 
   const toggleRecording = async () => {
     if (isRecording) {
@@ -136,11 +135,11 @@ export default function SettingsScreen() {
     }
   };
 
-  const generateVisitSummary = async () => {
+  const generateVisitSummary = async (file: string) => {
     const summary = {
       date: new Date().toLocaleString(),
       emotions,
-      audioFile: savedUri,
+      audioFile: file,
       totalEmotions: emotions.length,
     };
 
@@ -153,6 +152,7 @@ export default function SettingsScreen() {
 
   const handleEndSession = async () => {
     setIsRecording(false);
+    let savedUri: string = "";
 
     try {
       if (audioFileUri) {
@@ -165,7 +165,7 @@ export default function SettingsScreen() {
       console.error("Couldnt download audio", err);
     }
 
-    await generateVisitSummary();
+    await generateVisitSummary(savedUri);
     setModalVisible(true);
   };
 

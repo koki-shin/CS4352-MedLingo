@@ -3,12 +3,51 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
+import { LanguagePicker } from "../../hooks/LanguagePicker";
+import { useLanguage } from "../../hooks/LanguageContext";
+
+const localizedUI: Record<string, any> = {
+    en: {
+      doctor: "Doctor (English)",
+      translation: "Translation (Japanese)",
+      pause: "Pause & Explain",
+      feeling: "How are you feeling?",
+      end: "End Session",
+      tap: "Tap to pause/resume recording",
+    },
+    es: {
+      doctor: "Doctor (Inglés)",
+      translation: "Traducción (Japonés)",
+      pause: "Pausar y Explicar",
+      feeling: "¿Cómo te sientes?",
+      end: "Terminar sesión",
+      tap: "Toque para pausar/reanudar grabación",
+    },
+    fr: {
+      doctor: "Docteur (Anglais)",
+      translation: "Traduction (Japonais)",
+      pause: "Pause et Explication",
+      feeling: "Comment vous sentez-vous ?",
+      end: "Terminer la session",
+      tap: "Appuyez pour mettre en pause/reprendre l'enregistrement",
+    },
+    zh: {
+      doctor: "医生（英语）",
+      translation: "翻译（日语）",
+      pause: "暂停并解释",
+      feeling: "你感觉如何？",
+      end: "结束会话",
+      tap: "点击以暂停/继续录音",
+    },
+};
 
 export default function SettingsScreen() {
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
+
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
+  const [recording, setRecording] = useState<Audio.Recording | null>(null);
   const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
   
   const [emotions, setEmotions] = useState<{ emotion: string; timestamp: string }[]>([]);
@@ -27,14 +66,14 @@ export default function SettingsScreen() {
   const startAudioRecording = async () => {
     try {
       const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) return alert("Mic permission required.");
+      if (!granted) return alert("Please grant mic access");
 
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
       await recording.startAsync();
 
-      setAudioRecording(recording);
+      setRecording(recording);
     } catch (err) {
       console.log("Error starting recording:", err);
     }
@@ -42,18 +81,18 @@ export default function SettingsScreen() {
 
   const stopAudioRecording = async () => {
     try {
-      if (!audioRecording) return;
+      if (!recording) return;
 
-      await audioRecording.stopAndUnloadAsync();
-      const uri = audioRecording.getURI();
+      await recording.stopAndUnloadAsync();
+      const uri = recording.getURI();
       setAudioFileUri(uri);
-      setAudioRecording(null);
+      setRecording(null);
     } catch (err) {
       console.log("Error stopping recording:", err);
     }
   };
 
-  const generateVisitSummary = async (audioFileUri: string | null) => {
+  const generateVisitSummary = async () => {
     const summary = {
       date: new Date().toLocaleString(),
       emotions,
@@ -96,7 +135,6 @@ export default function SettingsScreen() {
 
 
         if (Platform.OS === "web") {
-          // web download
           const response = await fetch(audioFileUri);
           const blob = await response.blob();
           const url = URL.createObjectURL(blob);
@@ -109,7 +147,6 @@ export default function SettingsScreen() {
           URL.revokeObjectURL(url);
           console.log("audio downloaded to PC");
         } else {
-          // native save
           const dir = (FileSystem as any).documentDirectory;
           if (dir) {
             const newPath = `${dir}${fileName}`;
@@ -119,10 +156,10 @@ export default function SettingsScreen() {
         }
       }
     } catch (err) {
-      console.error("❌ Error saving/downloading audio:", err);
+      console.error("Couldnt download audio", err);
     }
 
-    await generateVisitSummary(audioFileUri);
+    await generateVisitSummary();
     setModalVisible(true);
   };
 
@@ -131,10 +168,12 @@ export default function SettingsScreen() {
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
     console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
-
+  // TODO: make it translate emotion bubbles and the actual text in the translation box, going to be static atm
   return (
     <View style={styles.container}>
-      {/* Recording Section */}
+      <LanguagePicker selectedLanguage={selectedLanguage} onValueChange={setSelectedLanguage} />
+
+      {/* Recording */}
       <TouchableOpacity
         style={[styles.box, isRecording ? styles.recordingBox : styles.startBox]}
         onPress={toggleRecording}
@@ -155,39 +194,39 @@ export default function SettingsScreen() {
       <View style={[styles.box, styles.englishBox]}>
         <View style={styles.labelRow}>
           <View style={styles.englishCircle} />
-          <Text style={styles.label}>Doctor (English)</Text>
+          <Text style={styles.label}>{localizedUI[selectedLanguage].doctor}</Text>
         </View>
         <Text style={styles.subText}>
           “Please avoid taking any antihistamines for at least 3 days before your allergy test.”
         </Text>
       </View>
 
-      {/* Translation (Japanese) */}
+      {/* Translations */}
       <View style={[styles.box, styles.translationBox]}>
         <View style={styles.labelRow}>
           <View style={styles.translationCircle} />
-          <Text style={styles.label}>Translation (Japanese)</Text>
+          <Text style={styles.label}>{localizedUI[selectedLanguage].translation}</Text>
         </View>
         <Text style={styles.subText}>
           アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。
         </Text>
       </View>
 
-      {/* Tap to pause/resume recording */}
+      {/* Pause or resume */}
       <TouchableOpacity style={[styles.box, styles.recordButton]}>
         <View style={styles.circle}></View>
-        <Text style={styles.tapText}>Tap to pause/resume recording</Text>
+        <Text style={styles.tapText}>{localizedUI[selectedLanguage].tap}</Text>
       </TouchableOpacity>
 
-      {/* Pause & Explain + Feelings */}
+      {/* Pause & Explain w/ Feelings btns */}
       <View style={styles.actionsContainer}>
         <TouchableOpacity style={styles.pauseButton}>
           <View style={styles.pauseCircle} />
-          <Text style={styles.pauseText}>Pause & Explain</Text>
+          <Text style={styles.pauseText}>{localizedUI[selectedLanguage].pause}</Text>
         </TouchableOpacity>
 
         <View style={styles.feelingsContainer}>
-          <Text style={styles.feelingsLabel}>How are you feeling?</Text>
+          <Text style={styles.feelingsLabel}>{localizedUI[selectedLanguage].feeling}</Text>
           <View style={styles.feelingsRow}>
             <TouchableOpacity style={styles.feelingsItem}
             onPress={() => logEmotion('Confused')}  
@@ -218,7 +257,7 @@ export default function SettingsScreen() {
         style={[styles.box, styles.endSession]}
         onPress={handleEndSession}
       >
-        <Text style={styles.endText}>End Session</Text>
+        <Text style={styles.endText}>{localizedUI[selectedLanguage].end}</Text>
       </TouchableOpacity>
 
       {/* Transcript Saved Modal */}
@@ -250,7 +289,7 @@ export default function SettingsScreen() {
   );
 }
 
-// ======= Styles =======
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

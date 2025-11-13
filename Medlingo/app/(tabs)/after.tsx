@@ -3,17 +3,18 @@ import {
   ScrollView,
   View,
   Text,
-  StyleSheet,
   Modal,
   Pressable,
   TextInput,
+  StyleSheet,
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
+import { useLanguage } from '../../hooks/LanguageContext';
+import { Language } from '../../hooks/LanguagePicker';
 
 // dropdown options
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
-const REPEAT_OPTIONS = ['Daily', 'Weekly', 'Bi-weekly', 'Monthly'];
 
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
   const hour24 = 7 + index;
@@ -22,17 +23,14 @@ const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
   return `${hour12}:00 ${ampm}`;
 });
 
-// medication presets: map medication name -> preset times and repeat
 const MED_PRESETS: Record<string, { times: string[]; repeat: string }> = {
   'Ipratropium Bromide': {
-    // 3x daily as described in UI for demonstration (morning, midday, evening)
     times: ['8:00 AM', '2:00 PM', '8:00 PM'],
-    repeat: 'Daily',
+    repeat: 'daily',
   },
   Ryaltis: {
-    // 2x daily
     times: ['9:00 AM', '9:00 PM'],
-    repeat: 'Daily',
+    repeat: 'daily',
   },
 };
 
@@ -47,28 +45,160 @@ const formatApptDate = (iso: string | null) => {
   });
 };
 
+// Localized UI strings
+const localizedUI: Record<Language, Record<string, string>> = {
+  en: {
+    pageTitle: 'After Your Visit',
+    diagnosisSummaryTitle: 'Diagnosis Summary',
+    prescribedMedicationsTitle: 'Prescribed Medications',
+    medicationRemindersTitle: 'Set Medication Reminders',
+    medicationName: 'Medication Name',
+    addCustomMedication: 'Add custom medication',
+    medicationNamePlaceholder: 'Medication name',
+    addButton: 'Add',
+    timesPerDay: 'Times per day',
+    timeLabel: 'Time',
+    repeatLabel: 'Repeat',
+    setReminderButton: 'Set Reminder',
+    followUpCareTitle: 'Follow-up Care',
+    telehealthFollowUp: 'Telehealth\nFollow-up',
+    scheduleNextAppointment: 'Schedule\nNext Appointment',
+    reminderSetTitle: 'Reminder Set',
+    scheduleAppointmentTitle: 'Schedule Next Appointment',
+    availableTimes: 'Available Times',
+    scheduleAppointmentButton: 'Schedule Appointment',
+    appointmentScheduledTitle: 'Appointment Scheduled',
+    scheduleTelehealthTitle: 'Schedule Telehealth Follow-up',
+    scheduleTelehealthButton: 'Schedule Virtual Appointment',
+    telehealthScheduledTitle: 'Telehealth Visit Scheduled',
+    continue: 'Continue',
+    diagnosisText: 'Mild pollen and dust mite allergy. Take daily antihistamine and nasal spray as prescribed.',
+    ipratropiumDetails: '1 spray in each nostril, 3× daily',
+    ryaltisDetails: '2 sprays in each nostril, 2× daily',
+    daily: 'Daily',
+    weekly: 'Weekly',
+    biweekly: 'Bi-weekly',
+    monthly: 'Monthly',
+  },
+  es: {
+    pageTitle: 'Después de su Visita',
+    diagnosisSummaryTitle: 'Resumen del Diagnóstico',
+    prescribedMedicationsTitle: 'Medicamentos Prescritos',
+    medicationRemindersTitle: 'Establecer Recordatorios de Medicamentos',
+    medicationName: 'Nombre del Medicamento',
+    addCustomMedication: 'Agregar medicamento personalizado',
+    medicationNamePlaceholder: 'Nombre del medicamento',
+    addButton: 'Agregar',
+    timesPerDay: 'Veces por día',
+    timeLabel: 'Hora',
+    repeatLabel: 'Repetir',
+    setReminderButton: 'Establecer Recordatorio',
+    followUpCareTitle: 'Cuidado de Seguimiento',
+    telehealthFollowUp: 'Seguimiento\nTeleterapia',
+    scheduleNextAppointment: 'Programar\nSiguiente Cita',
+    reminderSetTitle: 'Recordatorio Establecido',
+    scheduleAppointmentTitle: 'Programar Siguiente Cita',
+    availableTimes: 'Horas Disponibles',
+    scheduleAppointmentButton: 'Programar Cita',
+    appointmentScheduledTitle: 'Cita Programada',
+    scheduleTelehealthTitle: 'Programar Seguimiento Teleterapia',
+    scheduleTelehealthButton: 'Programar Cita Virtual',
+    telehealthScheduledTitle: 'Visita Teleterapia Programada',
+    continue: 'Continuar',
+    diagnosisText: 'Alergia leve al polen y a los ácaros del polvo. Tome un antihistamínico diario y use el spray nasal según lo prescrito.',
+    ipratropiumDetails: '1 pulverización en cada fosa nasal, 3× diarios',
+    ryaltisDetails: '2 pulverizaciones en cada fosa nasal, 2× diarios',
+    daily: 'Diario',
+    weekly: 'Semanal',
+    biweekly: 'Quincenal',
+    monthly: 'Mensual',
+  },
+  fr: {
+    pageTitle: 'Après Votre Visite',
+    diagnosisSummaryTitle: 'Résumé du Diagnostic',
+    prescribedMedicationsTitle: 'Médicaments Prescrits',
+    medicationRemindersTitle: 'Définir les Rappels de Médicaments',
+    medicationName: 'Nom du Médicament',
+    addCustomMedication: 'Ajouter un médicament personnalisé',
+    medicationNamePlaceholder: 'Nom du médicament',
+    addButton: 'Ajouter',
+    timesPerDay: 'Fois par jour',
+    timeLabel: 'Heure',
+    repeatLabel: 'Répéter',
+    setReminderButton: 'Définir le Rappel',
+    followUpCareTitle: 'Soins de Suivi',
+    telehealthFollowUp: 'Suivi\nTélésanté',
+    scheduleNextAppointment: 'Planifier\nProchaine Consultation',
+    reminderSetTitle: 'Rappel Défini',
+    scheduleAppointmentTitle: 'Planifier Prochaine Consultation',
+    availableTimes: 'Heures Disponibles',
+    scheduleAppointmentButton: 'Planifier Consultation',
+    appointmentScheduledTitle: 'Consultation Planifiée',
+    scheduleTelehealthTitle: 'Planifier Suivi Télésanté',
+    scheduleTelehealthButton: 'Planifier Consultation Virtuelle',
+    telehealthScheduledTitle: 'Visite Télésanté Planifiée',
+    continue: 'Continuer',
+    diagnosisText: 'Allergie légère au pollen et aux acariens. Prenez un antihistaminique quotidien et utilisez le spray nasal selon la prescription.',
+    ipratropiumDetails: '1 vaporisation dans chaque narine, 3× par jour',
+    ryaltisDetails: '2 vaporisations dans chaque narine, 2× par jour',
+    daily: 'Quotidien',
+    weekly: 'Hebdomadaire',
+    biweekly: 'Bi-hebdomadaire',
+    monthly: 'Mensuel',
+  },
+  zh: {
+    pageTitle: '就诊后',
+    diagnosisSummaryTitle: '诊断总结',
+    prescribedMedicationsTitle: '处方药物',
+    medicationRemindersTitle: '设置药物提醒',
+    medicationName: '药物名称',
+    addCustomMedication: '添加自定义药物',
+    medicationNamePlaceholder: '药物名称',
+    addButton: '添加',
+    timesPerDay: '每天次数',
+    timeLabel: '时间',
+    repeatLabel: '重复',
+    setReminderButton: '设置提醒',
+    followUpCareTitle: '后续护理',
+    telehealthFollowUp: '远程医疗\n随访',
+    scheduleNextAppointment: '安排\n下次预约',
+    reminderSetTitle: '提醒已设置',
+    scheduleAppointmentTitle: '安排下次预约',
+    availableTimes: '可用时间',
+    scheduleAppointmentButton: '安排预约',
+    appointmentScheduledTitle: '预约已安排',
+    scheduleTelehealthTitle: '安排远程医疗随访',
+    scheduleTelehealthButton: '安排虚拟预约',
+    telehealthScheduledTitle: '远程医疗访问已安排',
+    continue: '继续',
+    diagnosisText: '轻度花粉和尘螨过敏。请按处方每天服用抗组胺药并使用鼻喷剂。',
+    ipratropiumDetails: '每个鼻孔各喷1次，每天3次',
+    ryaltisDetails: '每个鼻孔各喷2次，每天2次',
+    daily: '每日',
+    weekly: '每周',
+    biweekly: '每两周',
+    monthly: '每月',
+  },
+};
+
 export default function SettingsScreen() {
-  // reminder state
+  const { selectedLanguage } = useLanguage() as { selectedLanguage: Language };
   const [selectedMedication, setSelectedMedication] = useState(
     MEDICATION_OPTIONS[0]
   );
-  // make medication options editable so users can add custom meds
   const [medicationOptions, setMedicationOptions] = useState<string[]>(
     MEDICATION_OPTIONS.slice()
   );
   const [newMedName, setNewMedName] = useState('');
-  // number of times per day for new custom medication
   const [newMedDoses, setNewMedDoses] = useState<number>(1);
-  // support multiple times per medication
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
     MED_PRESETS[MEDICATION_OPTIONS[0]]?.times ?? ['8:00 AM']
   );
   const [selectedRepeat, setSelectedRepeat] = useState(
-    MED_PRESETS[MEDICATION_OPTIONS[0]]?.repeat ?? REPEAT_OPTIONS[0]
+    MED_PRESETS[MEDICATION_OPTIONS[0]]?.repeat ?? 'daily'
   );
   const [summaryVisible, setSummaryVisible] = useState(false);
 
-  // schedule next in-person appointment state (existing)
   const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedApptDate, setSelectedApptDate] = useState<string | null>(null);
   const [selectedApptTime, setSelectedApptTime] = useState<string | null>(null);
@@ -87,9 +217,8 @@ export default function SettingsScreen() {
 
   const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTimes.join(
     ', '
-  )}, ${selectedRepeat}.`;
+  )}, ${localizedUI[selectedLanguage][selectedRepeat as keyof typeof localizedUI[Language]]}.`;
 
-  // add custom medication handler
   const addCustomMedication = () => {
     const name = newMedName.trim();
     if (!name) return;
@@ -102,15 +231,13 @@ export default function SettingsScreen() {
       setSelectedTimes(preset.times.slice());
       setSelectedRepeat(preset.repeat);
     } else {
-      // default times based on requested doses: pick first N times from TIME_OPTIONS
       const times = TIME_OPTIONS.slice(0, Math.max(1, Math.min(newMedDoses, TIME_OPTIONS.length)));
       setSelectedTimes(times.length ? times : ['8:00 AM']);
-      setSelectedRepeat(REPEAT_OPTIONS[0]);
+      setSelectedRepeat('daily');
     }
     setNewMedName('');
   };
 
-  // apply presets when medication changes
   useEffect(() => {
     const preset = MED_PRESETS[selectedMedication];
     if (preset) {
@@ -132,22 +259,18 @@ export default function SettingsScreen() {
       style={styles.container}
       contentContainerStyle={styles.content}
     >
-      <Text style={styles.header}>After Your Visit</Text>
+      <Text style={styles.header}>{localizedUI[selectedLanguage].pageTitle}</Text>
 
       {/* Diagnosis Summary */}
       <View style={styles.card}>
         <View style={styles.sectionHeader}>
           <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
-          <Text style={styles.cardTitle}>Diagnosis Summary</Text>
+          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].diagnosisSummaryTitle}</Text>
         </View>
 
         <View style={styles.summaryBubble}>
           <Text style={styles.bodyText}>
-            <Text style={styles.inlineLabel}>English: </Text>
-            Mild pollen and dust mite allergy. Take daily antihistamine and
-            nasal spray as prescribed.{'\n\n'}
-            <Text style={styles.inlineLabel}>Japanese: </Text>
-            花粉とダニによる軽度のアレルギーです。指示どおりに抗ヒスタミン薬と点鼻薬を毎日使用してください。
+            {localizedUI[selectedLanguage].diagnosisText}
           </Text>
         </View>
       </View>
@@ -156,7 +279,7 @@ export default function SettingsScreen() {
       <View style={styles.card}>
         <View style={styles.sectionHeader}>
           <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
-          <Text style={styles.cardTitle}>Prescribed Medications</Text>
+          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].prescribedMedicationsTitle}</Text>
         </View>
 
         <View style={styles.medList}>
@@ -165,7 +288,7 @@ export default function SettingsScreen() {
             <View>
               <Text style={styles.medName}>Ipratropium Bromide</Text>
               <Text style={styles.medDetails}>
-                1 spray in each nostril, 3× daily
+                {localizedUI[selectedLanguage].ipratropiumDetails}
               </Text>
             </View>
           </View>
@@ -175,7 +298,7 @@ export default function SettingsScreen() {
             <View>
               <Text style={styles.medName}>Ryaltis</Text>
               <Text style={styles.medDetails}>
-                2 sprays in each nostril, 2× daily
+                {localizedUI[selectedLanguage].ryaltisDetails}
               </Text>
             </View>
           </View>
@@ -184,11 +307,11 @@ export default function SettingsScreen() {
 
       {/* Set Medication Reminders */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Set Medication Reminders</Text>
+        <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].medicationRemindersTitle}</Text>
 
         <View style={styles.reminderWrapper}>
           <View style={styles.reminderLeft}>
-            <Text style={styles.label}>Medication Name</Text>
+            <Text style={styles.label}>{localizedUI[selectedLanguage].medicationName}</Text>
             <View style={styles.inputPill}>
               <Picker
                 selectedValue={selectedMedication}
@@ -203,47 +326,48 @@ export default function SettingsScreen() {
             </View>
 
             {/* Add custom medication input */}
-            <Text style={[styles.label, { marginTop: 12 }]}>Add custom medication</Text>
-            <View style={{ marginTop: 6 }}>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}> 
-                  <TextInput
-                    placeholder="Medication name"
-                    value={newMedName}
-                    onChangeText={setNewMedName}
-                    style={{ height: 36, paddingHorizontal: 6 }}
-                    returnKeyType="done"
-                  />
-                </View>
-                <Pressable
-                  style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
-                  onPress={addCustomMedication}
-                >
-                  <Text style={[styles.setReminderText, { fontSize: 13 }]}>Add</Text>
-                </Pressable>
-              </View>
-
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                <Text style={{ marginRight: 10, fontSize: 13, fontWeight: '600' }}>Times per day</Text>
-                <View style={[styles.inputPill, { width: 120 }]}> 
-                  <Picker
-                    selectedValue={newMedDoses}
-                    onValueChange={(val) => setNewMedDoses(Number(val))}
-                    style={styles.picker}
-                    dropdownIconColor="#111827"
+            <View style={styles.customMedBubble}>
+              <Text style={[styles.label, { marginTop: 0 }]}>{localizedUI[selectedLanguage].addCustomMedication}</Text>
+              <View style={{ marginTop: 6 }}>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}> 
+                    <TextInput
+                      placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
+                      value={newMedName}
+                      onChangeText={setNewMedName}
+                      style={{ height: 36, paddingHorizontal: 6 }}
+                      returnKeyType="done"
+                    />
+                  </View>
+                  <Pressable
+                    style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
+                    onPress={addCustomMedication}
                   >
-                    {[1,2,3,4].map((n) => (
-                      <Picker.Item key={n} label={`${n}`} value={n} />
-                    ))}
-                  </Picker>
+                    <Text style={[styles.setReminderText, { fontSize: 13 }]}>{localizedUI[selectedLanguage].addButton}</Text>
+                  </Pressable>
+                </View>
+
+                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                  <Text style={{ marginRight: 10, fontSize: 13, fontWeight: '600' }}>{localizedUI[selectedLanguage].timesPerDay}</Text>
+                  <View style={[styles.inputPill, { width: 120 }]}> 
+                    <Picker
+                      selectedValue={newMedDoses}
+                      onValueChange={(val) => setNewMedDoses(Number(val))}
+                      style={styles.picker}
+                      dropdownIconColor="#111827"
+                    >
+                      {[1,2,3,4].map((n) => (
+                        <Picker.Item key={n} label={`${n}`} value={n} />
+                      ))}
+                    </Picker>
+                  </View>
                 </View>
               </View>
             </View>
 
             <View style={styles.reminderRow}>
               <View style={styles.reminderColumn}>
-                <Text style={styles.label}>Time</Text>
-                {/* render a time picker for each selected time */}
+                <Text style={styles.label}>{localizedUI[selectedLanguage].timeLabel}</Text>
                 {selectedTimes.map((time, idx) => (
                   <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}> 
                     <Picker
@@ -265,7 +389,7 @@ export default function SettingsScreen() {
               </View>
 
               <View style={styles.reminderColumn}>
-                <Text style={styles.label}>Repeat</Text>
+                <Text style={styles.label}>{localizedUI[selectedLanguage].repeatLabel}</Text>
                 <View style={styles.inputPill}>
                   <Picker
                     selectedValue={selectedRepeat}
@@ -273,9 +397,10 @@ export default function SettingsScreen() {
                     style={styles.picker}
                     dropdownIconColor="#111827"
                   >
-                    {REPEAT_OPTIONS.map((opt) => (
-                      <Picker.Item key={opt} label={opt} value={opt} />
-                    ))}
+                    <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
+                    <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
+                    <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
+                    <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
                   </Picker>
                 </View>
               </View>
@@ -286,15 +411,14 @@ export default function SettingsScreen() {
             style={styles.setReminderButtonTall}
             onPress={() => setSummaryVisible(true)}
           >
-            <Text style={styles.setReminderText}>Set{'\n'}Reminder</Text>
+            <Text style={styles.setReminderText}>{localizedUI[selectedLanguage].setReminderButton}</Text>
           </Pressable>
         </View>
       </View>
-      {/* Additional Modifications for useEffect can be added here */}
 
       {/* Follow-up Care */}
       <View style={styles.card}>
-        <Text style={styles.cardTitle}>Follow-up Care</Text>
+        <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].followUpCareTitle}</Text>
 
         <View style={styles.followRow}>
           {/* Telehealth Follow-up */}
@@ -307,7 +431,7 @@ export default function SettingsScreen() {
             }}
           >
             <Text style={styles.followText}>
-              Telehealth{'\n'}Follow-up
+              {localizedUI[selectedLanguage].telehealthFollowUp}
             </Text>
           </Pressable>
 
@@ -320,7 +444,7 @@ export default function SettingsScreen() {
             }}
           >
             <Text style={styles.followText}>
-              Schedule{'\n'}Next Appointment
+              {localizedUI[selectedLanguage].scheduleNextAppointment}
             </Text>
           </Pressable>
         </View>
@@ -334,13 +458,13 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Reminder Set</Text>
+            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].reminderSetTitle}</Text>
             <Text style={styles.modalBody}>{reminderSummaryText}</Text>
             <Pressable
               style={styles.modalButton}
               onPress={() => setSummaryVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Continue</Text>
+              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
             </Pressable>
           </View>
         </View>
@@ -367,7 +491,7 @@ export default function SettingsScreen() {
             >
               <Text style={styles.closeTxt}>×</Text>
             </Pressable>
-            <Text style={styles.modalTitle}>Schedule Next Appointment</Text>
+            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].scheduleAppointmentTitle}</Text>
 
             <Calendar
               onDayPress={(day: any) => {
@@ -387,7 +511,7 @@ export default function SettingsScreen() {
             />
 
             <Text style={[styles.label, { marginTop: 12 }]}>
-              Available Times
+              {localizedUI[selectedLanguage].availableTimes}
             </Text>
 
             <View style={styles.timeGrid}>
@@ -427,7 +551,7 @@ export default function SettingsScreen() {
                 setApptSummaryVisible(true);
               }}
             >
-              <Text style={styles.modalButtonText}>Schedule Appointment</Text>
+              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].scheduleAppointmentButton}</Text>
             </Pressable>
           </View>
         </View>
@@ -441,13 +565,13 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Appointment Scheduled</Text>
+            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].appointmentScheduledTitle}</Text>
             <Text style={styles.modalBody}>{appointmentSummaryText}</Text>
             <Pressable
               style={styles.modalButton}
               onPress={() => setApptSummaryVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Continue</Text>
+              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
             </Pressable>
           </View>
         </View>
@@ -474,7 +598,7 @@ export default function SettingsScreen() {
             >
               <Text style={styles.closeTxt}>×</Text>
             </Pressable>
-            <Text style={styles.modalTitle}>Schedule Telehealth Follow-up</Text>
+            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].scheduleTelehealthTitle}</Text>
 
             <Calendar
               onDayPress={(day: any) => {
@@ -494,7 +618,7 @@ export default function SettingsScreen() {
             />
 
             <Text style={[styles.label, { marginTop: 12 }]}>
-              Available Times
+              {localizedUI[selectedLanguage].availableTimes}
             </Text>
 
             <View style={styles.timeGrid}>
@@ -538,7 +662,7 @@ export default function SettingsScreen() {
               }}
             >
               <Text style={styles.modalButtonText}>
-                Schedule Virtual Appointment
+                {localizedUI[selectedLanguage].scheduleTelehealthButton}
               </Text>
             </Pressable>
           </View>
@@ -553,13 +677,13 @@ export default function SettingsScreen() {
       >
         <View style={styles.modalBackdrop}>
           <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>Telehealth Visit Scheduled</Text>
+            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].telehealthScheduledTitle}</Text>
             <Text style={styles.modalBody}>{telehealthSummaryText}</Text>
             <Pressable
               style={styles.modalButton}
               onPress={() => setTelehealthSummaryVisible(false)}
             >
-              <Text style={styles.modalButtonText}>Continue</Text>
+              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
             </Pressable>
           </View>
         </View>
@@ -569,7 +693,6 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  // layout
   container: {
     flex: 1,
     backgroundColor: '#F4F4F4',
@@ -673,6 +796,15 @@ const styles = StyleSheet.create({
   reminderColumn: {
     flex: 1,
     marginRight: 8,
+  },
+
+  customMedBubble: {
+    marginTop: 12,
+    padding: 12,
+    borderRadius: 12,
+    backgroundColor: '#F0F9FF',
+    borderWidth: 1,
+    borderColor: '#E0F2FE',
   },
 
   inputPill: {

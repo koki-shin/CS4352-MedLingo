@@ -21,30 +21,34 @@ const localizedUI: Record<string, any> = {
     feeling: "How are you feeling?",
     end: "End Session",
     tap: "Tap to pause/resume recording",
+    statement: "アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。"
   },
   es: {
     doctor: "Doctor (Inglés)",
-    translation: "Traducción (Japonés)",
+    translation: "Traducción",
     pause: "Pausar y Explicar",
     feeling: "¿Cómo te sientes?",
     end: "Terminar sesión",
     tap: "Toque para pausar/reanudar grabación",
+    statement: "Por favor, evite tomar antihistamínicos durante al menos 3 días antes de su prueba de alergia."
   },
   fr: {
     doctor: "Docteur (Anglais)",
-    translation: "Traduction (Japonais)",
+    translation: "Traduction",
     pause: "Pause et Explication",
     feeling: "Comment vous sentez-vous ?",
     end: "Terminer la session",
     tap: "Appuyez pour mettre en pause/reprendre l'enregistrement",
+    statement: "Veuillez éviter de prendre des antihistaminiques pendant au moins 3 jours avant votre test d'allergie."
   },
   zh: {
     doctor: "医生（英语）",
-    translation: "翻译（日语）",
+    translation: "翻译",
     pause: "暂停并解释",
     feeling: "你感觉如何？",
     end: "结束会话",
     tap: "点击以暂停/继续录音",
+    statement: "请在进行过敏测试前至少3天内避免服用任何抗组胺药。"
   },
 };
 
@@ -173,7 +177,6 @@ export default function SettingsScreen() {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
   };
-  // TODO: make it translate emotion bubbles and the actual text in the translation box, going to be static atm
   return (
     <View style={styles.container}>
       <LanguagePicker
@@ -229,7 +232,7 @@ export default function SettingsScreen() {
           </Text>
         </View>
         <Text style={styles.subText}>
-          アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。
+          {localizedUI[selectedLanguage].statement}
         </Text>
       </View>
 

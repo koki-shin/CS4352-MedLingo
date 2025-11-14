@@ -1,18 +1,135 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
+import * as FileSystem from "expo-file-system/legacy";
+import { Audio } from "expo-av";
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const toggleRecording = () => {
+  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
+  const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
+  
+  const [emotions, setEmotions] = useState<{ emotion: string; timestamp: string }[]>([]);
+
+  let savedUri: string | null;
+
+  const toggleRecording = async () => {
+    if (isRecording) {
+      await stopAudioRecording();
+    } else {
+      await startAudioRecording();
+    }
     setIsRecording(!isRecording);
   };
 
-  const handleEndSession = () => {
-    setIsRecording(false); // Reset back to Start Recording
-    setModalVisible(true); // Show modal
+  const startAudioRecording = async () => {
+    try {
+      const { granted } = await Audio.requestPermissionsAsync();
+      if (!granted) return alert("Mic permission required.");
+
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      await recording.startAsync();
+
+      setAudioRecording(recording);
+    } catch (err) {
+      console.log("Error starting recording:", err);
+    }
+  };
+
+  const stopAudioRecording = async () => {
+    try {
+      if (!audioRecording) return;
+
+      await audioRecording.stopAndUnloadAsync();
+      const uri = audioRecording.getURI();
+      setAudioFileUri(uri);
+      setAudioRecording(null);
+    } catch (err) {
+      console.log("Error stopping recording:", err);
+    }
+  };
+
+  const generateVisitSummary = async (audioFileUri: string | null) => {
+    const summary = {
+      date: new Date().toLocaleString(),
+      emotions,
+      audioFile: savedUri,
+      totalEmotions: emotions.length,
+    };
+
+    const json = JSON.stringify(summary, null, 2);
+    const fileName = `visit_summary_${Date.now()}.json`;
+
+    if (Platform.OS === "web") {
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      console.log("Visit summary downloaded.");
+    } else {
+      const dir = (FileSystem as any).documentDirectory;
+      if (dir) {
+        const newPath = `${dir}${fileName}`;
+        await FileSystem.writeAsStringAsync(newPath, json);
+        console.log("Visit summary saved locally:", newPath);
+      }
+    }
+  };
+
+
+  const handleEndSession = async () => {
+    setIsRecording(false);
+
+    try {
+      if (audioFileUri) {
+        const fileName = `visit_audio_${Date.now()}.m4a`;
+        savedUri = fileName;
+
+
+        if (Platform.OS === "web") {
+          // web download
+          const response = await fetch(audioFileUri);
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          console.log("audio downloaded to PC");
+        } else {
+          // native save
+          const dir = (FileSystem as any).documentDirectory;
+          if (dir) {
+            const newPath = `${dir}${fileName}`;
+            await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
+            console.log("audio saved locally at:", newPath);
+          }
+        }
+      }
+    } catch (err) {
+      console.error("❌ Error saving/downloading audio:", err);
+    }
+
+    await generateVisitSummary(audioFileUri);
+    setModalVisible(true);
+  };
+
+    const logEmotion = (emotion: string) => {
+    const timestamp = new Date().toLocaleTimeString();
+    setEmotions((prev) => [...prev, { emotion, timestamp }]);
+    console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
 
   return (
@@ -72,18 +189,26 @@ export default function SettingsScreen() {
         <View style={styles.feelingsContainer}>
           <Text style={styles.feelingsLabel}>How are you feeling?</Text>
           <View style={styles.feelingsRow}>
-            <View style={styles.feelingsItem}>
+            <TouchableOpacity style={styles.feelingsItem}
+            onPress={() => logEmotion('Confused')}  
+            >
               <View style={[styles.feelingCircle, { backgroundColor: '#4B9EFF' }]} />
               <Text style={styles.feelingText}>Confused</Text>
-            </View>
-            <View style={styles.feelingsItem}>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.feelingsItem}
+            onPress={() => logEmotion('Anxious')}
+            >
               <View style={[styles.feelingCircle, { backgroundColor: '#FFB74B' }]} />
               <Text style={styles.feelingText}>Anxious</Text>
-            </View>
-            <View style={styles.feelingsItem}>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.feelingsItem}
+            onPress={() => logEmotion('Good')}
+            >
               <View style={[styles.feelingCircle, { backgroundColor: '#66BB6A' }]} />
               <Text style={styles.feelingText}>Good</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
       </View>

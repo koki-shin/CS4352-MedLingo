@@ -171,9 +171,24 @@ if (isOutputVisible) {
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
 
-      {/* General Health Questions */}
-      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
-      <Text style={styles.questionBlock}>{src_one}</Text>
+      {/* What brings you in today? */}
+      <Card
+        mode="outlined"
+        style={{
+          backgroundColor: "white",
+          borderColor: "#d7e3ff",
+          borderWidth: 1.2,
+          borderRadius: 22,
+          marginBottom: 16,
+        }}
+      >
+        <Card.Content style={{ paddingVertical: 18 }}>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
+            {localizedQuestions[selectedLanguage][0]}
+          </Text>
+          <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_one || "—"}</Text>
+        </Card.Content>
+      </Card>
 
           <Card
             mode="outlined"

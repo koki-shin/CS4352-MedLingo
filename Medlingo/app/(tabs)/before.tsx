@@ -176,6 +176,7 @@ export default function BeforeAppointmentCondensed() {
   if (isOutputVisible) {
     return (
       <ScrollView style={styles.container}>
+        <View style={{ height: 30 }} />
         <Text style={styles.outputTitle}>
           {localizedUI[selectedLanguage].beforeAppointmentTitle}
         </Text>

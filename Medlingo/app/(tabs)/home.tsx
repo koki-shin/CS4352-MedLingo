@@ -59,6 +59,7 @@ export default function HomeScreen() {
             color: "#0A4DA3",
             marginBottom: 18,
             textAlign: "center",
+            fontFamily: 'Montserrat-ExtraBold',
           }}
         >
           MedLingo
@@ -101,6 +102,7 @@ export default function HomeScreen() {
                         fontWeight: "700",
                         color: "#0A4DA3",
                         flex: 1,
+                        fontFamily: 'Montserrat-Bold',
                       }}
                     >
                       {localizedUI[selectedLanguage].before.title}
@@ -111,6 +113,7 @@ export default function HomeScreen() {
                       fontSize: 14,
                       color: "#5b6b7a",
                       marginTop: 4,
+                      fontFamily: 'Montserrat-Regular',
                     }}
                   >
                     {localizedUI[selectedLanguage].before.subtitle}
@@ -146,6 +149,7 @@ export default function HomeScreen() {
                         fontWeight: "700",
                         color: "#0A4DA3",
                         flex: 1,
+                        fontFamily: 'Montserrat-Bold',
                       }}
                     >
                       {localizedUI[selectedLanguage].during.title}
@@ -156,6 +160,7 @@ export default function HomeScreen() {
                       fontSize: 14,
                       color: "#5b6b7a",
                       marginTop: 4,
+                      fontFamily: 'Montserrat-Regular',
                     }}
                   >
                     {localizedUI[selectedLanguage].during.subtitle}
@@ -191,6 +196,7 @@ export default function HomeScreen() {
                         fontWeight: "700",
                         color: "#0A4DA3",
                         flex: 1,
+                        fontFamily: 'Montserrat-Bold',
                       }}
                     >
                       {localizedUI[selectedLanguage].after.title}
@@ -201,6 +207,7 @@ export default function HomeScreen() {
                       fontSize: 14,
                       color: "#5b6b7a",
                       marginTop: 4,
+                      fontFamily: 'Montserrat-Regular',
                     }}
                   >
                     {localizedUI[selectedLanguage].after.subtitle}
@@ -236,6 +243,7 @@ export default function HomeScreen() {
                         fontWeight: "700",
                         color: "#0A4DA3",
                         flex: 1,
+                        fontFamily: 'Montserrat-Bold',
                       }}
                     >
                       {localizedUI[selectedLanguage].quick.title}
@@ -246,6 +254,7 @@ export default function HomeScreen() {
                       fontSize: 14,
                       color: "#5b6b7a",
                       marginTop: 4,
+                      fontFamily: 'Montserrat-Regular',
                     }}
                   >
                     {localizedUI[selectedLanguage].quick.subtitle}

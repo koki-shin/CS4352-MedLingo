@@ -140,6 +140,7 @@ export default function BeforeAppointmentCondensed() {
               color: "#0A4DA3",
               marginBottom: 24,
               textAlign: "center",
+              fontFamily: 'Montserrat-ExtraBold',
             }}
           >
             {localizedUI[selectedLanguage].beforeAppointmentTitle}
@@ -156,13 +157,13 @@ export default function BeforeAppointmentCondensed() {
             }}
           >
             <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 8 }}>
+              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 8, fontFamily: 'Montserrat-Bold' }}>
                 GENERAL HEALTH QUESTIONS:
               </Text>
-              <Text style={{ fontSize: 16, color: "#5b6b7a", marginBottom: 12 }}>
+              <Text style={{ fontSize: 16, color: "#5b6b7a", marginBottom: 12, fontFamily: 'Montserrat-Regular' }}>
                 {localizedQuestions[selectedLanguage][0]}
               </Text>
-              <Text style={{ fontSize: 15, color: "#1a1a1a" }}>{src_one || "—"}</Text>
+              <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_one || "—"}</Text>
             </Card.Content>
           </Card>
 
@@ -177,10 +178,10 @@ export default function BeforeAppointmentCondensed() {
             }}
           >
             <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
                 {localizedQuestions[selectedLanguage][1]}
               </Text>
-              <Text style={{ fontSize: 15, color: "#1a1a1a" }}>{src_two || "—"}</Text>
+              <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_two || "—"}</Text>
             </Card.Content>
           </Card>
 
@@ -195,10 +196,10 @@ export default function BeforeAppointmentCondensed() {
             }}
           >
             <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
                 {localizedQuestions[selectedLanguage][2]}
               </Text>
-              <Text style={{ fontSize: 15, color: "#1a1a1a" }}>{src_three || "—"}</Text>
+              <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_three || "—"}</Text>
             </Card.Content>
           </Card>
 
@@ -213,30 +214,30 @@ export default function BeforeAppointmentCondensed() {
             }}
           >
             <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
                 CONSENT:
               </Text>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][3]}
                 </Text>
-                <Text style={{ fontSize: 16, color: consentOne ? "#0A4DA3" : "#999" }}>
+                <Text style={{ fontSize: 16, color: consentOne ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
                   {consentOne ? "✓" : "○"}
                 </Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][4]}
                 </Text>
-                <Text style={{ fontSize: 16, color: consentTwo ? "#0A4DA3" : "#999" }}>
+                <Text style={{ fontSize: 16, color: consentTwo ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
                   {consentTwo ? "✓" : "○"}
                 </Text>
               </View>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][5]}
                 </Text>
-                <Text style={{ fontSize: 16, color: consentThree ? "#0A4DA3" : "#999" }}>
+                <Text style={{ fontSize: 16, color: consentThree ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
                   {consentThree ? "✓" : "○"}
                 </Text>
               </View>
@@ -279,7 +280,7 @@ export default function BeforeAppointmentCondensed() {
                 marginBottom: 12,
               }}
             >
-              <Text style={{ color: "white", fontSize: 16, fontWeight: "600", textAlign: "center" }}>
+              <Text style={{ color: "white", fontSize: 16, fontWeight: "600", textAlign: "center", fontFamily: 'Montserrat-SemiBold' }}>
                 {localizedUI[selectedLanguage].print}
               </Text>
             </Pressable>
@@ -295,7 +296,7 @@ export default function BeforeAppointmentCondensed() {
                 borderRadius: 12,
               }}
             >
-              <Text style={{ color: "#0A4DA3", fontSize: 16, fontWeight: "600", textAlign: "center" }}>
+              <Text style={{ color: "#0A4DA3", fontSize: 16, fontWeight: "600", textAlign: "center", fontFamily: 'Montserrat-SemiBold' }}>
                 {localizedUI[selectedLanguage].back}
               </Text>
             </Pressable>
@@ -315,6 +316,7 @@ export default function BeforeAppointmentCondensed() {
             color: "#0A4DA3",
             marginBottom: 24,
             textAlign: "center",
+            fontFamily: 'Montserrat-ExtraBold',
           }}
         >
           {localizedUI[selectedLanguage].beforeAppointmentTitle}
@@ -332,10 +334,10 @@ export default function BeforeAppointmentCondensed() {
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
               GENERAL HEALTH QUESTIONS:
             </Text>
-            <Text style={{ fontSize: 18, fontWeight: "600", color: "#0A4DA3", marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "600", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-SemiBold' }}>
               {localizedQuestions[selectedLanguage][0]}
             </Text>
             <TextInput
@@ -346,7 +348,7 @@ export default function BeforeAppointmentCondensed() {
               editable={!isLoading}
               multiline
               numberOfLines={3}
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white", fontFamily: 'Montserrat-Regular' }}
               theme={{
                 colors: {
                   primary: "#0A4DA3",
@@ -370,7 +372,7 @@ export default function BeforeAppointmentCondensed() {
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
               {localizedQuestions[selectedLanguage][1]}
             </Text>
             <TextInput
@@ -381,7 +383,7 @@ export default function BeforeAppointmentCondensed() {
               editable={!isLoading}
               multiline
               numberOfLines={3}
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white", fontFamily: 'Montserrat-Regular' }}
               theme={{
                 colors: {
                   primary: "#0A4DA3",
@@ -405,7 +407,7 @@ export default function BeforeAppointmentCondensed() {
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
               {localizedQuestions[selectedLanguage][2]}
             </Text>
             <TextInput
@@ -416,7 +418,7 @@ export default function BeforeAppointmentCondensed() {
               editable={!isLoading}
               multiline
               numberOfLines={3}
-              style={{ backgroundColor: "white" }}
+              style={{ backgroundColor: "white", fontFamily: 'Montserrat-Regular' }}
               theme={{
                 colors: {
                   primary: "#0A4DA3",
@@ -440,7 +442,7 @@ export default function BeforeAppointmentCondensed() {
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 16 }}>
+            <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 16, fontFamily: 'Montserrat-Bold' }}>
               CONSENT:
             </Text>
             <View style={{ marginBottom: 12 }}>
@@ -465,7 +467,7 @@ export default function BeforeAppointmentCondensed() {
                     <Ionicons name="checkmark" size={16} color="white" />
                   )}
                 </View>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][3]}
                 </Text>
               </Pressable>
@@ -492,7 +494,7 @@ export default function BeforeAppointmentCondensed() {
                     <Ionicons name="checkmark" size={16} color="white" />
                   )}
                 </View>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][4]}
                 </Text>
               </Pressable>
@@ -519,7 +521,7 @@ export default function BeforeAppointmentCondensed() {
                     <Ionicons name="checkmark" size={16} color="white" />
                   )}
                 </View>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
+                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
                   {localizedQuestions[selectedLanguage][5]}
                 </Text>
               </Pressable>
@@ -539,10 +541,10 @@ export default function BeforeAppointmentCondensed() {
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <Text style={{ fontSize: 20, fontWeight: "700", color: "#0A4DA3", marginBottom: 8 }}>
+            <Text style={{ fontSize: 20, fontWeight: "700", color: "#0A4DA3", marginBottom: 8, fontFamily: 'Montserrat-Bold' }}>
               {localizedUI[selectedLanguage].aiTitle}
             </Text>
-            <Text style={{ fontSize: 15, color: "#5b6b7a", marginBottom: 16, lineHeight: 22 }}>
+            <Text style={{ fontSize: 15, color: "#5b6b7a", marginBottom: 16, lineHeight: 22, fontFamily: 'Montserrat-Regular' }}>
               {localizedUI[selectedLanguage].aiText}
             </Text>
             <Pressable
@@ -554,7 +556,7 @@ export default function BeforeAppointmentCondensed() {
                 borderRadius: 12,
               }}
             >
-              <Text style={{ color: "white", fontWeight: "600", fontSize: 15 }}>
+              <Text style={{ color: "white", fontWeight: "600", fontSize: 15, fontFamily: 'Montserrat-SemiBold' }}>
                 {localizedUI[selectedLanguage].startChat}
               </Text>
             </Pressable>
@@ -575,7 +577,7 @@ export default function BeforeAppointmentCondensed() {
             marginBottom: 20,
           }}
         >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "600", textAlign: "center" }}>
+          <Text style={{ color: "white", fontSize: 16, fontWeight: "600", textAlign: "center", fontFamily: 'Montserrat-SemiBold' }}>
             {localizedUI[selectedLanguage].submit}
           </Text>
         </Pressable>

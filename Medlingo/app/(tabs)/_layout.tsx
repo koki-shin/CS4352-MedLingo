@@ -14,7 +14,7 @@ export default function TabLayout() {
           }}
         >
           <Tabs.Screen
-            name="home" // Corresponds to app/(tabs)/home.tsx
+            name="home"
             options={{
               title: "Home",
               headerShown: false,
@@ -23,7 +23,7 @@ export default function TabLayout() {
           />
 
           <Tabs.Screen
-            name="before" // Corresponds to app/(tabs)/before.tsx
+            name="before"
             options={{
               title: "Before",
               headerShown: false,
@@ -31,8 +31,8 @@ export default function TabLayout() {
             }}
           />
 
-            <Tabs.Screen
-            name="during" // Corresponds to app/(tabs)/before.tsx
+          <Tabs.Screen
+            name="during"
             options={{
               title: "During",
               headerShown: false,
@@ -41,7 +41,7 @@ export default function TabLayout() {
           />
 
           <Tabs.Screen
-            name="after" // Corresponds to app/(tabs)/before.tsx
+            name="after"
             options={{
               title: "After",
               headerShown: false,

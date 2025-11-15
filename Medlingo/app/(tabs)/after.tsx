@@ -16,7 +16,6 @@ import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
 
-// dropdown options
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
@@ -27,14 +26,8 @@ const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {
 });
 
 const MED_PRESETS: Record<string, { times: string[]; repeat: string }> = {
-  'Ipratropium Bromide': {
-    times: ['8:00 AM', '2:00 PM', '8:00 PM'],
-    repeat: 'daily',
-  },
-  Ryaltis: {
-    times: ['9:00 AM', '9:00 PM'],
-    repeat: 'daily',
-  },
+  'Ipratropium Bromide': { times: ['8:00 AM', '2:00 PM', '8:00 PM'], repeat: 'daily',},
+  Ryaltis: { times: ['9:00 AM', '9:00 PM'], repeat: 'daily', },
 };
 
 const formatApptDate = (iso: string | null) => {
@@ -48,7 +41,7 @@ const formatApptDate = (iso: string | null) => {
   });
 };
 
-// Localized UI strings
+// Language chooser
 const localizedUI: Record<Language, Record<string, string>> = {
   en: {
     pageTitle: 'After Your Visit',
@@ -218,6 +211,11 @@ export default function SettingsScreen() {
   const [telehealthSummaryVisible, setTelehealthSummaryVisible] =
     useState(false);
 
+  const [showMedicationPicker, setShowMedicationPicker] = useState(false);
+  const [showDosesPicker, setShowDosesPicker] = useState(false);
+  const [showTimesPicker, setShowTimesPicker] = useState<number[]>([]);
+  const [showRepeatPicker, setShowRepeatPicker] = useState(false);
+
   const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTimes.join(
     ', '
   )}, ${localizedUI[selectedLanguage][selectedRepeat as keyof typeof localizedUI[Language]]}.`;
@@ -276,7 +274,7 @@ export default function SettingsScreen() {
           {localizedUI[selectedLanguage].pageTitle}
         </Text>
 
-        {/* Diagnosis Summary */}
+        {/* Diagnosis Summary Bubble */}
         <Card
           mode="outlined"
           style={{
@@ -285,9 +283,10 @@ export default function SettingsScreen() {
             borderWidth: 1.2,
             borderRadius: 22,
             marginBottom: 16,
+            overflow: 'visible',
           }}
         >
-          <Card.Content style={{ paddingVertical: 18 }}>
+          <Card.Content style={{ paddingVertical: 18, overflow: 'visible' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
               <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
               <Text
@@ -317,7 +316,7 @@ export default function SettingsScreen() {
           </Card.Content>
         </Card>
 
-        {/* Prescribed Medications */}
+        {/* Prescribed Medications bubble */}
         <Card
           mode="outlined"
           style={{
@@ -399,7 +398,7 @@ export default function SettingsScreen() {
           </Card.Content>
         </Card>
 
-        {/* Set Medication Reminders */}
+        {/* Set Medication Reminders bubble */}
         <Card
           mode="outlined"
           style={{
@@ -443,20 +442,16 @@ export default function SettingsScreen() {
               >
                 {localizedUI[selectedLanguage].medicationName}
               </Text>
-              <View style={styles.inputPill}>
-                <Picker
-                  selectedValue={selectedMedication}
-                  onValueChange={(value) => setSelectedMedication(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#0A4DA3"
-                >
-                  {medicationOptions.map((med) => (
-                    <Picker.Item key={med} label={med} value={med} />
-                  ))}
-                </Picker>
-              </View>
+              <Pressable 
+              style = {[styles.inputPill, {flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',paddingVertical: 10}]}
+              onPress={() => setShowMedicationPicker(true)}
+              >
+                <Text style = {{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
+                  {selectedMedication}
+                </Text>
+                <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
+              </Pressable>
 
-              {/* Add custom medication input */}
               <View style={styles.customMedBubble}>
                 <Text
                   style={{
@@ -516,18 +511,15 @@ export default function SettingsScreen() {
                     >
                       {localizedUI[selectedLanguage].timesPerDay}
                     </Text>
-                    <View style={[styles.inputPill, { width: 120 }]}>
-                      <Picker
-                        selectedValue={newMedDoses}
-                        onValueChange={(val) => setNewMedDoses(Number(val))}
-                        style={styles.picker}
-                        dropdownIconColor="#0A4DA3"
-                      >
-                        {[1, 2, 3, 4].map((n) => (
-                          <Picker.Item key={n} label={`${n}`} value={n} />
-                        ))}
-                      </Picker>
-                    </View>
+                    <Pressable
+                        style={[styles.inputPill, { width: 120, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }]}
+                        onPress={() => setShowDosesPicker(true)}
+                    >
+                        <Text style={{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
+                          {newMedDoses}
+                        </Text>
+                        <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
+                    </Pressable>
                   </View>
                 </View>
               </View>
@@ -546,24 +538,18 @@ export default function SettingsScreen() {
                   >
                     {localizedUI[selectedLanguage].timeLabel}
                   </Text>
-                  {selectedTimes.map((time, idx) => (
-                    <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}>
-                      <Picker
-                        selectedValue={time}
-                        onValueChange={(value) => {
-                          const next = [...selectedTimes];
-                          next[idx] = value;
-                          setSelectedTimes(next);
-                        }}
-                        style={styles.picker}
-                        dropdownIconColor="#0A4DA3"
-                      >
-                        {TIME_OPTIONS.map((t) => (
-                          <Picker.Item key={t} label={t} value={t} />
-                        ))}
-                      </Picker>
-                    </View>
-                  ))}
+                {selectedTimes.map((time, index) => (
+                  <Pressable
+                    key={index}
+                    style={[styles.inputPill, { marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }]}
+                    onPress={() => setShowTimesPicker([...showTimesPicker, index])}
+                  >
+                    <Text style={{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
+                      {time}
+                    </Text>
+                    <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
+                  </Pressable>
+                ))}
                 </View>
 
                 <View style={styles.reminderColumn}>
@@ -579,19 +565,15 @@ export default function SettingsScreen() {
                   >
                     {localizedUI[selectedLanguage].repeatLabel}
                   </Text>
-                  <View style={styles.inputPill}>
-                    <Picker
-                      selectedValue={selectedRepeat}
-                      onValueChange={(value) => setSelectedRepeat(value)}
-                      style={styles.picker}
-                      dropdownIconColor="#0A4DA3"
-                    >
-                      <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
-                      <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
-                      <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
-                      <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
-                    </Picker>
-                  </View>
+                  <Pressable
+                    style={[styles.inputPill, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }]}
+                    onPress={() => setShowRepeatPicker(true)}
+                  >
+                    <Text style={{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
+                      {localizedUI[selectedLanguage][selectedRepeat as keyof typeof localizedUI[Language]]}
+                    </Text>
+                    <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
+                  </Pressable>
                 </View>
               </View>
             </View>
@@ -620,7 +602,7 @@ export default function SettingsScreen() {
           </Card.Content>
         </Card>
 
-        {/* Follow-up Care */}
+        {/* Follow-up Care bubble */}
         <Card
           mode="outlined"
           style={{
@@ -652,7 +634,6 @@ export default function SettingsScreen() {
             </View>
 
             <View style={styles.followRow}>
-              {/* Telehealth Follow-up */}
               <Pressable
                 style={styles.followButton}
                 onPress={() => {
@@ -1100,6 +1081,152 @@ export default function SettingsScreen() {
           </View>
         </Modal>
       </ScrollView>
+      <Modal
+        visible={showMedicationPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowMedicationPicker(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.PickerModal}>
+            <Text style={styles.PickerModalTitle}>Select Medication</Text>
+            <ScrollView style={{ maxHeight: 300 }}>
+              {medicationOptions.map((med) => (
+                <Pressable
+                  key={med}
+                  style={styles.pickeroption}
+                  onPress={() => {
+                    setSelectedMedication(med);
+                    setShowMedicationPicker(false);
+                  }}
+                >
+                  <Text style={styles.pickeroptionText}>{med}</Text>
+                  {selectedMedication === med && (
+                    <Ionicons name="checkmark" size={20} color="#0A4DA3" />
+                  )}
+                </Pressable>
+              ))}
+            </ScrollView>
+            <Pressable
+              style ={styles.pickercloseButton}
+              onPress={() => setShowMedicationPicker(false)}
+            >
+              <Text style={styles.picker}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      <Modal
+        visible={showDosesPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowDosesPicker(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.PickerModal}>
+            <Text style={styles.PickerModalTitle}>Times per day</Text>
+            {[1, 2, 3, 4].map((n) => (
+              <Pressable
+                key={n}
+                style={styles.pickeroption}
+                onPress={() => {
+                  setNewMedDoses(n);
+                  setShowDosesPicker(false);
+                }}
+              >
+                <Text style={styles.pickeroptionText}>{n}</Text>
+                {newMedDoses === n && (
+                  <Ionicons name="checkmark" size={20} color="#0A4DA3" />
+                )}
+              </Pressable>
+            ))}
+            <Pressable
+              style={styles.pickercloseButton}
+              onPress={() => setShowDosesPicker(false)}
+            >
+              <Text style={styles.pickerclosebuttonText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {showTimesPicker.map((idx) => (
+        <Modal
+          key={idx}
+          visible={true}
+          transparent
+          animationType="slide"
+          onRequestClose={() => setShowTimesPicker(showTimesPicker.filter(i => i !== idx))}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.PickerModal}>
+              <Text style={styles.PickerModalTitle}>Select Time</Text>
+              <ScrollView style={{ maxHeight: 300 }}>
+                {TIME_OPTIONS.map((t) => (
+                  <Pressable
+                    key={t}
+                    style={styles.pickeroption}
+                    onPress={() => {
+                      const next = [...selectedTimes];
+                      next[idx] = t;
+                      setSelectedTimes(next);
+                      setShowTimesPicker(showTimesPicker.filter(i => i !== idx));
+                    }}
+                  >
+                    <Text style={styles.pickeroptionText}>{t}</Text>
+                    {selectedTimes[idx] === t && (
+                      <Ionicons name="checkmark" size={20} color="#0A4DA3" />
+                    )}
+                  </Pressable>
+                ))}
+              </ScrollView>
+              <Pressable
+                style={styles.pickercloseButton}
+                onPress={() => setShowTimesPicker(showTimesPicker.filter(i => i !== idx))}
+              >
+                <Text style={styles.pickerclosebuttonText}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      ))}
+
+      <Modal
+        visible={showRepeatPicker}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setShowRepeatPicker(false)}
+      >
+        <View style={styles.modalBackdrop}>
+          <View style={styles.PickerModal}>
+            <Text style={styles.PickerModalTitle}>Select Frequency</Text>
+            {['daily', 'weekly', 'biweekly', 'monthly'].map((freq) => (
+              <Pressable
+                key={freq}
+                style={styles.pickeroption}
+                onPress={() => {
+                  setSelectedRepeat(freq);
+                  setShowRepeatPicker(false);
+                }}
+              >
+                <Text style={styles.pickeroptionText}>
+                  {localizedUI[selectedLanguage][freq as keyof typeof localizedUI[typeof selectedLanguage]]}
+                </Text>
+                {selectedRepeat === freq && (
+                  <Ionicons name="checkmark" size={20} color="#0A4DA3" />
+                )}
+              </Pressable>
+            ))}
+            <Pressable
+              style={styles.pickercloseButton}
+              onPress={() => setShowRepeatPicker(false)}
+            >
+              <Text style={styles.pickerclosebuttonText}>Close</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -1224,7 +1351,7 @@ const styles = StyleSheet.create({
 
   modalBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.35)',
+    backgroundColor:'#E6EEFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1305,5 +1432,47 @@ const styles = StyleSheet.create({
   },
   timeSlotTextSelected: {
     color: '#FFFFFF',
+  },
+  PickerModal: {
+    width: '85%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
+    padding: 20,
+    maxHeight: '60%',
+  },
+  PickerModalTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+    textAlign: 'center',
+    marginBottom: 16,
+    color: "#0A4DA3",
+    fontFamily: 'Montserrat-Bold',
+  },
+  pickeroption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E5E7EB',
+  },
+  pickeroptionText: {
+    fontSize: 16,
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-Regular',
+  },
+  pickercloseButton: {
+    marginTop: 16,
+    alignSelf: 'center',
+    paddingVertical: 12,
+    borderRadius: 20,
+    backgroundColor: '#E0F2F1',
+  },
+  pickerclosebuttonText: {  
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#0A4DA3',
+    fontFamily: 'Montserrat-semiBold',
   },
 });

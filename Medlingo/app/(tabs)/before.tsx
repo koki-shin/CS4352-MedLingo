@@ -2,7 +2,7 @@ import * as Print from 'expo-print';
 
 import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Keyboard, View } from 'react-native';
-import { Text, TextInput, Checkbox } from 'react-native-paper';
+import { Text, TextInput, Checkbox, Card } from 'react-native-paper';
 // import Checkbox from 'expo-checkbox';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
@@ -132,7 +132,15 @@ export default function BeforeAppointmentCondensed() {
 if (isOutputVisible) {
   return (
     <ScrollView className="flex-1 p-4 bg-white">
-      <Text variant="headlineSmall" className="my-3 text-center uppercase">
+      <Text
+        style={{
+        fontSize: 28,
+        fontWeight: "800",
+        color: "#0A4DA3",
+        marginBottom: 20,
+        textAlign: "left",
+        }}
+      >
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
 
@@ -190,42 +198,90 @@ if (isOutputVisible) {
 
   return (
     <ScrollView className="flex-1 p-4 bg-white">
-      <Text variant="headlineSmall" className="my-3 text-center uppercase">
+      <Text 
+        variant="headlineSmall"
+        style={{ marginVertical: 12, textAlign: 'center', textTransform: 'uppercase' }}
+      >
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
-        <Text variant="bodyLarge" className="mt-3">
-          {localizedQuestions[selectedLanguage][0]}
-        </Text>
-        <TextInput
-                mode="outlined"
-                value={src_one}
-                onChangeText={set_src_one}
-                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                editable={!isLoading}
-                className="mt-2"
-            />
-        <Text variant="bodyLarge" className="mt-3">
-          {localizedQuestions[selectedLanguage][1]}
-        </Text>
-        <TextInput
-                mode="outlined"
-                value={src_two}
-                onChangeText={set_src_two}
-                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                editable={!isLoading}
-                className="mt-2"
-            />
-        <Text variant="bodyLarge" className="mt-3">
-          {localizedQuestions[selectedLanguage][2]}
-        </Text>
-        <TextInput
-                mode="outlined"
-                value={src_three}
-                onChangeText={set_src_three}
-                placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                editable={!isLoading}
-                className="mt-2"
-            />
+
+        <Card 
+          mode="outlined"
+          style={{
+            borderRadius: 20,
+            borderColor: "#d0ddff",
+            borderWidth: 1,
+            padding: 14,
+            marginBottom: 18,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3" }}>
+            {localizedQuestions[selectedLanguage][0]}
+          </Text>
+
+          <TextInput
+            mode="outlined"
+            value={src_one}
+            onChangeText={set_src_one}
+            placeholder={localizedUI[selectedLanguage].inputPlaceholder}
+            style={{ marginTop: 10 }}
+            theme={{
+              colors: { primary: "#0A4DA3", outline: "#d0ddff" }
+            }}
+          />
+        </Card>
+
+        <Card 
+          mode="outlined"
+          style={{
+            borderRadius: 20,
+            borderColor: "#d0ddff",
+            borderWidth: 1,
+            padding: 14,
+            marginBottom: 18,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3" }}>
+            {localizedQuestions[selectedLanguage][1]}
+          </Text>
+
+          <TextInput
+            mode="outlined"
+            value={src_two}
+            onChangeText={set_src_two}
+            placeholder={localizedUI[selectedLanguage].inputPlaceholder}
+            style={{ marginTop: 10 }}
+            theme={{
+              colors: { primary: "#0A4DA3", outline: "#d0ddff" }
+            }}
+          />
+        </Card>
+
+        <Card 
+          mode="outlined"
+          style={{
+            borderRadius: 20,
+            borderColor: "#d0ddff",
+            borderWidth: 1,
+            padding: 14,
+            marginBottom: 18,
+          }}
+        >
+          <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3" }}>
+            {localizedQuestions[selectedLanguage][2]}
+          </Text>
+
+          <TextInput
+            mode="outlined"
+            value={src_three}
+            onChangeText={set_src_three}
+            placeholder={localizedUI[selectedLanguage].inputPlaceholder}
+            style={{ marginTop: 10 }}
+            theme={{
+              colors: { primary: "#0A4DA3", outline: "#d0ddff" }
+            }}
+          />
+        </Card>
 
       {/* Consent Section */}
       <View className="mt-5 mb-3">

@@ -155,15 +155,27 @@ export default function SettingsScreen() {
   const localizedUI: Record<Language, Record<string, string>> = {
     en: {
       message: 'Message From Doctor:',
+      start: "Start Recording",
+      end: "End Session",
+      pause: "Tap to pause/resume recording"
     },
     es: {
       message: 'Mensaje del doctor:',
+      start: "Iniciar grabación",
+      end: "Finalizar sesión",
+      pause: "Toca para pausar/reanudar la grabación"
     },
     fr: {
       message: 'Mensaje del médico:',
+      start: "Démarrer l'enregistrement",
+      end: "Fin de session",
+      pause: "Appuyez pour mettre en pause/reprendre l'enregistrement"
     },
     zh: {
       message: '医生的话:',
+      start: "开始录音",
+      end: "结束会议",
+      pause: "点击暂停/恢复录制"
     },
   };
 

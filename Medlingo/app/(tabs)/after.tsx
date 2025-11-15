@@ -15,6 +15,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
 
+import { Picker } from '@react-native-picker/picker';
+
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 
 const TIME_OPTIONS = Array.from({ length: 13 }, (_, index) => {

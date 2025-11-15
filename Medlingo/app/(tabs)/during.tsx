@@ -1,12 +1,21 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, TextInput, View, StyleSheet, TouchableOpacity, Modal, Platform, Keyboard, ActivityIndicator } from 'react-native';
-import * as FileSystem from "expo-file-system/legacy";
-import { Audio } from "expo-av";
+import {
+  Text,
+  TextInput,
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Modal,
+  Platform,
+  Keyboard,
+  ActivityIndicator,
+} from 'react-native';
+import * as FileSystem from 'expo-file-system/legacy';
+import { Audio } from 'expo-av';
 import { useTranslation } from '../../hooks/translate';
 import { Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
-
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
@@ -14,10 +23,14 @@ export default function SettingsScreen() {
 
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
-  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
+  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(
+    null,
+  );
   const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
-  
-  const [emotions, setEmotions] = useState<{ emotion: string; timestamp: string }[]>([]);
+
+  const [emotions, setEmotions] = useState<
+    { emotion: string; timestamp: string }[]
+  >([]);
 
   let savedUri: string | null;
 
@@ -33,16 +46,18 @@ export default function SettingsScreen() {
   const startAudioRecording = async () => {
     try {
       const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) return alert("Mic permission required.");
+      if (!granted) return alert('Mic permission required.');
 
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
       const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(Audio.RecordingOptionsPresets.HIGH_QUALITY);
+      await recording.prepareToRecordAsync(
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+      );
       await recording.startAsync();
 
       setAudioRecording(recording);
     } catch (err) {
-      console.log("Error starting recording:", err);
+      console.log('Error starting recording:', err);
     }
   };
 
@@ -55,7 +70,7 @@ export default function SettingsScreen() {
       setAudioFileUri(uri);
       setAudioRecording(null);
     } catch (err) {
-      console.log("Error stopping recording:", err);
+      console.log('Error stopping recording:', err);
     }
   };
 
@@ -70,27 +85,26 @@ export default function SettingsScreen() {
     const json = JSON.stringify(summary, null, 2);
     const fileName = `visit_summary_${Date.now()}.json`;
 
-    if (Platform.OS === "web") {
-      const blob = new Blob([json], { type: "application/json" });
+    if (Platform.OS === 'web') {
+      const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      console.log("Visit summary downloaded.");
+      console.log('Visit summary downloaded.');
     } else {
       const dir = (FileSystem as any).documentDirectory;
       if (dir) {
         const newPath = `${dir}${fileName}`;
         await FileSystem.writeAsStringAsync(newPath, json);
-        console.log("Visit summary saved locally:", newPath);
+        console.log('Visit summary saved locally:', newPath);
       }
     }
   };
-
 
   const handleEndSession = async () => {
     setIsRecording(false);
@@ -100,74 +114,76 @@ export default function SettingsScreen() {
         const fileName = `visit_audio_${Date.now()}.m4a`;
         savedUri = fileName;
 
-
-        if (Platform.OS === "web") {
+        if (Platform.OS === 'web') {
           // web download
           const response = await fetch(audioFileUri);
           const blob = await response.blob();
           const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
+          const a = document.createElement('a');
           a.href = url;
           a.download = fileName;
           document.body.appendChild(a);
           a.click();
           a.remove();
           URL.revokeObjectURL(url);
-          console.log("audio downloaded to PC");
+          console.log('audio downloaded to PC');
         } else {
           // native save
           const dir = (FileSystem as any).documentDirectory;
           if (dir) {
             const newPath = `${dir}${fileName}`;
             await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
-            console.log("audio saved locally at:", newPath);
+            console.log('audio saved locally at:', newPath);
           }
         }
       }
     } catch (err) {
-      console.error("❌ Error saving/downloading audio:", err);
+      console.error('❌ Error saving/downloading audio:', err);
     }
 
     await generateVisitSummary(audioFileUri);
     setModalVisible(true);
   };
 
-    const logEmotion = (emotion: string) => {
+  const logEmotion = (emotion: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
     console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
 
   //translate prompts
-const localizedUI: Record<Language, Record<string, string>> = {
-  en: {
-    message: "Message From Doctor:",
-  },
-  es: {
-    message: "Mensaje del doctor:",
-  },
-  fr: {
-    message: "Mensaje del médico:",
-  },
-  zh: {
-    message: "医生的话:",
-  }
-};
+  const localizedUI: Record<Language, Record<string, string>> = {
+    en: {
+      message: 'Message From Doctor:',
+    },
+    es: {
+      message: 'Mensaje del doctor:',
+    },
+    fr: {
+      message: 'Mensaje del médico:',
+    },
+    zh: {
+      message: '医生的话:',
+    },
+  };
 
-  // translate user text to 
+  // translate user text to
   const [src_one, set_src_one] = useState('');
   const { translate, isLoading, hasApiKey } = useTranslation();
   async function run_trans() {
-        Keyboard.dismiss();
-        const result = await translate(src_one, selectedLanguage);
-        if (result) set_src_one(result);
-    }
+    Keyboard.dismiss();
+    const result = await translate(src_one, selectedLanguage);
+    if (result) set_src_one(result);
+  }
 
   return (
     <View style={styles.container}>
       {/* Recording Section */}
       <TouchableOpacity
-        style={[styles.box, isRecording ? styles.recordingBox : styles.startBox]}
+        style={[
+          styles.box,
+          isRecording ? styles.recordingBox : styles.startBox,
+        ]}
         onPress={toggleRecording}
         activeOpacity={0.7}
       >
@@ -177,7 +193,12 @@ const localizedUI: Record<Language, Record<string, string>> = {
             { backgroundColor: isRecording ? '#FF5C5C' : '#4CAF50' },
           ]}
         />
-        <Text style={[styles.recordingText, { color: isRecording ? '#D33' : '#2E7D32' }]}>
+        <Text
+          style={[
+            styles.recordingText,
+            { color: isRecording ? '#D33' : '#2E7D32' },
+          ]}
+        >
           {isRecording ? 'Recording in progress' : 'Start Recording'}
         </Text>
       </TouchableOpacity>
@@ -189,17 +210,21 @@ const localizedUI: Record<Language, Record<string, string>> = {
             {localizedUI[selectedLanguage].message}
           </Text>
         </View>
-         <TextInput
-                value={src_one}
-                onChangeText={set_src_one}
-                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                multiline={false}
-                returnKeyType="send"
-                onSubmitEditing={run_trans}
-                style={styles.subText}
-                editable={!isLoading}
-            />
-            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
+        <TextInput
+          value={src_one}
+          onChangeText={set_src_one}
+          placeholder={
+            hasApiKey
+              ? 'Enter text in any language — press Enter to translate'
+              : 'Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment'
+          }
+          multiline={false}
+          returnKeyType="send"
+          onSubmitEditing={run_trans}
+          style={styles.subText}
+          editable={!isLoading}
+        />
+        {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
       </View>
 
       {/* Tap to pause/resume recording */}
@@ -218,24 +243,33 @@ const localizedUI: Record<Language, Record<string, string>> = {
         <View style={styles.feelingsContainer}>
           <Text style={styles.feelingsLabel}>How are you feeling?</Text>
           <View style={styles.feelingsRow}>
-            <TouchableOpacity style={styles.feelingsItem}
-            onPress={() => logEmotion('Confused')}  
+            <TouchableOpacity
+              style={styles.feelingsItem}
+              onPress={() => logEmotion('Confused')}
             >
-              <View style={[styles.feelingCircle, { backgroundColor: '#4B9EFF' }]} />
+              <View
+                style={[styles.feelingCircle, { backgroundColor: '#4B9EFF' }]}
+              />
               <Text style={styles.feelingText}>Confused</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.feelingsItem}
-            onPress={() => logEmotion('Anxious')}
+            <TouchableOpacity
+              style={styles.feelingsItem}
+              onPress={() => logEmotion('Anxious')}
             >
-              <View style={[styles.feelingCircle, { backgroundColor: '#FFB74B' }]} />
+              <View
+                style={[styles.feelingCircle, { backgroundColor: '#FFB74B' }]}
+              />
               <Text style={styles.feelingText}>Anxious</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.feelingsItem}
-            onPress={() => logEmotion('Good')}
+            <TouchableOpacity
+              style={styles.feelingsItem}
+              onPress={() => logEmotion('Good')}
             >
-              <View style={[styles.feelingCircle, { backgroundColor: '#66BB6A' }]} />
+              <View
+                style={[styles.feelingCircle, { backgroundColor: '#66BB6A' }]}
+              />
               <Text style={styles.feelingText}>Good</Text>
             </TouchableOpacity>
           </View>

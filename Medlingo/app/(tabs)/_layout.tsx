@@ -1,8 +1,8 @@
 import React from 'react';
-import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
-import { LanguageProvider } from "../../hooks/LanguageContext";
-import { PaperProvider } from 'react-native-paper'; 
+import { Tabs } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
+import { LanguageProvider } from '../../hooks/LanguageContext';
+import { PaperProvider } from 'react-native-paper';
 
 export default function TabLayout() {
   return (
@@ -10,42 +10,50 @@ export default function TabLayout() {
       <LanguageProvider>
         <Tabs
           screenOptions={{
-            tabBarActiveTintColor: "blue",
+            tabBarActiveTintColor: 'blue',
           }}
         >
           <Tabs.Screen
             name="home"
             options={{
-              title: "Home",
+              title: 'Home',
               headerShown: false,
-              tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
+              tabBarIcon: ({ color }) => (
+                <Ionicons name="home" size={24} color={color} />
+              ),
             }}
           />
 
           <Tabs.Screen
             name="before"
             options={{
-              title: "Before",
+              title: 'Before',
               headerShown: false,
-              tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
+              tabBarIcon: ({ color }) => (
+                <Ionicons name="push" size={24} color={color} />
+              ),
             }}
           />
 
           <Tabs.Screen
             name="during"
             options={{
-              title: "During",
+              title: 'During',
               headerShown: false,
-              tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
+              tabBarIcon: ({ color }) => (
+                <Ionicons name="push" size={24} color={color} />
+              ),
             }}
           />
 
           <Tabs.Screen
             name="after"
             options={{
-              title: "After",
+              title: 'After',
               headerShown: false,
-              tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
+              tabBarIcon: ({ color }) => (
+                <Ionicons name="push" size={24} color={color} />
+              ),
             }}
           />
         </Tabs>

@@ -171,7 +171,7 @@ if (isOutputVisible) {
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
 
-      {/* What brings you in today? */}
+      {/* Question: What brings you in today? */}
       <Card
         mode="outlined"
         style={{
@@ -190,129 +190,133 @@ if (isOutputVisible) {
         </Card.Content>
       </Card>
 
-          <Card
-            mode="outlined"
-            style={{
-              backgroundColor: "white",
-              borderColor: "#d7e3ff",
-              borderWidth: 1.2,
-              borderRadius: 22,
-              marginBottom: 16,
-            }}
-          >
-            <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
-                {localizedQuestions[selectedLanguage][2]}
-              </Text>
-              <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_three || "—"}</Text>
-            </Card.Content>
-          </Card>
+      {/* Question: List any current medications */}
+      <Card
+        mode="outlined"
+        style={{
+          backgroundColor: "white",
+          borderColor: "#d7e3ff",
+          borderWidth: 1.2,
+          borderRadius: 22,
+          marginBottom: 16,
+        }}
+      >
+        <Card.Content style={{ paddingVertical: 18 }}>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
+            {localizedQuestions[selectedLanguage][1]}
+          </Text>
+          <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_two || "—"}</Text>
+        </Card.Content>
+      </Card>
+      
+      {/* Question: List any allergies */}
+      <Card
+        mode="outlined"
+        style={{
+          backgroundColor: "white",
+          borderColor: "#d7e3ff",
+          borderWidth: 1.2,
+          borderRadius: 22,
+          marginBottom: 16,
+        }}
+      >
+        <Card.Content style={{ paddingVertical: 18 }}>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
+            {localizedQuestions[selectedLanguage][2]}
+          </Text>
+          <Text style={{ fontSize: 15, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>{src_three || "—"}</Text>
+        </Card.Content>
+      </Card>
 
-          <Card
-            mode="outlined"
-            style={{
-              backgroundColor: "white",
-              borderColor: "#d7e3ff",
-              borderWidth: 1.2,
-              borderRadius: 22,
-              marginBottom: 16,
-            }}
-          >
-            <Card.Content style={{ paddingVertical: 18 }}>
-              <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
-                CONSENT:
-              </Text>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
-                  {localizedQuestions[selectedLanguage][3]}
-                </Text>
-                <Text style={{ fontSize: 16, color: consentOne ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
-                  {consentOne ? "✓" : "○"}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
-                  {localizedQuestions[selectedLanguage][4]}
-                </Text>
-                <Text style={{ fontSize: 16, color: consentTwo ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
-                  {consentTwo ? "✓" : "○"}
-                </Text>
-              </View>
-              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
-                  {localizedQuestions[selectedLanguage][5]}
-                </Text>
-                <Text style={{ fontSize: 16, color: consentThree ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
-                  {consentThree ? "✓" : "○"}
-                </Text>
-              </View>
-            </Card.Content>
-          </Card>
-
-      {/* Consent Section */}
-      <View style={{ marginTop: 25 }}>
-        <Text style={[styles.outputQuestion, { fontWeight: 'bold', textTransform: 'uppercase', marginBottom: 10 }]}>
-          {localizedQuestions[selectedLanguage][3].replace(/\n\s*/g, '').replace('I consent to receive medical evaluation and treatment.', '').trim()}
-        </Text>
-        {[3, 4, 5].map((i, index) => (
-          <View key={index} style={{ flexDirection: 'row', alignItems: 'center', marginVertical: 6 }}>
-            <Checkbox
-              value={i === 3 ? consentOne : i === 4 ? consentTwo : consentThree}
-              disabled={true}
-            />
-            <Text style={{ marginLeft: 10, flexShrink: 1 }}>
-              {localizedQuestions[selectedLanguage][i].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()}
+      {/* Consent */}
+      <Card
+        mode="outlined"
+        style={{
+          backgroundColor: "white",
+          borderColor: "#d7e3ff",
+          borderWidth: 1.2,
+          borderRadius: 22,
+          marginBottom: 16,
+        }}
+      >
+        <Card.Content style={{ paddingVertical: 18 }}>
+          <Text style={{ fontSize: 16, fontWeight: "700", color: "#0A4DA3", marginBottom: 12, fontFamily: 'Montserrat-Bold' }}>
+            CONSENT:
+          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+            <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
+              {localizedQuestions[selectedLanguage][3]}
+            </Text>
+            <Text style={{ fontSize: 16, color: consentOne ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
+              {consentOne ? "✓" : "○"}
             </Text>
           </View>
-        ))}
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+            <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
+              {localizedQuestions[selectedLanguage][4]}
+            </Text>
+            <Text style={{ fontSize: 16, color: consentTwo ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
+              {consentTwo ? "✓" : "○"}
+            </Text>
+          </View>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1, fontFamily: 'Montserrat-Regular' }}>
+              {localizedQuestions[selectedLanguage][5]}
+            </Text>
+            <Text style={{ fontSize: 16, color: consentThree ? "#0A4DA3" : "#999", fontFamily: 'Montserrat-Regular' }}>
+              {consentThree ? "✓" : "○"}
+            </Text>
+          </View>
+        </Card.Content>
+      </Card>
+
+      {/* Print PDF Button */}
+      <View style={{ marginVertical: 20 }}>
+        <Button
+          title={localizedUI[selectedLanguage].print}
+          onPress={async () => {
+            const consentHtml = `
+              <p><b>CONSENT:</b></p>
+              <ul>
+                <li>${localizedQuestions[selectedLanguage][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✅' : '⬜'}</li>
+                <li>${localizedQuestions[selectedLanguage][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✅' : '⬜'}</li>
+                <li>${localizedQuestions[selectedLanguage][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✅' : '⬜'}</li>
+              </ul>
+            `;
+
+            const htmlContent = `
+              <html>
+                <body style="font-family: Arial; padding: 20px;">
+                  <h1 style="text-align: center;">${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
+                  <p><strong>${localizedQuestions[selectedLanguage][0]}</strong><br>${src_one}</p>
+                  <p><strong>${localizedQuestions[selectedLanguage][1]}</strong><br>${src_two}</p>
+                  <p><strong>${localizedQuestions[selectedLanguage][2]}</strong><br>${src_three}</p>
+                  ${consentHtml}
+                </body>
+              </html>
+            `;
+
+            try {
+              const { uri } = await Print.printToFileAsync({ html: htmlContent });
+              console.log('PDF saved to:', uri);
+
+              if (uri && (await Sharing.isAvailableAsync())) {
+                await Sharing.shareAsync(uri);
+              } else {
+                alert(`PDF created at: ${uri}`);
+              }
+            } catch (error) {
+
+            }
+          }}
+        />
       </View>
 
-{/* Print PDF Button */}
-<View style={{ marginVertical: 20 }}>
-  <Button
-    title={localizedUI[selectedLanguage].print}
-    onPress={async () => {
-      const consentHtml = `
-        <p><b>CONSENT:</b></p>
-        <ul>
-          <li>${localizedQuestions[selectedLanguage][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✅' : '⬜'}</li>
-          <li>${localizedQuestions[selectedLanguage][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✅' : '⬜'}</li>
-          <li>${localizedQuestions[selectedLanguage][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✅' : '⬜'}</li>
-        </ul>
-      `;
-
-      const htmlContent = `
-        <html>
-          <body style="font-family: Arial; padding: 20px;">
-            <h1 style="text-align: center;">${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
-            <p><strong>${localizedQuestions[selectedLanguage][0]}</strong><br>${src_one}</p>
-            <p><strong>${localizedQuestions[selectedLanguage][1]}</strong><br>${src_two}</p>
-            <p><strong>${localizedQuestions[selectedLanguage][2]}</strong><br>${src_three}</p>
-            ${consentHtml}
-          </body>
-        </html>
-      `;
-
-      try {
-        const { uri } = await Print.printToFileAsync({ html: htmlContent });
-        console.log('PDF saved to:', uri);
-
-        if (uri && (await Sharing.isAvailableAsync())) {
-          await Sharing.shareAsync(uri);
-        } else {
-          alert(`PDF created at: ${uri}`);
-        }
-      } catch (error) {
-
-      }
-    }}
-  />
-</View>
-{/* Back Button */}
-      <Button
-        title={localizedUI[selectedLanguage].back}
-        onPress={() => setIsOutputVisible(false)}
-      />
+      {/* Back Button */}
+            <Button
+              title={localizedUI[selectedLanguage].back}
+              onPress={() => setIsOutputVisible(false)}
+            />
     </ScrollView>
   );
 }

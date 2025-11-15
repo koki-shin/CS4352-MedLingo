@@ -1,6 +1,6 @@
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useState } from 'react';
 
-export type Language = "en" | "es" | "fr" | "zh";
+export type Language = 'en' | 'es' | 'fr' | 'zh';
 
 type LanguageProviderProps = {
   children: ReactNode;
@@ -8,7 +8,7 @@ type LanguageProviderProps = {
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
   // keep language in the state
-  const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
+  const [selectedLanguage, setSelectedLanguage] = useState<Language>('en');
 
   // distibute language in tree so its global
   return (
@@ -22,6 +22,7 @@ const LanguageState = React.createContext<any>(null);
 
 export function useLanguage() {
   const context = React.useContext(LanguageState);
-  if (!context) throw new Error("useLanguage must be used within a LanguageProvider");
+  if (!context)
+    throw new Error('useLanguage must be used within a LanguageProvider');
   return context;
 }

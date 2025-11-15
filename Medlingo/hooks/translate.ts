@@ -12,22 +12,24 @@ export function useTranslation() {
   const [result, setResult] = useState<TranslationResult>({
     text: null,
     loading: false,
-    error: null
+    error: null,
   });
 
-  const API_KEY =(Constants.expoConfig && (Constants.expoConfig.extra as any)?.GOOGLE_TRANSLATE_API_KEY);
+  const API_KEY =
+    Constants.expoConfig &&
+    (Constants.expoConfig.extra as any)?.GOOGLE_TRANSLATE_API_KEY;
 
-  const translate = async (text: string, targetLang: string): Promise<string | null> => {
+  const translate = async (
+    text: string,
+    targetLang: string,
+  ): Promise<string | null> => {
     if (!text.trim()) {
       Alert.alert('Enter text', 'Please enter some text to translate.');
       return null;
     }
 
     if (!API_KEY) {
-      Alert.alert(
-        'Missing API key',
-        'Ensure api key is entered. '
-      );
+      Alert.alert('Missing API key', 'Ensure api key is entered. ');
       return null;
     }
 
@@ -65,6 +67,6 @@ export function useTranslation() {
     translatedText: result.text,
     isLoading: result.loading,
     error: result.error,
-    hasApiKey: Boolean(API_KEY)
+    hasApiKey: Boolean(API_KEY),
   };
 }

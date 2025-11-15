@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Platform, Text, TouchableOpacity, Modal, FlatList } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Platform,
+  Text,
+  TouchableOpacity,
+  Modal,
+  FlatList,
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 export type Language = 'en' | 'es' | 'fr' | 'zh';
@@ -19,7 +27,7 @@ const languages = [
 ];
 
 const getLanguageLabel = (lang: Language) => {
-  return languages.find(l => l.value === lang)?.label || lang;
+  return languages.find((l) => l.value === lang)?.label || lang;
 };
 
 export const LanguagePicker: React.FC<LanguagePickerProps> = ({
@@ -54,12 +62,14 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Language / Idioma / Langue / 语言</Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.touchableContainer}
         onPress={() => setModalVisible(true)}
         activeOpacity={0.7}
       >
-        <Text style={styles.selectedText}>{getLanguageLabel(selectedLanguage)}</Text>
+        <Text style={styles.selectedText}>
+          {getLanguageLabel(selectedLanguage)}
+        </Text>
       </TouchableOpacity>
 
       <Modal
@@ -76,7 +86,7 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({
                 <Text style={styles.closeButton}>✕</Text>
               </TouchableOpacity>
             </View>
-            
+
             <FlatList
               data={languages}
               keyExtractor={(item) => item.value}
@@ -94,7 +104,8 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({
                   <Text
                     style={[
                       styles.languageOptionText,
-                      selectedLanguage === item.value && styles.selectedOptionText,
+                      selectedLanguage === item.value &&
+                        styles.selectedOptionText,
                     ]}
                   >
                     {item.label}

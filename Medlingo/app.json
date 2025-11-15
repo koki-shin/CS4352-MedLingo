@@ -43,8 +43,7 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
-    ,
+    },
     "extra": {
       "GOOGLE_TRANSLATE_API_KEY": ""
     }

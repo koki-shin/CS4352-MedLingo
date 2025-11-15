@@ -7,6 +7,7 @@ import { Text, TextInput, Checkbox, Card } from 'react-native-paper';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useTranslation } from '../../hooks/translate';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Page based on language
 const localizedUI: Record<Language, Record<string, string>> = {
@@ -131,76 +132,83 @@ export default function BeforeAppointmentCondensed() {
 
 if (isOutputVisible) {
   return (
-    <ScrollView className="flex-1 p-4 bg-white">
-      <Text
-        style={{
-        fontSize: 28,
-        fontWeight: "800",
-        color: "#0A4DA3",
-        marginBottom: 20,
-        textAlign: "left",
-        }}
-      >
-        {localizedUI[selectedLanguage].beforeAppointmentTitle}
-      </Text>
-
-      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
-      <Text style={styles.questionBlock}>{src_one}</Text>
-
-      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][1]}</Text>
-      <Text style={styles.questionBlock}>{src_two}</Text>
-
-      <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
-      <Text style={styles.questionBlock}>{src_three}</Text>
-
-      {/* Print Button */}
-      <View style={{ marginVertical: 20 }}>
-        <Button
-          title={localizedUI[selectedLanguage].print}
-          onPress={async () => {
-            // Prepare HTML for printing
-            const consentHtml = `
-              <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
-              <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
-              <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
-            `;
-            const htmlContent = `
-              <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
-              <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
-              <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
-              <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
-              ${consentHtml}
-      `;
-            if (typeof window !== 'undefined') {
-              // Web: native print dialog
-              const printWindow = window.open('', '_blank', 'width=600,height=600');
-              if (printWindow) {
-                printWindow.document.write(htmlContent);
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
-              }
-            } else {
-              // Mobile: Expo Print
-              await Print.printAsync({ html: htmlContent });
-            }
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <ScrollView className="flex-1 px-5 pt-6 bg-white" contentContainerStyle={{ paddingBottom: 20 }}>
+        <Text
+          style={{
+          fontSize: 28,
+          fontWeight: "800",
+          color: "#0A4DA3",
+          marginBottom: 20,
+          textAlign: "left",
           }}
-        />
-      </View>
-            <Button
-              title={localizedUI[selectedLanguage].back}
-              onPress={() => setIsOutputVisible(false)}
-            />
-    </ScrollView>
+        >
+          {localizedUI[selectedLanguage].beforeAppointmentTitle}
+        </Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
+        <Text style={styles.questionBlock}>{src_one}</Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][1]}</Text>
+        <Text style={styles.questionBlock}>{src_two}</Text>
+
+        <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
+        <Text style={styles.questionBlock}>{src_three}</Text>
+
+        {/* Print Button */}
+        <View style={{ marginVertical: 20 }}>
+          <Button
+            title={localizedUI[selectedLanguage].print}
+            onPress={async () => {
+              // Prepare HTML for printing
+              const consentHtml = `
+                <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
+                <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
+                <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
+              `;
+              const htmlContent = `
+                <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
+                <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
+                <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
+                <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
+                ${consentHtml}
+        `;
+              if (typeof window !== 'undefined') {
+                // Web: native print dialog
+                const printWindow = window.open('', '_blank', 'width=600,height=600');
+                if (printWindow) {
+                  printWindow.document.write(htmlContent);
+                  printWindow.document.close();
+                  printWindow.focus();
+                  printWindow.print();
+                  printWindow.close();
+                }
+              } else {
+                // Mobile: Expo Print
+                await Print.printAsync({ html: htmlContent });
+              }
+            }}
+          />
+        </View>
+              <Button
+                title={localizedUI[selectedLanguage].back}
+                onPress={() => setIsOutputVisible(false)}
+              />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
   return (
     <ScrollView className="flex-1 p-4 bg-white">
-      <Text 
-        variant="headlineSmall"
-        style={{ marginVertical: 12, textAlign: 'center', textTransform: 'uppercase' }}
+      <Text
+        style={{
+          fontSize: 28,
+          fontWeight: "800",
+          color: "#0A4DA3",
+          marginBottom: 24,
+          textAlign: "center",
+        }}
       >
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
@@ -317,22 +325,39 @@ if (isOutputVisible) {
 
 
       {/*AI Assistant*/}
-      <View style={styles.aiContainer}>
-        <View style={styles.aiHeader}>
-          <View style={styles.aiCircle} />
-          <Text style={styles.aiTitle}>{localizedUI[selectedLanguage].aiTitle}</Text>
-        </View>
-        <Text style={styles.aiText}>{localizedUI[selectedLanguage].aiText}</Text>
-        <View style={styles.startChatButton}>
-          <Text style={styles.startChatText}>{localizedUI[selectedLanguage].startChat}</Text>
-        </View>
-      </View>
+      <Card
+        mode="outlined"
+        style={{
+          borderRadius: 20,
+          borderColor: "#d0ddff",
+          borderWidth: 1,
+          padding: 16,
+          marginBottom: 20,
+        }}
+      >
+        <Text style={{ fontSize: 20, fontWeight: "700", color: "#0A4DA3" }}>
+          {localizedUI[selectedLanguage].aiTitle}
+        </Text>
 
-      <Button
-        title={localizedUI[selectedLanguage].submit}
-        onPress={() => {translateAll(); setIsOutputVisible(true);}}
-      />
-      <View style={{ height: 50 }} />
+        <Text style={{ marginTop: 8, fontSize: 15, color: "#444" }}>
+          {localizedUI[selectedLanguage].aiText}
+        </Text>
+
+        <View
+          style={{
+            alignSelf: "flex-end",
+            backgroundColor: "#0A4DA3",
+            paddingHorizontal: 16,
+            paddingVertical: 8,
+            borderRadius: 10,
+            marginTop: 12,
+          }}
+        >
+          <Text style={{ color: "white", fontWeight: "600" }}>
+            {localizedUI[selectedLanguage].startChat}
+          </Text>
+        </View>
+      </Card>
     </ScrollView>
   );
 }

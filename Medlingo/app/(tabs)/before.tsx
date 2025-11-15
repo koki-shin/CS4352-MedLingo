@@ -284,31 +284,37 @@ if (isOutputVisible) {
         </Card>
 
       {/* Consent Section */}
-      <View className="mt-5 mb-3">
+      <Card
+        mode="outlined"
+        style={{
+          borderRadius: 20,
+          borderColor: "#d0ddff",
+          borderWidth: 1,
+          padding: 14,
+          marginBottom: 18,
+        }}
+      >
+        <Text style={{ fontSize: 18, fontWeight: "700", color: "#0A4DA3", marginBottom: 12 }}>
+          {localizedQuestions[selectedLanguage][3].replace("\n", "").trim()}
+        </Text>
+
         <Checkbox.Item
           label={localizedQuestions[selectedLanguage][3]}
-          status={consentOne ? 'checked' : 'unchecked'}
+          status={consentOne ? "checked" : "unchecked"}
           onPress={() => setConsentOne(!consentOne)}
-          style={{ padding: 0 }}
-          labelStyle={{ fontSize: 16 }}
         />
-
         <Checkbox.Item
           label={localizedQuestions[selectedLanguage][4]}
-          status={consentTwo ? 'checked' : 'unchecked'}
+          status={consentTwo ? "checked" : "unchecked"}
           onPress={() => setConsentTwo(!consentTwo)}
-          style={{ padding: 0 }}
-          labelStyle={{ fontSize: 16 }}
         />
-
         <Checkbox.Item
           label={localizedQuestions[selectedLanguage][5]}
-          status={consentThree ? 'checked' : 'unchecked'}
+          status={consentThree ? "checked" : "unchecked"}
           onPress={() => setConsentThree(!consentThree)}
-          style={{ padding: 0 }}
-          labelStyle={{ fontSize: 16 }}
         />
-      </View>
+      </Card>
+
 
       {/*AI Assistant*/}
       <View style={styles.aiContainer}>

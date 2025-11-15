@@ -57,19 +57,23 @@ const localizedUI: Record<Language, Record<string, string>> = {
 };
 
 export default function BeforeAppointmentCondensed() {
+  // language selection and output
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
   const [isOutputVisible, setIsOutputVisible] = useState(false);
 
+    // user input for health questions
     const [src_one, set_src_one] = useState('');
     const [src_two, set_src_two] = useState('');
     const [src_three, set_src_three] = useState('');
+
+    // consent checkboxes
     const [consentGiven, setConsentGiven] = useState(false);
     const { translate, isLoading, hasApiKey } = useTranslation();
-
     const [consentOne, setConsentOne] = useState(false);
     const [consentTwo, setConsentTwo] = useState(false);
     const [consentThree, setConsentThree] = useState(false);
 
+    // translate user test to language
     async function translateAll() {
         Keyboard.dismiss();
         try {
@@ -128,7 +132,7 @@ export default function BeforeAppointmentCondensed() {
     ]
   };
 
-
+// Review Screen after submit
 if (isOutputVisible) {
   return (
     <ScrollView style={styles.container}>
@@ -164,7 +168,7 @@ if (isOutputVisible) {
         ))}
       </View>
 
-{/* Print Button */}
+{/* Print PDF Button */}
 <View style={{ marginVertical: 20 }}>
   <Button
     title={localizedUI[selectedLanguage].print}
@@ -205,6 +209,7 @@ if (isOutputVisible) {
     }}
   />
 </View>
+{/* Back Button */}
       <Button
         title={localizedUI[selectedLanguage].back}
         onPress={() => setIsOutputVisible(false)}
@@ -213,6 +218,7 @@ if (isOutputVisible) {
   );
 }
 
+// Input form screen 
   return (
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
@@ -271,6 +277,7 @@ if (isOutputVisible) {
         </View>
       </View>
 
+      {/*Submit*/}
       <Button
         title={localizedUI[selectedLanguage].submit}
         onPress={() => {translateAll(); setIsOutputVisible(true);}}

@@ -5,10 +5,12 @@ import { Picker } from '@react-native-picker/picker';
 export type Language = 'en' | 'es' | 'fr' | 'zh';
 
 interface LanguagePickerProps {
+  // current and selected language
   selectedLanguage: Language;
   onValueChange: (value: Language) => void;
 }
 
+// languages with display labels
 const languages = [
   { label: 'English', value: 'en' },
   { label: 'Español', value: 'es' },
@@ -23,9 +25,11 @@ const getLanguageLabel = (lang: Language) => {
 export const LanguagePicker: React.FC<LanguagePickerProps> = ({
   selectedLanguage,
   onValueChange,
+  // if mobile is open
 }) => {
   const [modalVisible, setModalVisible] = useState(false);
 
+  // Web Drop Down
   if (Platform.OS === 'web') {
     return (
       <View style={styles.container}>
@@ -46,7 +50,7 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({
     );
   }
 
-  // Mobile-optimized modal picker for iOS and Android
+  // Mobile Drop Down
   return (
     <View style={styles.container}>
       <Text style={styles.label}>Language / Idioma / Langue / 语言</Text>

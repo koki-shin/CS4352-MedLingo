@@ -7,8 +7,10 @@ type LanguageProviderProps = {
 };
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
+  // keep language in the state
   const [selectedLanguage, setSelectedLanguage] = useState<Language>("en");
 
+  // distibute language in tree so its global
   return (
     <LanguageState.Provider value={{ selectedLanguage, setSelectedLanguage }}>
       {children}

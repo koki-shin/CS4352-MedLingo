@@ -134,6 +134,35 @@ export default function BeforeAppointmentCondensed() {
     ]
   };
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  outputTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#0A4DA3',
+    marginBottom: 24,
+    textAlign: 'center',
+    fontFamily: 'Montserrat-ExtraBold',
+  },
+  outputQuestion: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0A4DA3',
+    marginBottom: 12,
+    fontFamily: 'Montserrat-SemiBold',
+  },
+  questionBlock: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    marginBottom: 16,
+    fontFamily: 'Montserrat-Regular',
+  },
+});
+
 // Review Screen after submit
 if (isOutputVisible) {
   return (

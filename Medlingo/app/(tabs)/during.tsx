@@ -4,10 +4,15 @@ import { Text, TextInput, View, StyleSheet, TouchableOpacity, Modal, Platform, K
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
 import { useTranslation } from '../../hooks/translate';
+import { Language } from '../../hooks/LanguagePicker';
+import { useLanguage } from '../../hooks/LanguageContext';
+
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
   const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
@@ -133,12 +138,28 @@ export default function SettingsScreen() {
     console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
 
-  // translate user test to 
+  //translate prompts
+const localizedUI: Record<Language, Record<string, string>> = {
+  en: {
+    message: "Message From Doctor:",
+  },
+  es: {
+    message: "Mensaje del doctor:",
+  },
+  fr: {
+    message: "Mensaje del médico:",
+  },
+  zh: {
+    message: "医生的话:",
+  }
+};
+
+  // translate user text to 
   const [src_one, set_src_one] = useState('');
   const { translate, isLoading, hasApiKey } = useTranslation();
   async function run_trans() {
         Keyboard.dismiss();
-        const result = await translate(src_one, "de");
+        const result = await translate(src_one, selectedLanguage);
         if (result) set_src_one(result);
     }
 
@@ -164,6 +185,9 @@ export default function SettingsScreen() {
       {/* Doctor (English) */}
       <View style={[styles.box, styles.englishBox]}>
         <View style={styles.labelRow}>
+          <Text style={styles.label}>
+            {localizedUI[selectedLanguage].message}
+          </Text>
         </View>
          <TextInput
                 value={src_one}

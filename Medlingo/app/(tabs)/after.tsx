@@ -8,7 +8,6 @@ import {
   TextInput,
   StyleSheet,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';

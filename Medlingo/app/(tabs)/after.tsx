@@ -11,9 +11,11 @@ import {
 import { Calendar } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
+
+import { Picker } from '@react-native-picker/picker';
 
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 
@@ -67,7 +69,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     scheduleTelehealthButton: 'Schedule Virtual Appointment',
     telehealthScheduledTitle: 'Telehealth Visit Scheduled',
     continue: 'Continue',
-    diagnosisText: 'Mild pollen and dust mite allergy. Take daily antihistamine and nasal spray as prescribed.',
+    diagnosisText:
+      'Mild pollen and dust mite allergy. Take daily antihistamine and nasal spray as prescribed.',
     ipratropiumDetails: '1 spray in each nostril, 3× daily',
     ryaltisDetails: '2 sprays in each nostril, 2× daily',
     daily: 'Daily',
@@ -103,7 +106,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     scheduleTelehealthButton: 'Programar Cita Virtual',
     telehealthScheduledTitle: 'Visita Teleterapia Programada',
     continue: 'Continuar',
-    diagnosisText: 'Alergia leve al polen y a los ácaros del polvo. Tome un antihistamínico diario y use el spray nasal según lo prescrito.',
+    diagnosisText:
+      'Alergia leve al polen y a los ácaros del polvo. Tome un antihistamínico diario y use el spray nasal según lo prescrito.',
     ipratropiumDetails: '1 pulverización en cada fosa nasal, 3× diarios',
     ryaltisDetails: '2 pulverizaciones en cada fosa nasal, 2× diarios',
     daily: 'Diario',
@@ -139,7 +143,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     scheduleTelehealthButton: 'Planifier Consultation Virtuelle',
     telehealthScheduledTitle: 'Visite Télésanté Planifiée',
     continue: 'Continuer',
-    diagnosisText: 'Allergie légère au pollen et aux acariens. Prenez un antihistaminique quotidien et utilisez le spray nasal selon la prescription.',
+    diagnosisText:
+      'Allergie légère au pollen et aux acariens. Prenez un antihistaminique quotidien et utilisez le spray nasal selon la prescription.',
     ipratropiumDetails: '1 vaporisation dans chaque narine, 3× par jour',
     ryaltisDetails: '2 vaporisations dans chaque narine, 2× par jour',
     daily: 'Quotidien',
@@ -191,18 +196,18 @@ const localizedUI: Record<Language, Record<string, string>> = {
 export default function SettingsScreen() {
   const { selectedLanguage } = useLanguage() as { selectedLanguage: Language };
   const [selectedMedication, setSelectedMedication] = useState(
-    MEDICATION_OPTIONS[0]
+    MEDICATION_OPTIONS[0],
   );
   const [medicationOptions, setMedicationOptions] = useState<string[]>(
-    MEDICATION_OPTIONS.slice()
+    MEDICATION_OPTIONS.slice(),
   );
   const [newMedName, setNewMedName] = useState('');
   const [newMedDoses, setNewMedDoses] = useState<number>(1);
   const [selectedTimes, setSelectedTimes] = useState<string[]>(
-    MED_PRESETS[MEDICATION_OPTIONS[0]]?.times ?? ['8:00 AM']
+    MED_PRESETS[MEDICATION_OPTIONS[0]]?.times ?? ['8:00 AM'],
   );
   const [selectedRepeat, setSelectedRepeat] = useState(
-    MED_PRESETS[MEDICATION_OPTIONS[0]]?.repeat ?? 'daily'
+    MED_PRESETS[MEDICATION_OPTIONS[0]]?.repeat ?? 'daily',
   );
   const [summaryVisible, setSummaryVisible] = useState(false);
 
@@ -228,8 +233,8 @@ export default function SettingsScreen() {
   const [showRepeatPicker, setShowRepeatPicker] = useState(false);
 
   const reminderSummaryText = `Reminder set for ${selectedMedication} at ${selectedTimes.join(
-    ', '
-  )}, ${localizedUI[selectedLanguage][selectedRepeat as keyof typeof localizedUI[Language]]}.`;
+    ', ',
+  )}, ${localizedUI[selectedLanguage][selectedRepeat as keyof (typeof localizedUI)[Language]]}.`;
 
   const addCustomMedication = () => {
     const name = newMedName.trim();
@@ -243,7 +248,10 @@ export default function SettingsScreen() {
       setSelectedTimes(preset.times.slice());
       setSelectedRepeat(preset.repeat);
     } else {
-      const times = TIME_OPTIONS.slice(0, Math.max(1, Math.min(newMedDoses, TIME_OPTIONS.length)));
+      const times = TIME_OPTIONS.slice(
+        0,
+        Math.max(1, Math.min(newMedDoses, TIME_OPTIONS.length)),
+      );
       setSelectedTimes(times.length ? times : ['8:00 AM']);
       setSelectedRepeat('daily');
     }
@@ -259,11 +267,11 @@ export default function SettingsScreen() {
   }, [selectedMedication]);
 
   const appointmentSummaryText = `In-person appointment scheduled for ${formatApptDate(
-    selectedApptDate
+    selectedApptDate,
   )} at ${selectedApptTime}.`;
 
   const telehealthSummaryText = `Virtual appointment scheduled for ${formatApptDate(
-    selectedTelehealthDate
+    selectedTelehealthDate,
   )} at ${selectedTelehealthTime}.`;
 
   return (
@@ -275,10 +283,10 @@ export default function SettingsScreen() {
         <Text
           style={{
             fontSize: 28,
-            fontWeight: "800",
-            color: "#0A4DA3",
+            fontWeight: '800',
+            color: '#0A4DA3',
             marginBottom: 24,
-            textAlign: "center",
+            textAlign: 'center',
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
@@ -289,22 +297,30 @@ export default function SettingsScreen() {
         <Card
           mode="outlined"
           style={{
-            backgroundColor: "white",
-            borderColor: "#d7e3ff",
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
             borderWidth: 1.2,
             borderRadius: 22,
             marginBottom: 16,
             overflow: 'visible',
           }}
         >
-          <Card.Content style={{ paddingVertical: 18, overflow: 'visible' }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-              <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <View
+                style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]}
+              />
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "700",
-                  color: "#0A4DA3",
+                  fontWeight: '700',
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -317,7 +333,7 @@ export default function SettingsScreen() {
                 style={{
                   fontSize: 14,
                   lineHeight: 20,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
@@ -331,21 +347,29 @@ export default function SettingsScreen() {
         <Card
           mode="outlined"
           style={{
-            backgroundColor: "white",
-            borderColor: "#d7e3ff",
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
             borderWidth: 1.2,
             borderRadius: 22,
             marginBottom: 16,
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-              <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <View
+                style={[styles.sectionDot, { backgroundColor: '#A855F7' }]}
+              />
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "700",
-                  color: "#0A4DA3",
+                  fontWeight: '700',
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -355,13 +379,15 @@ export default function SettingsScreen() {
 
             <View style={styles.medList}>
               <View style={styles.medRow}>
-                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View
+                  style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]}
+                />
                 <View style={{ flex: 1 }}>
                   <Text
                     style={{
                       fontSize: 15,
                       fontWeight: '600',
-                      color: "#1a1a1a",
+                      color: '#1a1a1a',
                       fontFamily: 'Montserrat-SemiBold',
                     }}
                   >
@@ -371,7 +397,7 @@ export default function SettingsScreen() {
                     style={{
                       fontSize: 13,
                       marginTop: 2,
-                      color: "#5b6b7a",
+                      color: '#5b6b7a',
                       fontFamily: 'Montserrat-Regular',
                     }}
                   >
@@ -381,13 +407,15 @@ export default function SettingsScreen() {
               </View>
 
               <View style={styles.medRow}>
-                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View
+                  style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]}
+                />
                 <View style={{ flex: 1 }}>
                   <Text
                     style={{
                       fontSize: 15,
                       fontWeight: '600',
-                      color: "#1a1a1a",
+                      color: '#1a1a1a',
                       fontFamily: 'Montserrat-SemiBold',
                     }}
                   >
@@ -397,7 +425,7 @@ export default function SettingsScreen() {
                     style={{
                       fontSize: 13,
                       marginTop: 2,
-                      color: "#5b6b7a",
+                      color: '#5b6b7a',
                       fontFamily: 'Montserrat-Regular',
                     }}
                   >
@@ -413,26 +441,32 @@ export default function SettingsScreen() {
         <Card
           mode="outlined"
           style={{
-            backgroundColor: "white",
-            borderColor: "#d7e3ff",
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
             borderWidth: 1.2,
             borderRadius: 22,
             marginBottom: 16,
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-              <Ionicons 
-                name="notifications-outline" 
-                size={22} 
-                color="#0A4DA3" 
-                style={{ marginRight: 10 }} 
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 16,
+              }}
+            >
+              <Ionicons
+                name="notifications-outline"
+                size={22}
+                color="#0A4DA3"
+                style={{ marginRight: 10 }}
               />
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "700",
-                  color: "#0A4DA3",
+                  fontWeight: '700',
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -447,7 +481,7 @@ export default function SettingsScreen() {
                   fontWeight: '600',
                   marginTop: 10,
                   marginBottom: 4,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-SemiBold',
                 }}
               >
@@ -470,7 +504,7 @@ export default function SettingsScreen() {
                     fontWeight: '600',
                     marginTop: 0,
                     marginBottom: 6,
-                    color: "#1a1a1a",
+                    color: '#1a1a1a',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -478,9 +512,14 @@ export default function SettingsScreen() {
                 </Text>
                 <View style={{ marginTop: 6 }}>
                   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}>
+                    <View
+                      style={[styles.inputPill, { flex: 1, marginRight: 8 }]}
+                    >
                       <TextInput
-                        placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
+                        placeholder={
+                          localizedUI[selectedLanguage]
+                            .medicationNamePlaceholder
+                        }
                         value={newMedName}
                         onChangeText={setNewMedName}
                         style={{
@@ -493,7 +532,10 @@ export default function SettingsScreen() {
                       />
                     </View>
                     <Pressable
-                      style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
+                      style={[
+                        styles.setReminderButtonTall,
+                        { width: 72, paddingVertical: 8 },
+                      ]}
                       onPress={addCustomMedication}
                     >
                       <Text
@@ -510,13 +552,19 @@ export default function SettingsScreen() {
                     </Pressable>
                   </View>
 
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      marginTop: 8,
+                    }}
+                  >
                     <Text
                       style={{
                         marginRight: 10,
                         fontSize: 13,
                         fontWeight: '600',
-                        color: "#1a1a1a",
+                        color: '#1a1a1a',
                         fontFamily: 'Montserrat-SemiBold',
                       }}
                     >
@@ -543,24 +591,33 @@ export default function SettingsScreen() {
                       fontWeight: '600',
                       marginTop: 10,
                       marginBottom: 4,
-                      color: "#1a1a1a",
+                      color: '#1a1a1a',
                       fontFamily: 'Montserrat-SemiBold',
                     }}
                   >
                     {localizedUI[selectedLanguage].timeLabel}
                   </Text>
-                {selectedTimes.map((time, index) => (
-                  <Pressable
-                    key={index}
-                    style={[styles.inputPill, { marginBottom: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }]}
-                    onPress={() => setShowTimesPicker([...showTimesPicker, index])}
-                  >
-                    <Text style={{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
-                      {time}
-                    </Text>
-                    <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
-                  </Pressable>
-                ))}
+                  {selectedTimes.map((time, idx) => (
+                    <View
+                      key={idx}
+                      style={[styles.inputPill, { marginBottom: 8 }]}
+                    >
+                      <Picker
+                        selectedValue={time}
+                        onValueChange={(value) => {
+                          const next = [...selectedTimes];
+                          next[idx] = value;
+                          setSelectedTimes(next);
+                        }}
+                        style={styles.picker}
+                        dropdownIconColor="#0A4DA3"
+                      >
+                        {TIME_OPTIONS.map((t) => (
+                          <Picker.Item key={t} label={t} value={t} />
+                        ))}
+                      </Picker>
+                    </View>
+                  ))}
                 </View>
 
                 <View style={styles.reminderColumn}>
@@ -570,21 +627,41 @@ export default function SettingsScreen() {
                       fontWeight: '600',
                       marginTop: 10,
                       marginBottom: 4,
-                      color: "#1a1a1a",
+                      color: '#1a1a1a',
                       fontFamily: 'Montserrat-SemiBold',
                     }}
                   >
                     {localizedUI[selectedLanguage].repeatLabel}
                   </Text>
-                  <Pressable
-                    style={[styles.inputPill, { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 10 }]}
-                    onPress={() => setShowRepeatPicker(true)}
-                  >
-                    <Text style={{ fontSize: 14, color: "#111827", fontFamily: 'Montserrat-Regular' }}>
-                      {localizedUI[selectedLanguage][selectedRepeat as keyof typeof localizedUI[Language]]}
-                    </Text>
-                    <Ionicons name="chevron-down" size={20} color="#0A4DA3" />
-                  </Pressable>
+                  <View style={styles.inputPill}>
+                    <Picker
+                      selectedValue={selectedRepeat}
+                      onValueChange={(value) => setSelectedRepeat(value)}
+                      style={styles.picker}
+                      dropdownIconColor="#0A4DA3"
+                    >
+                      <Picker.Item
+                        key="daily"
+                        label={localizedUI[selectedLanguage].daily}
+                        value="daily"
+                      />
+                      <Picker.Item
+                        key="weekly"
+                        label={localizedUI[selectedLanguage].weekly}
+                        value="weekly"
+                      />
+                      <Picker.Item
+                        key="biweekly"
+                        label={localizedUI[selectedLanguage].biweekly}
+                        value="biweekly"
+                      />
+                      <Picker.Item
+                        key="monthly"
+                        label={localizedUI[selectedLanguage].monthly}
+                        value="monthly"
+                      />
+                    </Picker>
+                  </View>
                 </View>
               </View>
             </View>
@@ -593,11 +670,11 @@ export default function SettingsScreen() {
               style={styles.setReminderButton}
               onPress={() => setSummaryVisible(true)}
             >
-              <Ionicons 
-                name="checkmark-circle-outline" 
-                size={20} 
-                color="#15803D" 
-                style={{ marginRight: 8 }} 
+              <Ionicons
+                name="checkmark-circle-outline"
+                size={20}
+                color="#15803D"
+                style={{ marginRight: 8 }}
               />
               <Text
                 style={{
@@ -617,26 +694,32 @@ export default function SettingsScreen() {
         <Card
           mode="outlined"
           style={{
-            backgroundColor: "white",
-            borderColor: "#d7e3ff",
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
             borderWidth: 1.2,
             borderRadius: 22,
             marginBottom: 16,
           }}
         >
           <Card.Content style={{ paddingVertical: 18 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
-              <Ionicons 
-                name="calendar-outline" 
-                size={22} 
-                color="#0A4DA3" 
-                style={{ marginRight: 10 }} 
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                marginBottom: 12,
+              }}
+            >
+              <Ionicons
+                name="calendar-outline"
+                size={22}
+                color="#0A4DA3"
+                style={{ marginRight: 10 }}
               />
               <Text
                 style={{
                   fontSize: 18,
-                  fontWeight: "700",
-                  color: "#0A4DA3",
+                  fontWeight: '700',
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -653,18 +736,18 @@ export default function SettingsScreen() {
                   setTelehealthScheduleModalVisible(true);
                 }}
               >
-                <Ionicons 
-                  name="videocam-outline" 
-                  size={20} 
-                  color="#0A4DA3" 
-                  style={{ marginBottom: 4 }} 
+                <Ionicons
+                  name="videocam-outline"
+                  size={20}
+                  color="#0A4DA3"
+                  style={{ marginBottom: 4 }}
                 />
                 <Text
                   style={{
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -680,18 +763,18 @@ export default function SettingsScreen() {
                   setScheduleModalVisible(true);
                 }}
               >
-                <Ionicons 
-                  name="calendar-outline" 
-                  size={20} 
-                  color="#0A4DA3" 
-                  style={{ marginBottom: 4 }} 
+                <Ionicons
+                  name="calendar-outline"
+                  size={20}
+                  color="#0A4DA3"
+                  style={{ marginBottom: 4 }}
                 />
                 <Text
                   style={{
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -716,7 +799,7 @@ export default function SettingsScreen() {
                   fontWeight: '700',
                   textAlign: 'center',
                   marginBottom: 8,
-                  color: "#0A4DA3",
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -727,7 +810,7 @@ export default function SettingsScreen() {
                   fontSize: 14,
                   textAlign: 'center',
                   marginBottom: 16,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
@@ -742,7 +825,7 @@ export default function SettingsScreen() {
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -774,18 +857,18 @@ export default function SettingsScreen() {
               >
                 <Text style={styles.closeTxt}>×</Text>
               </Pressable>
-                <Text
-                  style={{
-                    fontSize: 18,
-                    fontWeight: '700',
-                    textAlign: 'center',
-                    marginBottom: 8,
-                    color: "#0A4DA3",
-                    fontFamily: 'Montserrat-Bold',
-                  }}
-                >
-                  {localizedUI[selectedLanguage].scheduleAppointmentTitle}
-                </Text>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: '#0A4DA3',
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].scheduleAppointmentTitle}
+              </Text>
 
               <Calendar
                 onDayPress={(day: any) => {
@@ -810,7 +893,7 @@ export default function SettingsScreen() {
                   fontWeight: '600',
                   marginTop: 12,
                   marginBottom: 8,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-SemiBold',
                 }}
               >
@@ -830,7 +913,8 @@ export default function SettingsScreen() {
                     <Text
                       style={[
                         styles.timeSlotText,
-                        selectedApptTime === time && styles.timeSlotTextSelected,
+                        selectedApptTime === time &&
+                          styles.timeSlotTextSelected,
                       ]}
                     >
                       {time}
@@ -859,7 +943,7 @@ export default function SettingsScreen() {
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -884,7 +968,7 @@ export default function SettingsScreen() {
                   fontWeight: '700',
                   textAlign: 'center',
                   marginBottom: 8,
-                  color: "#0A4DA3",
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -895,7 +979,7 @@ export default function SettingsScreen() {
                   fontSize: 14,
                   textAlign: 'center',
                   marginBottom: 16,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
@@ -910,7 +994,7 @@ export default function SettingsScreen() {
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -948,7 +1032,7 @@ export default function SettingsScreen() {
                   fontWeight: '700',
                   textAlign: 'center',
                   marginBottom: 8,
-                  color: "#0A4DA3",
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -957,7 +1041,7 @@ export default function SettingsScreen() {
 
               <Calendar
                 onDayPress={(day: any) => {
-                  setSelectedTelehealthDate(day.dateString); 
+                  setSelectedTelehealthDate(day.dateString);
                 }}
                 markedDates={
                   selectedTelehealthDate
@@ -978,7 +1062,7 @@ export default function SettingsScreen() {
                   fontWeight: '600',
                   marginTop: 12,
                   marginBottom: 8,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-SemiBold',
                 }}
               >
@@ -1016,7 +1100,9 @@ export default function SettingsScreen() {
                   {
                     marginTop: 18,
                     opacity:
-                      selectedTelehealthDate && selectedTelehealthTime ? 1 : 0.5,
+                      selectedTelehealthDate && selectedTelehealthTime
+                        ? 1
+                        : 0.5,
                   },
                 ]}
                 disabled={!selectedTelehealthDate || !selectedTelehealthTime}
@@ -1030,7 +1116,7 @@ export default function SettingsScreen() {
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -1055,7 +1141,7 @@ export default function SettingsScreen() {
                   fontWeight: '700',
                   textAlign: 'center',
                   marginBottom: 8,
-                  color: "#0A4DA3",
+                  color: '#0A4DA3',
                   fontFamily: 'Montserrat-Bold',
                 }}
               >
@@ -1066,7 +1152,7 @@ export default function SettingsScreen() {
                   fontSize: 14,
                   textAlign: 'center',
                   marginBottom: 16,
-                  color: "#1a1a1a",
+                  color: '#1a1a1a',
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
@@ -1081,7 +1167,7 @@ export default function SettingsScreen() {
                     fontSize: 14,
                     fontWeight: '600',
                     textAlign: 'center',
-                    color: "#0A4DA3",
+                    color: '#0A4DA3',
                     fontFamily: 'Montserrat-SemiBold',
                   }}
                 >
@@ -1400,7 +1486,7 @@ const styles = StyleSheet.create({
     padding: 20,
     borderWidth: 1.2,
     borderColor: '#d7e3ff',
-    position: 'relative', 
+    position: 'relative',
     overflow: 'visible',
   },
   modalCardLarge: {
@@ -1425,7 +1511,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 18,
-    color: "#1a1a1a",
+    color: '#1a1a1a',
   },
   modalButton: {
     alignSelf: 'center',

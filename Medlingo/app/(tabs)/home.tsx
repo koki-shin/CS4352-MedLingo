@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text } from 'react-native';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Card } from 'react-native-paper';
@@ -79,22 +79,11 @@ export default function HomeScreen() {
         </Card>
       </Link>
 
-      <Link href="/quick" style={styles.quick_button}>
-        <Text style={styles.buttonText}>
-          {localizedUI[selectedLanguage].quick.title}
-        </Text>
+      <Link href="/quick" asChild>
+        <Card mode="contained" className="w-4/5">
+          <Card.Title title={localizedUI[selectedLanguage].quick.title} />
+        </Card>
       </Link>
     </View>
   );
-}
-
-const styles = StyleSheet.create({
-  quick_button: {
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 0, 0.25)',
-    borderRadius: 8,
-    width: '80%',
-    borderColor: 'black',
-    borderWidth: 2,
-  },
-});
+};

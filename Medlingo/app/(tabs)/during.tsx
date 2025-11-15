@@ -211,7 +211,7 @@ export default function SettingsScreen() {
             { color: isRecording ? '#D33' : '#2E7D32' },
           ]}
         >
-          {isRecording ? 'Recording in progress' : 'Start Recording'}
+          {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage].start}
         </Text>
       </TouchableOpacity>
 
@@ -242,17 +242,14 @@ export default function SettingsScreen() {
       {/* Tap to pause/resume recording */}
       <TouchableOpacity style={[styles.box, styles.recordButton]}>
         <View style={styles.circle}></View>
-        <Text style={styles.tapText}>Tap to pause/resume recording</Text>
+        <Text style={styles.label}>
+            {localizedUI[selectedLanguage].pause}
+          </Text>
       </TouchableOpacity>
 
       {/* Pause & Explain + Feelings */}
       <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.pauseButton}>
-          <View style={styles.pauseCircle} />
-          <Text style={styles.pauseText}>Pause & Explain</Text>
-        </TouchableOpacity>
-
-        <View style={styles.feelingsContainer}>
+          <View style={styles.feelingsContainer}>
           <Text style={styles.feelingsLabel}>How are you feeling?</Text>
           <View style={styles.feelingsRow}>
             <TouchableOpacity
@@ -293,7 +290,9 @@ export default function SettingsScreen() {
         style={[styles.box, styles.endSession]}
         onPress={handleEndSession}
       >
-        <Text style={styles.endText}>End Session</Text>
+        <Text style={styles.label}>
+            {localizedUI[selectedLanguage].end}
+          </Text>
       </TouchableOpacity>
 
       {/* Transcript Saved Modal */}

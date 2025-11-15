@@ -265,48 +265,127 @@ export default function SettingsScreen() {
         <Text style={styles.header}>{localizedUI[selectedLanguage].pageTitle}</Text>
 
         {/* Diagnosis Summary */}
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
-            <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].diagnosisSummaryTitle}</Text>
-          </View>
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].diagnosisSummaryTitle}
+              </Text>
+            </View>
 
-          <View style={styles.summaryBubble}>
-            <Text style={styles.bodyText}>
-              {localizedUI[selectedLanguage].diagnosisText}
-            </Text>
-          </View>
-        </View>
+            <View style={styles.summaryBubble}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  lineHeight: 20,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {localizedUI[selectedLanguage].diagnosisText}
+              </Text>
+            </View>
+          </Card.Content>
+        </Card>
 
         {/* Prescribed Medications */}
-        <View style={styles.card}>
-          <View style={styles.sectionHeader}>
-            <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
-            <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].prescribedMedicationsTitle}</Text>
-          </View>
-
-          <View style={styles.medList}>
-            <View style={styles.medRow}>
-              <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
-              <View>
-                <Text style={styles.medName}>Ipratropium Bromide</Text>
-                <Text style={styles.medDetails}>
-                  {localizedUI[selectedLanguage].ipratropiumDetails}
-                </Text>
-              </View>
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].prescribedMedicationsTitle}
+              </Text>
             </View>
 
-            <View style={styles.medRow}>
-              <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
-              <View>
-                <Text style={styles.medName}>Ryaltis</Text>
-                <Text style={styles.medDetails}>
-                  {localizedUI[selectedLanguage].ryaltisDetails}
-                </Text>
+            <View style={styles.medList}>
+              <View style={styles.medRow}>
+                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: '600',
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    Ipratropium Bromide
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      marginTop: 2,
+                      color: "#5b6b7a",
+                      fontFamily: 'Montserrat-Regular',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].ipratropiumDetails}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.medRow}>
+                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: '600',
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    Ryaltis
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      marginTop: 2,
+                      color: "#5b6b7a",
+                      fontFamily: 'Montserrat-Regular',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].ryaltisDetails}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-        </View>
+          </Card.Content>
+        </Card>
 
         {/* Set Medication Reminders */}
         <View style={styles.card}>

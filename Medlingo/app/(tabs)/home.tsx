@@ -61,22 +61,22 @@ export default function HomeScreen() {
         </Card>
       </Link>
 
-      <Link href="/during" style={styles.during_button}>
-        <Text style={styles.buttonText}>
-          {localizedUI[selectedLanguage].during.title}{'\n'}
-          <Text style={styles.buttonSubText}>
-            {localizedUI[selectedLanguage].during.subtitle}
-          </Text>
-        </Text>
+      <Link href="/during" asChild>
+        <Card mode="contained" className="w-4/5">
+          <Card.Title
+            title={localizedUI[selectedLanguage].during.title}
+            subtitle={localizedUI[selectedLanguage].during.subtitle}
+          />
+        </Card>
       </Link>
 
-      <Link href="/after" style={styles.after_button}>
-        <Text style={styles.buttonText}>
-          {localizedUI[selectedLanguage].after.title}{'\n'}
-          <Text style={styles.buttonSubText}>
-            {localizedUI[selectedLanguage].after.subtitle}
-          </Text>
-        </Text>
+      <Link href="/after" asChild>
+        <Card mode="contained" className="w-4/5">
+          <Card.Title
+            title={localizedUI[selectedLanguage].after.title}
+            subtitle={localizedUI[selectedLanguage].after.subtitle}
+          />
+        </Card>
       </Link>
 
       <Link href="/quick" style={styles.quick_button}>
@@ -89,22 +89,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  during_button: {
-    padding: 20,
-    backgroundColor: 'rgba(0, 255, 0, 0.4)',
-    borderRadius: 8,
-    width: '80%',
-    borderColor: 'black',
-    borderWidth: 2,
-  },
-  after_button: {
-    padding: 20,
-    backgroundColor: 'rgba(0, 0, 255, 0.4)',
-    borderRadius: 8,
-    width: '80%',
-    borderColor: 'black',
-    borderWidth: 2,
-  },
   quick_button: {
     padding: 20,
     backgroundColor: 'rgba(0, 0, 0, 0.25)',

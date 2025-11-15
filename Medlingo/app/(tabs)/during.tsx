@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
+import { useTranslation } from '../../hooks/translate';
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
@@ -132,6 +133,20 @@ export default function SettingsScreen() {
     console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
 
+  // translate user test to 
+  const [src_one, set_src_one] = useState('');
+  async function translateAll() {
+      Keyboard.dismiss();
+      try {
+          if (src_one.trim().length > 0) {
+              const r1 = await translate(src_one);
+              if (r1) set_src_one(r1);
+          }
+  } catch (e) {
+    console.warn('translateAll error', e);
+  }
+}
+
   return (
     <View style={styles.container}>
       {/* Recording Section */}
@@ -154,23 +169,18 @@ export default function SettingsScreen() {
       {/* Doctor (English) */}
       <View style={[styles.box, styles.englishBox]}>
         <View style={styles.labelRow}>
-          <View style={styles.englishCircle} />
-          <Text style={styles.label}>Doctor (English)</Text>
         </View>
-        <Text style={styles.subText}>
-          “Please avoid taking any antihistamines for at least 3 days before your allergy test.”
-        </Text>
-      </View>
-
-      {/* Translation (Japanese) */}
-      <View style={[styles.box, styles.translationBox]}>
-        <View style={styles.labelRow}>
-          <View style={styles.translationCircle} />
-          <Text style={styles.label}>Translation (Japanese)</Text>
-        </View>
-        <Text style={styles.subText}>
-          アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。
-        </Text>
+         <TextInput
+                value={sourceText}
+                onChangeText={set_source}
+                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                returnKeyType="send"
+                onSubmitEditing={run_trans}
+                style={styles.input}
+                editable={!isLoading}
+            />
+            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
       </View>
 
       {/* Tap to pause/resume recording */}

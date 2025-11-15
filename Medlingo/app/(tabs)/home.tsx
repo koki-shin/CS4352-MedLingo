@@ -1,6 +1,7 @@
 import { View, Text, StyleSheet } from 'react-native';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
+import { Card } from 'react-native-paper';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
 
@@ -51,13 +52,13 @@ export default function HomeScreen() {
         onValueChange={setSelectedLanguage}
       />
 
-      <Link href="/before" style={styles.before_button}>
-        <Text style={styles.buttonText}>
-          {localizedUI[selectedLanguage].before.title}{'\n'}
-          <Text style={styles.buttonSubText}>
-            {localizedUI[selectedLanguage].before.subtitle}
-          </Text>
-        </Text>
+      <Link href="/before" asChild>
+        <Card mode="contained" className="w-4/5">
+          <Card.Title
+            title={localizedUI[selectedLanguage].before.title}
+            subtitle={localizedUI[selectedLanguage].before.subtitle}
+          />
+        </Card>
       </Link>
 
       <Link href="/during" style={styles.during_button}>
@@ -88,20 +89,6 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   gap: 20,
-  // },
-  before_button: {
-    padding: 20,
-    backgroundColor: 'rgba(255, 0, 0, 0.4)',
-    borderRadius: 8,
-    width: '80%',
-    borderColor: 'black',
-    borderWidth: 2,
-  },
   during_button: {
     padding: 20,
     backgroundColor: 'rgba(0, 255, 0, 0.4)',
@@ -125,16 +112,5 @@ const styles = StyleSheet.create({
     width: '80%',
     borderColor: 'black',
     borderWidth: 2,
-  },
-  buttonText: {
-    color: 'black',
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'left',
-  },
-  buttonSubText: {
-    color: 'black',
-    fontSize: 16,
-    textAlign: 'left',
   },
 });

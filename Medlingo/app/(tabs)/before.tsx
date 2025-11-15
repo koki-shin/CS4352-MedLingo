@@ -1,7 +1,8 @@
 import * as Print from 'expo-print';
 
 import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Text, Keyboard, TextInput, View } from 'react-native';
+import { Button, ScrollView, StyleSheet, Keyboard, TextInput, View } from 'react-native';
+import { Text } from 'react-native-paper';
 import Checkbox from 'expo-checkbox';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
@@ -130,8 +131,10 @@ export default function BeforeAppointmentCondensed() {
 
 if (isOutputVisible) {
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.outputTitle}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
+    <ScrollView className="flex-1 p-4 bg-white">
+      <Text variant="headlineSmall" className="my-3 text-center uppercase">
+        {localizedUI[selectedLanguage].beforeAppointmentTitle}
+      </Text>
 
       <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][0]}</Text>
       <Text style={styles.questionBlock}>{src_one}</Text>
@@ -142,52 +145,54 @@ if (isOutputVisible) {
       <Text style={styles.outputQuestion}>{localizedQuestions[selectedLanguage][2]}</Text>
       <Text style={styles.questionBlock}>{src_three}</Text>
 
-{/* Print Button */}
-<View style={{ marginVertical: 20 }}>
-  <Button
-    title={localizedUI[selectedLanguage].print}
-    onPress={async () => {
-      // Prepare HTML for printing
-      const consentHtml = `
-        <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
-        <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
-        <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
+      {/* Print Button */}
+      <View style={{ marginVertical: 20 }}>
+        <Button
+          title={localizedUI[selectedLanguage].print}
+          onPress={async () => {
+            // Prepare HTML for printing
+            const consentHtml = `
+              <p>${localizedQuestions[selectedLanguage][3]} <input type="checkbox" ${consentOne ? 'checked' : ''} disabled></p>
+              <p>${localizedQuestions[selectedLanguage][4]} <input type="checkbox" ${consentTwo ? 'checked' : ''} disabled></p>
+              <p>${localizedQuestions[selectedLanguage][5]} <input type="checkbox" ${consentThree ? 'checked' : ''} disabled></p>
+            `;
+            const htmlContent = `
+              <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
+              <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
+              <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
+              <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
+              ${consentHtml}
       `;
-      const htmlContent = `
-        <h1>${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
-        <p>${localizedQuestions[selectedLanguage][0]}<br>${src_one}</p>
-        <p>${localizedQuestions[selectedLanguage][1]}<br>${src_two}</p>
-        <p>${localizedQuestions[selectedLanguage][2]}<br>${src_three}</p>
-        ${consentHtml}
-`;
-      if (typeof window !== 'undefined') {
-        // Web: native print dialog
-        const printWindow = window.open('', '_blank', 'width=600,height=600');
-        if (printWindow) {
-          printWindow.document.write(htmlContent);
-          printWindow.document.close();
-          printWindow.focus();
-          printWindow.print();
-          printWindow.close();
-        }
-      } else {
-        // Mobile: Expo Print
-        await Print.printAsync({ html: htmlContent });
-      }
-    }}
-  />
-</View>
-      <Button
-        title={localizedUI[selectedLanguage].back}
-        onPress={() => setIsOutputVisible(false)}
-      />
+            if (typeof window !== 'undefined') {
+              // Web: native print dialog
+              const printWindow = window.open('', '_blank', 'width=600,height=600');
+              if (printWindow) {
+                printWindow.document.write(htmlContent);
+                printWindow.document.close();
+                printWindow.focus();
+                printWindow.print();
+                printWindow.close();
+              }
+            } else {
+              // Mobile: Expo Print
+              await Print.printAsync({ html: htmlContent });
+            }
+          }}
+        />
+      </View>
+            <Button
+              title={localizedUI[selectedLanguage].back}
+              onPress={() => setIsOutputVisible(false)}
+            />
     </ScrollView>
   );
 }
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>{localizedUI[selectedLanguage].beforeAppointmentTitle}</Text>
+    <ScrollView className="flex-1 p-4 bg-white">
+      <Text variant="headlineSmall" className="my-3 text-center uppercase">
+        {localizedUI[selectedLanguage].beforeAppointmentTitle}
+      </Text>
         <Text style={styles.label}>{localizedQuestions[selectedLanguage][0]}</Text>
         <TextInput
                 value={src_one}
@@ -253,24 +258,6 @@ if (isOutputVisible) {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    padding: 15, 
-    backgroundColor: '#fff' 
-  },
-  title: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    marginVertical: 10, 
-    textAlign: 'center', 
-    textTransform: 'uppercase' 
-  },
-  outputTitle: { 
-    fontSize: 24, 
-    fontWeight: 'bold', 
-    marginVertical: 10, 
-    textAlign: 'center', 
-    textTransform: 'uppercase' 
-  },
   label: { 
     fontSize: 16, 
     marginTop: 10 

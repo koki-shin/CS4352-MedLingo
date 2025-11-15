@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
+import { Card } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
 
@@ -255,474 +258,853 @@ export default function SettingsScreen() {
   )} at ${selectedTelehealthTime}.`;
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={styles.content}
-    >
-      <Text style={styles.header}>{localizedUI[selectedLanguage].pageTitle}</Text>
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <ScrollView
+        className="flex-1 bg-white px-5 pt-6"
+        contentContainerStyle={{ paddingBottom: 40 }}
+      >
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "800",
+            color: "#0A4DA3",
+            marginBottom: 24,
+            textAlign: "center",
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          {localizedUI[selectedLanguage].pageTitle}
+        </Text>
 
-      {/* Diagnosis Summary */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
-          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].diagnosisSummaryTitle}</Text>
-        </View>
-
-        <View style={styles.summaryBubble}>
-          <Text style={styles.bodyText}>
-            {localizedUI[selectedLanguage].diagnosisText}
-          </Text>
-        </View>
-      </View>
-
-      {/* Prescribed Medications */}
-      <View style={styles.card}>
-        <View style={styles.sectionHeader}>
-          <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
-          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].prescribedMedicationsTitle}</Text>
-        </View>
-
-        <View style={styles.medList}>
-          <View style={styles.medRow}>
-            <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
-            <View>
-              <Text style={styles.medName}>Ipratropium Bromide</Text>
-              <Text style={styles.medDetails}>
-                {localizedUI[selectedLanguage].ipratropiumDetails}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.medRow}>
-            <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
-            <View>
-              <Text style={styles.medName}>Ryaltis</Text>
-              <Text style={styles.medDetails}>
-                {localizedUI[selectedLanguage].ryaltisDetails}
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Set Medication Reminders */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].medicationRemindersTitle}</Text>
-
-        <View style={styles.reminderWrapper}>
-          <View style={styles.reminderLeft}>
-            <Text style={styles.label}>{localizedUI[selectedLanguage].medicationName}</Text>
-            <View style={styles.inputPill}>
-              <Picker
-                selectedValue={selectedMedication}
-                onValueChange={(value) => setSelectedMedication(value)}
-                style={styles.picker}
-                dropdownIconColor="#111827"
+        {/* Diagnosis Summary */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <View style={[styles.sectionDot, { backgroundColor: '#3B82F6' }]} />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
               >
-                {medicationOptions.map((med) => (
-                  <Picker.Item key={med} label={med} value={med} />
-                ))}
-              </Picker>
+                {localizedUI[selectedLanguage].diagnosisSummaryTitle}
+              </Text>
             </View>
 
-            {/* Add custom medication input */}
-            <View style={styles.customMedBubble}>
-              <Text style={[styles.label, { marginTop: 0 }]}>{localizedUI[selectedLanguage].addCustomMedication}</Text>
-              <View style={{ marginTop: 6 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}> 
-                    <TextInput
-                      placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
-                      value={newMedName}
-                      onChangeText={setNewMedName}
-                      style={{ height: 36, paddingHorizontal: 6 }}
-                      returnKeyType="done"
-                    />
-                  </View>
-                  <Pressable
-                    style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
-                    onPress={addCustomMedication}
-                  >
-                    <Text style={[styles.setReminderText, { fontSize: 13 }]}>{localizedUI[selectedLanguage].addButton}</Text>
-                  </Pressable>
-                </View>
+            <View style={styles.summaryBubble}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  lineHeight: 20,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {localizedUI[selectedLanguage].diagnosisText}
+              </Text>
+            </View>
+          </Card.Content>
+        </Card>
 
-                <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                  <Text style={{ marginRight: 10, fontSize: 13, fontWeight: '600' }}>{localizedUI[selectedLanguage].timesPerDay}</Text>
-                  <View style={[styles.inputPill, { width: 120 }]}> 
-                    <Picker
-                      selectedValue={newMedDoses}
-                      onValueChange={(val) => setNewMedDoses(Number(val))}
-                      style={styles.picker}
-                      dropdownIconColor="#111827"
-                    >
-                      {[1,2,3,4].map((n) => (
-                        <Picker.Item key={n} label={`${n}`} value={n} />
-                      ))}
-                    </Picker>
-                  </View>
+        {/* Prescribed Medications */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <View style={[styles.sectionDot, { backgroundColor: '#A855F7' }]} />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].prescribedMedicationsTitle}
+              </Text>
+            </View>
+
+            <View style={styles.medList}>
+              <View style={styles.medRow}>
+                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: '600',
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    Ipratropium Bromide
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      marginTop: 2,
+                      color: "#5b6b7a",
+                      fontFamily: 'Montserrat-Regular',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].ipratropiumDetails}
+                  </Text>
+                </View>
+              </View>
+
+              <View style={styles.medRow}>
+                <View style={[styles.bulletDot, { backgroundColor: '#C4A3FF' }]} />
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={{
+                      fontSize: 15,
+                      fontWeight: '600',
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    Ryaltis
+                  </Text>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      marginTop: 2,
+                      color: "#5b6b7a",
+                      fontFamily: 'Montserrat-Regular',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].ryaltisDetails}
+                  </Text>
                 </View>
               </View>
             </View>
+          </Card.Content>
+        </Card>
 
-            <View style={styles.reminderRow}>
-              <View style={styles.reminderColumn}>
-                <Text style={styles.label}>{localizedUI[selectedLanguage].timeLabel}</Text>
-                {selectedTimes.map((time, idx) => (
-                  <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}> 
-                    <Picker
-                      selectedValue={time}
-                      onValueChange={(value) => {
-                        const next = [...selectedTimes];
-                        next[idx] = value;
-                        setSelectedTimes(next);
+        {/* Set Medication Reminders */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+              <Ionicons 
+                name="notifications-outline" 
+                size={22} 
+                color="#0A4DA3" 
+                style={{ marginRight: 10 }} 
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].medicationRemindersTitle}
+              </Text>
+            </View>
+
+            <View style={styles.reminderContent}>
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  marginTop: 10,
+                  marginBottom: 4,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-SemiBold',
+                }}
+              >
+                {localizedUI[selectedLanguage].medicationName}
+              </Text>
+              <View style={styles.inputPill}>
+                <Picker
+                  selectedValue={selectedMedication}
+                  onValueChange={(value) => setSelectedMedication(value)}
+                  style={styles.picker}
+                  dropdownIconColor="#0A4DA3"
+                >
+                  {medicationOptions.map((med) => (
+                    <Picker.Item key={med} label={med} value={med} />
+                  ))}
+                </Picker>
+              </View>
+
+              {/* Add custom medication input */}
+              <View style={styles.customMedBubble}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    marginTop: 0,
+                    marginBottom: 6,
+                    color: "#1a1a1a",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].addCustomMedication}
+                </Text>
+                <View style={{ marginTop: 6 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}>
+                      <TextInput
+                        placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
+                        value={newMedName}
+                        onChangeText={setNewMedName}
+                        style={{
+                          height: 36,
+                          paddingHorizontal: 6,
+                          fontFamily: 'Montserrat-Regular',
+                        }}
+                        returnKeyType="done"
+                        placeholderTextColor="#9CA3AF"
+                      />
+                    </View>
+                    <Pressable
+                      style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
+                      onPress={addCustomMedication}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          fontWeight: '600',
+                          color: '#15803D',
+                          textAlign: 'center',
+                          fontFamily: 'Montserrat-SemiBold',
+                        }}
+                      >
+                        {localizedUI[selectedLanguage].addButton}
+                      </Text>
+                    </Pressable>
+                  </View>
+
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                    <Text
+                      style={{
+                        marginRight: 10,
+                        fontSize: 13,
+                        fontWeight: '600',
+                        color: "#1a1a1a",
+                        fontFamily: 'Montserrat-SemiBold',
                       }}
-                      style={styles.picker}
-                      dropdownIconColor="#111827"
                     >
-                      {TIME_OPTIONS.map((t) => (
-                        <Picker.Item key={t} label={t} value={t} />
-                      ))}
-                    </Picker>
+                      {localizedUI[selectedLanguage].timesPerDay}
+                    </Text>
+                    <View style={[styles.inputPill, { width: 120 }]}>
+                      <Picker
+                        selectedValue={newMedDoses}
+                        onValueChange={(val) => setNewMedDoses(Number(val))}
+                        style={styles.picker}
+                        dropdownIconColor="#0A4DA3"
+                      >
+                        {[1, 2, 3, 4].map((n) => (
+                          <Picker.Item key={n} label={`${n}`} value={n} />
+                        ))}
+                      </Picker>
+                    </View>
                   </View>
-                ))}
+                </View>
               </View>
 
-              <View style={styles.reminderColumn}>
-                <Text style={styles.label}>{localizedUI[selectedLanguage].repeatLabel}</Text>
-                <View style={styles.inputPill}>
-                  <Picker
-                    selectedValue={selectedRepeat}
-                    onValueChange={(value) => setSelectedRepeat(value)}
-                    style={styles.picker}
-                    dropdownIconColor="#111827"
+              <View style={styles.reminderRow}>
+                <View style={styles.reminderColumn}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '600',
+                      marginTop: 10,
+                      marginBottom: 4,
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
                   >
-                    <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
-                    <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
-                    <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
-                    <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
-                  </Picker>
+                    {localizedUI[selectedLanguage].timeLabel}
+                  </Text>
+                  {selectedTimes.map((time, idx) => (
+                    <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}>
+                      <Picker
+                        selectedValue={time}
+                        onValueChange={(value) => {
+                          const next = [...selectedTimes];
+                          next[idx] = value;
+                          setSelectedTimes(next);
+                        }}
+                        style={styles.picker}
+                        dropdownIconColor="#0A4DA3"
+                      >
+                        {TIME_OPTIONS.map((t) => (
+                          <Picker.Item key={t} label={t} value={t} />
+                        ))}
+                      </Picker>
+                    </View>
+                  ))}
+                </View>
+
+                <View style={styles.reminderColumn}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '600',
+                      marginTop: 10,
+                      marginBottom: 4,
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].repeatLabel}
+                  </Text>
+                  <View style={styles.inputPill}>
+                    <Picker
+                      selectedValue={selectedRepeat}
+                      onValueChange={(value) => setSelectedRepeat(value)}
+                      style={styles.picker}
+                      dropdownIconColor="#0A4DA3"
+                    >
+                      <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
+                      <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
+                      <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
+                      <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
+                    </Picker>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-
-          <Pressable
-            style={styles.setReminderButtonTall}
-            onPress={() => setSummaryVisible(true)}
-          >
-            <Text style={styles.setReminderText}>{localizedUI[selectedLanguage].setReminderButton}</Text>
-          </Pressable>
-        </View>
-      </View>
-
-      {/* Follow-up Care */}
-      <View style={styles.card}>
-        <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].followUpCareTitle}</Text>
-
-        <View style={styles.followRow}>
-          {/* Telehealth Follow-up */}
-          <Pressable
-            style={styles.followButton}
-            onPress={() => {
-              setSelectedTelehealthDate(null);
-              setSelectedTelehealthTime(null);
-              setTelehealthScheduleModalVisible(true);
-            }}
-          >
-            <Text style={styles.followText}>
-              {localizedUI[selectedLanguage].telehealthFollowUp}
-            </Text>
-          </Pressable>
-
-          <Pressable
-            style={styles.followButton}
-            onPress={() => {
-              setSelectedApptDate(null);
-              setSelectedApptTime(null);
-              setScheduleModalVisible(true);
-            }}
-          >
-            <Text style={styles.followText}>
-              {localizedUI[selectedLanguage].scheduleNextAppointment}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
-
-      <Modal
-        transparent
-        visible={summaryVisible}
-        animationType="fade"
-        onRequestClose={() => setSummaryVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].reminderSetTitle}</Text>
-            <Text style={styles.modalBody}>{reminderSummaryText}</Text>
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => setSummaryVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        transparent
-        visible={scheduleModalVisible}
-        animationType="fade"
-        onRequestClose={() => setScheduleModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop} pointerEvents="box-none">
-          <View style={[styles.modalCard, styles.modalCardLarge]}>
-            <Pressable
-              style={styles.closeBtn}
-              accessibilityRole="button"
-              accessibilityLabel="Close"
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-              onPress={() => {
-                setScheduleModalVisible(false);
-                setSelectedApptDate(null);
-                setSelectedApptTime(null);
-              }}
-            >
-              <Text style={styles.closeTxt}>×</Text>
-            </Pressable>
-            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].scheduleAppointmentTitle}</Text>
-
-            <Calendar
-              onDayPress={(day: any) => {
-                setSelectedApptDate(day.dateString);
-              }}
-              markedDates={
-                selectedApptDate
-                  ? {
-                      [selectedApptDate]: {
-                        selected: true,
-                        selectedColor: '#3B82F6',
-                      },
-                    }
-                  : {}
-              }
-              style={styles.calendar}
-            />
-
-            <Text style={[styles.label, { marginTop: 12 }]}>
-              {localizedUI[selectedLanguage].availableTimes}
-            </Text>
-
-            <View style={styles.timeGrid}>
-              {TIME_OPTIONS.map((time) => (
-                <Pressable
-                  key={time}
-                  style={[
-                    styles.timeSlot,
-                    selectedApptTime === time && styles.timeSlotSelected,
-                  ]}
-                  onPress={() => setSelectedApptTime(time)}
-                >
-                  <Text
-                    style={[
-                      styles.timeSlotText,
-                      selectedApptTime === time && styles.timeSlotTextSelected,
-                    ]}
-                  >
-                    {time}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
 
             <Pressable
-              style={[
-                styles.modalButton,
-                styles.modalButtonFullWidth,
-                {
-                  marginTop: 18,
-                  opacity: selectedApptDate && selectedApptTime ? 1 : 0.5,
-                },
-              ]}
-              disabled={!selectedApptDate || !selectedApptTime}
-              onPress={() => {
-                setScheduleModalVisible(false);
-                setApptSummaryVisible(true);
-              }}
+              style={styles.setReminderButton}
+              onPress={() => setSummaryVisible(true)}
             >
-              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].scheduleAppointmentButton}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        transparent
-        visible={apptSummaryVisible}
-        animationType="fade"
-        onRequestClose={() => setApptSummaryVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].appointmentScheduledTitle}</Text>
-            <Text style={styles.modalBody}>{appointmentSummaryText}</Text>
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => setApptSummaryVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      <Modal
-        transparent
-        visible={telehealthScheduleModalVisible}
-        animationType="fade"
-        onRequestClose={() => setTelehealthScheduleModalVisible(false)}
-      >
-        <View style={styles.modalBackdrop} pointerEvents="box-none">
-          <View style={[styles.modalCard, styles.modalCardLarge]}>
-            <Pressable
-              style={styles.closeBtn}
-              accessibilityRole="button"
-              accessibilityLabel="Close"
-              hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
-              onPress={() => {
-                setTelehealthScheduleModalVisible(false);
-                setSelectedTelehealthDate(null);
-                setSelectedTelehealthTime(null);
-              }}
-            >
-              <Text style={styles.closeTxt}>×</Text>
-            </Pressable>
-            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].scheduleTelehealthTitle}</Text>
-
-            <Calendar
-              onDayPress={(day: any) => {
-                setSelectedTelehealthDate(day.dateString); 
-              }}
-              markedDates={
-                selectedTelehealthDate
-                  ? {
-                      [selectedTelehealthDate]: {
-                        selected: true,
-                        selectedColor: '#3B82F6',
-                      },
-                    }
-                  : {}
-              }
-              style={styles.calendar}
-            />
-
-            <Text style={[styles.label, { marginTop: 12 }]}>
-              {localizedUI[selectedLanguage].availableTimes}
-            </Text>
-
-            <View style={styles.timeGrid}>
-              {TIME_OPTIONS.map((time) => (
-                <Pressable
-                  key={time}
-                  style={[
-                    styles.timeSlot,
-                    selectedTelehealthTime === time &&
-                      styles.timeSlotSelected,
-                  ]}
-                  onPress={() => setSelectedTelehealthTime(time)}
-                >
-                  <Text
-                    style={[
-                      styles.timeSlotText,
-                      selectedTelehealthTime === time &&
-                        styles.timeSlotTextSelected,
-                    ]}
-                  >
-                    {time}
-                  </Text>
-                </Pressable>
-              ))}
-            </View>
-
-            <Pressable
-              style={[
-                styles.modalButton,
-                styles.modalButtonFullWidth,
-                {
-                  marginTop: 18,
-                  opacity:
-                    selectedTelehealthDate && selectedTelehealthTime ? 1 : 0.5,
-                },
-              ]}
-              disabled={!selectedTelehealthDate || !selectedTelehealthTime}
-              onPress={() => {
-                setTelehealthScheduleModalVisible(false);
-                setTelehealthSummaryVisible(true);
-              }}
-            >
-              <Text style={styles.modalButtonText}>
-                {localizedUI[selectedLanguage].scheduleTelehealthButton}
+              <Ionicons 
+                name="checkmark-circle-outline" 
+                size={20} 
+                color="#15803D" 
+                style={{ marginRight: 8 }} 
+              />
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '600',
+                  color: '#15803D',
+                  fontFamily: 'Montserrat-SemiBold',
+                }}
+              >
+                {localizedUI[selectedLanguage].setReminderButton}
               </Text>
             </Pressable>
-          </View>
-        </View>
-      </Modal>
+          </Card.Content>
+        </Card>
 
-      <Modal
-        transparent
-        visible={telehealthSummaryVisible}
-        animationType="fade"
-        onRequestClose={() => setTelehealthSummaryVisible(false)}
-      >
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalCard}>
-            <Text style={styles.modalTitle}>{localizedUI[selectedLanguage].telehealthScheduledTitle}</Text>
-            <Text style={styles.modalBody}>{telehealthSummaryText}</Text>
-            <Pressable
-              style={styles.modalButton}
-              onPress={() => setTelehealthSummaryVisible(false)}
-            >
-              <Text style={styles.modalButtonText}>{localizedUI[selectedLanguage].continue}</Text>
-            </Pressable>
+        {/* Follow-up Care */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <Ionicons 
+                name="calendar-outline" 
+                size={22} 
+                color="#0A4DA3" 
+                style={{ marginRight: 10 }} 
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].followUpCareTitle}
+              </Text>
+            </View>
+
+            <View style={styles.followRow}>
+              {/* Telehealth Follow-up */}
+              <Pressable
+                style={styles.followButton}
+                onPress={() => {
+                  setSelectedTelehealthDate(null);
+                  setSelectedTelehealthTime(null);
+                  setTelehealthScheduleModalVisible(true);
+                }}
+              >
+                <Ionicons 
+                  name="videocam-outline" 
+                  size={20} 
+                  color="#0A4DA3" 
+                  style={{ marginBottom: 4 }} 
+                />
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].telehealthFollowUp}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.followButton}
+                onPress={() => {
+                  setSelectedApptDate(null);
+                  setSelectedApptTime(null);
+                  setScheduleModalVisible(true);
+                }}
+              >
+                <Ionicons 
+                  name="calendar-outline" 
+                  size={20} 
+                  color="#0A4DA3" 
+                  style={{ marginBottom: 4 }} 
+                />
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].scheduleNextAppointment}
+                </Text>
+              </Pressable>
+            </View>
+          </Card.Content>
+        </Card>
+
+        <Modal
+          transparent
+          visible={summaryVisible}
+          animationType="fade"
+          onRequestClose={() => setSummaryVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].reminderSetTitle}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginBottom: 16,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {reminderSummaryText}
+              </Text>
+              <Pressable
+                style={styles.modalButton}
+                onPress={() => setSummaryVisible(false)}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].continue}
+                </Text>
+              </Pressable>
+            </View>
           </View>
-        </View>
-      </Modal>
-    </ScrollView>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={scheduleModalVisible}
+          animationType="fade"
+          onRequestClose={() => setScheduleModalVisible(false)}
+        >
+          <View style={styles.modalBackdrop} pointerEvents="box-none">
+            <View style={[styles.modalCard, styles.modalCardLarge]}>
+              <Pressable
+                style={styles.closeBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                onPress={() => {
+                  setScheduleModalVisible(false);
+                  setSelectedApptDate(null);
+                  setSelectedApptTime(null);
+                }}
+              >
+                <Text style={styles.closeTxt}>×</Text>
+              </Pressable>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    fontWeight: '700',
+                    textAlign: 'center',
+                    marginBottom: 8,
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-Bold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].scheduleAppointmentTitle}
+                </Text>
+
+              <Calendar
+                onDayPress={(day: any) => {
+                  setSelectedApptDate(day.dateString);
+                }}
+                markedDates={
+                  selectedApptDate
+                    ? {
+                        [selectedApptDate]: {
+                          selected: true,
+                          selectedColor: '#0A4DA3',
+                        },
+                      }
+                    : {}
+                }
+                style={styles.calendar}
+              />
+
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  marginTop: 12,
+                  marginBottom: 8,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-SemiBold',
+                }}
+              >
+                {localizedUI[selectedLanguage].availableTimes}
+              </Text>
+
+              <View style={styles.timeGrid}>
+                {TIME_OPTIONS.map((time) => (
+                  <Pressable
+                    key={time}
+                    style={[
+                      styles.timeSlot,
+                      selectedApptTime === time && styles.timeSlotSelected,
+                    ]}
+                    onPress={() => setSelectedApptTime(time)}
+                  >
+                    <Text
+                      style={[
+                        styles.timeSlotText,
+                        selectedApptTime === time && styles.timeSlotTextSelected,
+                      ]}
+                    >
+                      {time}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <Pressable
+                style={[
+                  styles.modalButton,
+                  styles.modalButtonFullWidth,
+                  {
+                    marginTop: 18,
+                    opacity: selectedApptDate && selectedApptTime ? 1 : 0.5,
+                  },
+                ]}
+                disabled={!selectedApptDate || !selectedApptTime}
+                onPress={() => {
+                  setScheduleModalVisible(false);
+                  setApptSummaryVisible(true);
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].scheduleAppointmentButton}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={apptSummaryVisible}
+          animationType="fade"
+          onRequestClose={() => setApptSummaryVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].appointmentScheduledTitle}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginBottom: 16,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {appointmentSummaryText}
+              </Text>
+              <Pressable
+                style={styles.modalButton}
+                onPress={() => setApptSummaryVisible(false)}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].continue}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={telehealthScheduleModalVisible}
+          animationType="fade"
+          onRequestClose={() => setTelehealthScheduleModalVisible(false)}
+        >
+          <View style={styles.modalBackdrop} pointerEvents="box-none">
+            <View style={[styles.modalCard, styles.modalCardLarge]}>
+              <Pressable
+                style={styles.closeBtn}
+                accessibilityRole="button"
+                accessibilityLabel="Close"
+                hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+                onPress={() => {
+                  setTelehealthScheduleModalVisible(false);
+                  setSelectedTelehealthDate(null);
+                  setSelectedTelehealthTime(null);
+                }}
+              >
+                <Text style={styles.closeTxt}>×</Text>
+              </Pressable>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].scheduleTelehealthTitle}
+              </Text>
+
+              <Calendar
+                onDayPress={(day: any) => {
+                  setSelectedTelehealthDate(day.dateString); 
+                }}
+                markedDates={
+                  selectedTelehealthDate
+                    ? {
+                        [selectedTelehealthDate]: {
+                          selected: true,
+                          selectedColor: '#0A4DA3',
+                        },
+                      }
+                    : {}
+                }
+                style={styles.calendar}
+              />
+
+              <Text
+                style={{
+                  fontSize: 13,
+                  fontWeight: '600',
+                  marginTop: 12,
+                  marginBottom: 8,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-SemiBold',
+                }}
+              >
+                {localizedUI[selectedLanguage].availableTimes}
+              </Text>
+
+              <View style={styles.timeGrid}>
+                {TIME_OPTIONS.map((time) => (
+                  <Pressable
+                    key={time}
+                    style={[
+                      styles.timeSlot,
+                      selectedTelehealthTime === time &&
+                        styles.timeSlotSelected,
+                    ]}
+                    onPress={() => setSelectedTelehealthTime(time)}
+                  >
+                    <Text
+                      style={[
+                        styles.timeSlotText,
+                        selectedTelehealthTime === time &&
+                          styles.timeSlotTextSelected,
+                      ]}
+                    >
+                      {time}
+                    </Text>
+                  </Pressable>
+                ))}
+              </View>
+
+              <Pressable
+                style={[
+                  styles.modalButton,
+                  styles.modalButtonFullWidth,
+                  {
+                    marginTop: 18,
+                    opacity:
+                      selectedTelehealthDate && selectedTelehealthTime ? 1 : 0.5,
+                  },
+                ]}
+                disabled={!selectedTelehealthDate || !selectedTelehealthTime}
+                onPress={() => {
+                  setTelehealthScheduleModalVisible(false);
+                  setTelehealthSummaryVisible(true);
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].scheduleTelehealthButton}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={telehealthSummaryVisible}
+          animationType="fade"
+          onRequestClose={() => setTelehealthSummaryVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: '700',
+                  textAlign: 'center',
+                  marginBottom: 8,
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].telehealthScheduledTitle}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  textAlign: 'center',
+                  marginBottom: 16,
+                  color: "#1a1a1a",
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {telehealthSummaryText}
+              </Text>
+              <Pressable
+                style={styles.modalButton}
+                onPress={() => setTelehealthSummaryVisible(false)}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].continue}
+                </Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#F4F4F4',
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 40,
-  },
-
-  header: {
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 18,
-    textAlign: 'left',
-  },
-
-  card: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 18,
-    borderWidth: 2,
-    borderColor: '#000000',
-    padding: 16,
-    marginBottom: 16,
-  },
-
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-  },
   sectionDot: {
     width: 18,
     height: 18,
@@ -730,30 +1112,11 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
 
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-  },
-
-  label: {
-    fontSize: 13,
-    fontWeight: '600',
-    marginTop: 10,
-    marginBottom: 4,
-  },
-
   summaryBubble: {
     marginTop: 4,
     padding: 12,
     borderRadius: 18,
     backgroundColor: '#E3F2FF',
-  },
-  inlineLabel: {
-    fontWeight: '700',
-  },
-  bodyText: {
-    fontSize: 14,
-    lineHeight: 20,
   },
 
   medList: {
@@ -771,15 +1134,9 @@ const styles = StyleSheet.create({
     marginRight: 8,
     marginTop: 5,
   },
-  medName: {
-    fontSize: 15,
-    fontWeight: '600',
+  reminderContent: {
+    marginTop: 6,
   },
-  medDetails: {
-    fontSize: 13,
-    marginTop: 2,
-  },
-
   reminderWrapper: {
     flexDirection: 'row',
     marginTop: 6,
@@ -810,7 +1167,7 @@ const styles = StyleSheet.create({
   inputPill: {
     borderRadius: 18,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: '#d7e3ff',
     backgroundColor: '#FFFFFF',
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -833,32 +1190,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  setReminderText: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#15803D',
-    textAlign: 'center',
+  setReminderButton: {
+    width: '100%',
+    marginTop: 20,
+    borderRadius: 20,
+    borderWidth: 1.2,
+    borderColor: '#22C55E',
+    backgroundColor: '#E7F9EE',
+    paddingVertical: 14,
+    paddingHorizontal: 24,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 
   followRow: {
     flexDirection: 'row',
     marginTop: 10,
+    gap: 12,
   },
   followButton: {
     flex: 1,
-    marginHorizontal: 4,
     borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: '#000000',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
     backgroundColor: '#E6EEFF',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     justifyContent: 'center',
-  },
-  followText: {
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
+    alignItems: 'center',
+    minHeight: 100,
   },
 
   modalBackdrop: {
@@ -870,10 +1231,10 @@ const styles = StyleSheet.create({
   modalCard: {
     width: '80%',
     backgroundColor: '#FFFFFF',
-    borderRadius: 16,
+    borderRadius: 22,
     padding: 20,
-    borderWidth: 1,
-    borderColor: '#000000',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
     position: 'relative', 
     overflow: 'visible',
   },
@@ -887,8 +1248,8 @@ const styles = StyleSheet.create({
     width: 32,
     height: 32,
     borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#000',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
     backgroundColor: '#F3F4F6',
     alignItems: 'center',
     justifyContent: 'center',
@@ -899,34 +1260,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
     lineHeight: 18,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  modalBody: {
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 16,
+    color: "#1a1a1a",
   },
   modalButton: {
     alignSelf: 'center',
     paddingHorizontal: 24,
     paddingVertical: 10,
     borderRadius: 20,
-    borderWidth: 1,
-    borderColor: '#000000',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
     backgroundColor: '#E0F2F1',
   },
   modalButtonFullWidth: {
     alignSelf: 'stretch',
-  },
-  modalButtonText: {
-    fontSize: 14,
-    fontWeight: '600',
-    textAlign: 'center',
   },
 
   calendar: {
@@ -943,18 +1289,19 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 16,
     borderWidth: 1,
-    borderColor: '#D1D5DB',
+    borderColor: '#d7e3ff',
     backgroundColor: '#F9FAFB',
     marginRight: 8,
     marginBottom: 8,
   },
   timeSlotSelected: {
-    backgroundColor: '#3B82F6',
-    borderColor: '#1D4ED8',
+    backgroundColor: '#0A4DA3',
+    borderColor: '#0A4DA3',
   },
   timeSlotText: {
     fontSize: 13,
     color: '#111827',
+    fontFamily: 'Montserrat-Regular',
   },
   timeSlotTextSelected: {
     color: '#FFFFFF',

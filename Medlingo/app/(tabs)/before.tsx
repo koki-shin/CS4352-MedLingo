@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Keyboard, View, Pressable } from 'react-native';
 import { Text, TextInput, Checkbox, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useTranslation } from '../../hooks/translate';
@@ -447,9 +448,23 @@ export default function BeforeAppointmentCondensed() {
                 onPress={() => setConsentOne(!consentOne)}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
-                <Text style={{ fontSize: 16, color: consentOne ? "#0A4DA3" : "#999", marginRight: 12, fontSize: 20 }}>
-                  {consentOne ? "✓" : "○"}
-                </Text>
+                <View
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderWidth: 2,
+                    borderColor: consentOne ? "#0A4DA3" : "#d7e3ff",
+                    borderRadius: 4,
+                    backgroundColor: consentOne ? "#0A4DA3" : "white",
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 12,
+                  }}
+                >
+                  {consentOne && (
+                    <Ionicons name="checkmark" size={16} color="white" />
+                  )}
+                </View>
                 <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
                   {localizedQuestions[selectedLanguage][3]}
                 </Text>
@@ -460,9 +475,23 @@ export default function BeforeAppointmentCondensed() {
                 onPress={() => setConsentTwo(!consentTwo)}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
-                <Text style={{ fontSize: 16, color: consentTwo ? "#0A4DA3" : "#999", marginRight: 12, fontSize: 20 }}>
-                  {consentTwo ? "✓" : "○"}
-                </Text>
+                <View
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderWidth: 2,
+                    borderColor: consentTwo ? "#0A4DA3" : "#d7e3ff",
+                    borderRadius: 4,
+                    backgroundColor: consentTwo ? "#0A4DA3" : "white",
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 12,
+                  }}
+                >
+                  {consentTwo && (
+                    <Ionicons name="checkmark" size={16} color="white" />
+                  )}
+                </View>
                 <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
                   {localizedQuestions[selectedLanguage][4]}
                 </Text>
@@ -473,9 +502,23 @@ export default function BeforeAppointmentCondensed() {
                 onPress={() => setConsentThree(!consentThree)}
                 style={{ flexDirection: 'row', alignItems: 'center' }}
               >
-                <Text style={{ fontSize: 16, color: consentThree ? "#0A4DA3" : "#999", marginRight: 12, fontSize: 20 }}>
-                  {consentThree ? "✓" : "○"}
-                </Text>
+                <View
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderWidth: 2,
+                    borderColor: consentThree ? "#0A4DA3" : "#d7e3ff",
+                    borderRadius: 4,
+                    backgroundColor: consentThree ? "#0A4DA3" : "white",
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: 12,
+                  }}
+                >
+                  {consentThree && (
+                    <Ionicons name="checkmark" size={16} color="white" />
+                  )}
+                </View>
                 <Text style={{ fontSize: 15, color: "#1a1a1a", flex: 1 }}>
                   {localizedQuestions[selectedLanguage][5]}
                 </Text>

@@ -12,7 +12,7 @@ import { useTranslation } from '../../hooks/translate';
 // Page based on language
 const localizedUI: Record<Language, Record<string, string>> = {
   en: {
-    beforeAppointmentTitle: "BEFORE YOUR APPOINTMENT",
+    beforeAppointmentTitle: "Before Your Appointment",
     selectLanguage: "Select Language:",
     inputPlaceholder: "Type here...",
     aiTitle: "AI ASSISTANT",
@@ -23,7 +23,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     back: "Back"
   },
   es: {
-    beforeAppointmentTitle: "ANTES DE SU CITA",
+    beforeAppointmentTitle: "Antes de su cita",
     selectLanguage: "Seleccione el idioma:",
     inputPlaceholder: "Escriba aquí...",
     aiTitle: "ASISTENTE AI",
@@ -34,7 +34,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     back: "Atrás"
   },
   fr: {
-    beforeAppointmentTitle: "AVANT VOTRE RENDEZ-VOUS",
+    beforeAppointmentTitle: "Avant votre rendez-vous",
     selectLanguage: "Choisir la langue:",
     inputPlaceholder: "Tapez ici...",
     aiTitle: "ASSISTANT IA",

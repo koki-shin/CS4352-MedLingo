@@ -17,6 +17,7 @@ export default function TabLayout() {
             name="home" // Corresponds to app/(tabs)/home.tsx
             options={{
               title: "Home",
+              headerShown: false,
               tabBarIcon: ({ color }) => <Ionicons name="home" size={24} color={color} />,
             }}
           />
@@ -24,7 +25,8 @@ export default function TabLayout() {
           <Tabs.Screen
             name="before" // Corresponds to app/(tabs)/before.tsx
             options={{
-              title: "Before Appointment",
+              title: "Before",
+              headerShown: false,
               tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
             }}
           />
@@ -32,7 +34,8 @@ export default function TabLayout() {
             <Tabs.Screen
             name="during" // Corresponds to app/(tabs)/before.tsx
             options={{
-              title: "During Appointment",
+              title: "During",
+              headerShown: false,
               tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
             }}
           />
@@ -40,7 +43,8 @@ export default function TabLayout() {
           <Tabs.Screen
             name="after" // Corresponds to app/(tabs)/before.tsx
             options={{
-              title: "After Appointment",
+              title: "After",
+              headerShown: false,
               tabBarIcon: ({ color }) => <Ionicons name="push" size={24} color={color} />,
             }}
           />

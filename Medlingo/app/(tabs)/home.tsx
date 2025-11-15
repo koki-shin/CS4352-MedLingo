@@ -45,7 +45,7 @@ export default function HomeScreen() {
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   return (
-    <View style={styles.container}>
+    <View className="flex-1 justify-center items-center gap-5 p-4">
       <LanguagePicker
         selectedLanguage={selectedLanguage}
         onValueChange={setSelectedLanguage}
@@ -88,12 +88,12 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20,
-  },
+  // container: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   gap: 20,
+  // },
   before_button: {
     padding: 20,
     backgroundColor: 'rgba(255, 0, 0, 0.4)',

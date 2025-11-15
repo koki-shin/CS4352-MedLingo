@@ -1,12 +1,18 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Modal, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
+import { useTranslation } from '../../hooks/translate';
+import { Language } from '../../hooks/LanguagePicker';
+import { useLanguage } from '../../hooks/LanguageContext';
+
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
+
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(null);
   const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
@@ -132,6 +138,31 @@ export default function SettingsScreen() {
     console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
   };
 
+  //translate prompts
+const localizedUI: Record<Language, Record<string, string>> = {
+  en: {
+    message: "Message From Doctor:",
+  },
+  es: {
+    message: "Mensaje del doctor:",
+  },
+  fr: {
+    message: "Mensaje del médico:",
+  },
+  zh: {
+    message: "医生的话:",
+  }
+};
+
+  // translate user text to 
+  const [src_one, set_src_one] = useState('');
+  const { translate, isLoading, hasApiKey } = useTranslation();
+  async function run_trans() {
+        Keyboard.dismiss();
+        const result = await translate(src_one, selectedLanguage);
+        if (result) set_src_one(result);
+    }
+
   return (
     <View style={styles.container}>
       {/* Recording Section */}
@@ -154,23 +185,21 @@ export default function SettingsScreen() {
       {/* Doctor (English) */}
       <View style={[styles.box, styles.englishBox]}>
         <View style={styles.labelRow}>
-          <View style={styles.englishCircle} />
-          <Text style={styles.label}>Doctor (English)</Text>
+          <Text style={styles.label}>
+            {localizedUI[selectedLanguage].message}
+          </Text>
         </View>
-        <Text style={styles.subText}>
-          “Please avoid taking any antihistamines for at least 3 days before your allergy test.”
-        </Text>
-      </View>
-
-      {/* Translation (Japanese) */}
-      <View style={[styles.box, styles.translationBox]}>
-        <View style={styles.labelRow}>
-          <View style={styles.translationCircle} />
-          <Text style={styles.label}>Translation (Japanese)</Text>
-        </View>
-        <Text style={styles.subText}>
-          アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。
-        </Text>
+         <TextInput
+                value={src_one}
+                onChangeText={set_src_one}
+                placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
+                multiline={false}
+                returnKeyType="send"
+                onSubmitEditing={run_trans}
+                style={styles.subText}
+                editable={!isLoading}
+            />
+            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
       </View>
 
       {/* Tap to pause/resume recording */}

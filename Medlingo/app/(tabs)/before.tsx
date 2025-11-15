@@ -80,17 +80,17 @@ export default function BeforeAppointmentCondensed() {
         Keyboard.dismiss();
         try {
             if (src_one.trim().length > 0) {
-                const r1 = await translate(src_one);
+                const r1 = await translate(src_one, "en");
                 if (r1) set_src_one(r1);
             }
 
       if (src_two.trim().length > 0) {
-        const r2 = await translate(src_two);
+        const r2 = await translate(src_two, "en");
         if (r2) set_src_two(r2);
       }
 
       if (src_three.trim().length > 0) {
-        const r3 = await translate(src_three);
+        const r3 = await translate(src_three, "en");
         if (r3) set_src_three(r3);
       }
     } catch (e) {
@@ -133,6 +133,35 @@ export default function BeforeAppointmentCondensed() {
       "我同意诊所的隐私和付款政策。"
     ]
   };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    padding: 20,
+  },
+  outputTitle: {
+    fontSize: 28,
+    fontWeight: '800',
+    color: '#0A4DA3',
+    marginBottom: 24,
+    textAlign: 'center',
+    fontFamily: 'Montserrat-ExtraBold',
+  },
+  outputQuestion: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#0A4DA3',
+    marginBottom: 12,
+    fontFamily: 'Montserrat-SemiBold',
+  },
+  questionBlock: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    marginBottom: 16,
+    fontFamily: 'Montserrat-Regular',
+  },
+});
 
 // Review Screen after submit
 if (isOutputVisible) {

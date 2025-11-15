@@ -504,28 +504,6 @@ if (isOutputVisible) {
       />
       <View style={{ height: 50 }} />
     </ScrollView>
-  );
-}
-
-        {/* Submit Button */}
-        <Pressable
-          onPress={() => {
-            translateAll();
-            setIsOutputVisible(true);
-          }}
-          style={{
-            backgroundColor: "#0A4DA3",
-            paddingVertical: 16,
-            paddingHorizontal: 24,
-            borderRadius: 12,
-            marginBottom: 20,
-          }}
-        >
-          <Text style={{ color: "white", fontSize: 16, fontWeight: "600", textAlign: "center", fontFamily: 'Montserrat-SemiBold' }}>
-            {localizedUI[selectedLanguage].submit}
-          </Text>
-        </Pressable>
-      </ScrollView>
     </SafeAreaView>
   );
 }

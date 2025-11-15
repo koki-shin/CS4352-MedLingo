@@ -106,39 +106,6 @@ export default function SettingsScreen() {
     }
   };
 
-  const saveFile = async (
-    content: string,
-    fileName: string,
-    type: "blob" | "text" = "text"
-  ) => {
-    if (Platform.OS === "web") {
-      if (type === "text") {
-        const blob = new Blob([content], { type: "application/json" });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        URL.revokeObjectURL(url);
-      } else {
-        const blob = await (await fetch(content)).blob();
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = fileName;
-        a.click();
-        URL.revokeObjectURL(url);
-      }
-    } else {
-      const newPath = `${FileSystem.documentDirectory}${fileName}`;
-      if (type === "text") {
-        await FileSystem.writeAsStringAsync(newPath, content);
-      } else {
-        await FileSystem.copyAsync({ from: content, to: newPath });
-      }
-    }
-  };
-
   const generateVisitSummary = async (file: string) => {
     const summary = {
       date: new Date().toLocaleString(),
@@ -150,8 +117,25 @@ export default function SettingsScreen() {
     const json = JSON.stringify(summary, null, 2);
     const fileName = `visit_summary_${Date.now()}.json`;
 
-    await saveFile(json, fileName, "text");
-    console.log("Vbisit summary saved.");
+    if (Platform.OS === "web") {
+      const blob = new Blob([json], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      console.log("Visit summary downloaded.");
+    } else {
+      const dir = (FileSystem as any).documentDirectory;
+      if (dir) {
+        const newPath = `${dir}${fileName}`;
+        await FileSystem.writeAsStringAsync(newPath, json);
+        console.log("Visit summary saved locally:", newPath);
+      }
+    }
   };
 
   const handleEndSession = async () => {
@@ -162,8 +146,28 @@ export default function SettingsScreen() {
       if (audioFileUri) {
         const fileName = `visit_audio_${Date.now()}.m4a`;
         savedUri = fileName;
-        await saveFile(audioFileUri, fileName, "blob");
-        console.log("Audio saved:", fileName);
+
+
+        if (Platform.OS === "web") {
+          const response = await fetch(audioFileUri);
+          const blob = await response.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          URL.revokeObjectURL(url);
+          console.log("audio downloaded to PC");
+        } else {
+          const dir = (FileSystem as any).documentDirectory;
+          if (dir) {
+            const newPath = `${dir}${fileName}`;
+            await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
+            console.log("audio saved locally at:", newPath);
+          }
+        }
       }
     } catch (err) {
       console.error("Couldnt download audio", err);
@@ -191,7 +195,7 @@ export default function SettingsScreen() {
           isRecording ? styles.recordingBox : styles.startBox,
         ]}
         onPress={toggleRecording}
-        activeOpacity={0.3}
+        activeOpacity={0.7}
       >
         <View
           style={[

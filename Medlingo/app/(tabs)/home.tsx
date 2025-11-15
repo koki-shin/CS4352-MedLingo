@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Card, Text } from 'react-native-paper';
@@ -69,6 +69,16 @@ export default function HomeScreen() {
         >
           MedLingo
         </Text>
+
+        <Image
+          source={require('../../assets/images/MedLingo-Logo.png')}
+          style={{
+            width: 250,
+            height: 250,
+            marginHorizontal: '17.5%',
+          }}
+          resizeMode="contain"
+        />
 
         {/* Language Picker */}
         <View className="mb-8">
@@ -238,61 +248,7 @@ export default function HomeScreen() {
               </Card>
             </Link>
           </View>
-
-          {/* Quick Access */}
-          <View>
-            <Link href="/quick" asChild>
-              <Card
-                mode="outlined"
-                style={{
-                  backgroundColor: 'white',
-                  borderColor: '#d7e3ff',
-                  borderWidth: 1.2,
-                  borderRadius: 22,
-                }}
-              >
-                <Card.Content style={{ paddingVertical: 18 }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginBottom: 8,
-                    }}
-                  >
-                    <Ionicons
-                      name="flash-outline"
-                      size={24}
-                      color="#0A4DA3"
-                      style={{ marginRight: 12 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: '700',
-                        color: '#0A4DA3',
-                        flex: 1,
-                        fontFamily: 'Montserrat-Bold',
-                      }}
-                    >
-                      {localizedUI[selectedLanguage].quick.title}
-                    </Text>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: '#5b6b7a',
-                      marginTop: 4,
-                      fontFamily: 'Montserrat-Regular',
-                    }}
-                  >
-                    {localizedUI[selectedLanguage].quick.subtitle}
-                  </Text>
-                </Card.Content>
-              </Card>
-            </Link>
-          </View>
         </View>
-
         <View className="h-20" />
       </View>
     </SafeAreaView>

@@ -75,8 +75,7 @@ export default function HomeScreen() {
           style={{
             width: 250,
             height: 250,
-            justifyContent: 'center',
-            alignItems: 'center',
+            marginHorizontal: '17.5%',
           }}
           resizeMode="contain"
         />

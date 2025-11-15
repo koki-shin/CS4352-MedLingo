@@ -400,115 +400,222 @@ export default function SettingsScreen() {
         </Card>
 
         {/* Set Medication Reminders */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].medicationRemindersTitle}</Text>
-
-          <View style={styles.reminderWrapper}>
-            <View style={styles.reminderLeft}>
-              <Text style={styles.label}>{localizedUI[selectedLanguage].medicationName}</Text>
-              <View style={styles.inputPill}>
-                <Picker
-                  selectedValue={selectedMedication}
-                  onValueChange={(value) => setSelectedMedication(value)}
-                  style={styles.picker}
-                  dropdownIconColor="#111827"
-                >
-                  {medicationOptions.map((med) => (
-                    <Picker.Item key={med} label={med} value={med} />
-                  ))}
-                </Picker>
-              </View>
-
-              {/* Add custom medication input */}
-              <View style={styles.customMedBubble}>
-                <Text style={[styles.label, { marginTop: 0 }]}>{localizedUI[selectedLanguage].addCustomMedication}</Text>
-                <View style={{ marginTop: 6 }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                    <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}> 
-                      <TextInput
-                        placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
-                        value={newMedName}
-                        onChangeText={setNewMedName}
-                        style={{ height: 36, paddingHorizontal: 6 }}
-                        returnKeyType="done"
-                      />
-                    </View>
-                    <Pressable
-                      style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
-                      onPress={addCustomMedication}
-                    >
-                      <Text style={[styles.setReminderText, { fontSize: 13 }]}>{localizedUI[selectedLanguage].addButton}</Text>
-                    </Pressable>
-                  </View>
-
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
-                    <Text style={{ marginRight: 10, fontSize: 13, fontWeight: '600' }}>{localizedUI[selectedLanguage].timesPerDay}</Text>
-                    <View style={[styles.inputPill, { width: 120 }]}> 
-                      <Picker
-                        selectedValue={newMedDoses}
-                        onValueChange={(val) => setNewMedDoses(Number(val))}
-                        style={styles.picker}
-                        dropdownIconColor="#111827"
-                      >
-                        {[1,2,3,4].map((n) => (
-                          <Picker.Item key={n} label={`${n}`} value={n} />
-                        ))}
-                      </Picker>
-                    </View>
-                  </View>
-                </View>
-              </View>
-
-              <View style={styles.reminderRow}>
-                <View style={styles.reminderColumn}>
-                  <Text style={styles.label}>{localizedUI[selectedLanguage].timeLabel}</Text>
-                  {selectedTimes.map((time, idx) => (
-                    <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}> 
-                      <Picker
-                        selectedValue={time}
-                        onValueChange={(value) => {
-                          const next = [...selectedTimes];
-                          next[idx] = value;
-                          setSelectedTimes(next);
-                        }}
-                        style={styles.picker}
-                        dropdownIconColor="#111827"
-                      >
-                        {TIME_OPTIONS.map((t) => (
-                          <Picker.Item key={t} label={t} value={t} />
-                        ))}
-                      </Picker>
-                    </View>
-                  ))}
-                </View>
-
-                <View style={styles.reminderColumn}>
-                  <Text style={styles.label}>{localizedUI[selectedLanguage].repeatLabel}</Text>
-                  <View style={styles.inputPill}>
-                    <Picker
-                      selectedValue={selectedRepeat}
-                      onValueChange={(value) => setSelectedRepeat(value)}
-                      style={styles.picker}
-                      dropdownIconColor="#111827"
-                    >
-                      <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
-                      <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
-                      <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
-                      <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
-                    </Picker>
-                  </View>
-                </View>
-              </View>
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+              <Ionicons 
+                name="notifications-outline" 
+                size={22} 
+                color="#0A4DA3" 
+                style={{ marginRight: 10 }} 
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].medicationRemindersTitle}
+              </Text>
             </View>
 
-            <Pressable
-              style={styles.setReminderButtonTall}
-              onPress={() => setSummaryVisible(true)}
-            >
-              <Text style={styles.setReminderText}>{localizedUI[selectedLanguage].setReminderButton}</Text>
-            </Pressable>
-          </View>
-        </View>
+            <View style={styles.reminderWrapper}>
+              <View style={styles.reminderLeft}>
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontWeight: '600',
+                    marginTop: 10,
+                    marginBottom: 4,
+                    color: "#1a1a1a",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].medicationName}
+                </Text>
+                <View style={styles.inputPill}>
+                  <Picker
+                    selectedValue={selectedMedication}
+                    onValueChange={(value) => setSelectedMedication(value)}
+                    style={styles.picker}
+                    dropdownIconColor="#0A4DA3"
+                  >
+                    {medicationOptions.map((med) => (
+                      <Picker.Item key={med} label={med} value={med} />
+                    ))}
+                  </Picker>
+                </View>
+
+                {/* Add custom medication input */}
+                <View style={styles.customMedBubble}>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '600',
+                      marginTop: 0,
+                      marginBottom: 6,
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].addCustomMedication}
+                  </Text>
+                  <View style={{ marginTop: 6 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                      <View style={[styles.inputPill, { flex: 1, marginRight: 8 }]}>
+                        <TextInput
+                          placeholder={localizedUI[selectedLanguage].medicationNamePlaceholder}
+                          value={newMedName}
+                          onChangeText={setNewMedName}
+                          style={{
+                            height: 36,
+                            paddingHorizontal: 6,
+                            fontFamily: 'Montserrat-Regular',
+                          }}
+                          returnKeyType="done"
+                          placeholderTextColor="#9CA3AF"
+                        />
+                      </View>
+                      <Pressable
+                        style={[styles.setReminderButtonTall, { width: 72, paddingVertical: 8 }]}
+                        onPress={addCustomMedication}
+                      >
+                        <Text
+                          style={{
+                            fontSize: 13,
+                            fontWeight: '600',
+                            color: '#15803D',
+                            textAlign: 'center',
+                            fontFamily: 'Montserrat-SemiBold',
+                          }}
+                        >
+                          {localizedUI[selectedLanguage].addButton}
+                        </Text>
+                      </Pressable>
+                    </View>
+
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+                      <Text
+                        style={{
+                          marginRight: 10,
+                          fontSize: 13,
+                          fontWeight: '600',
+                          color: "#1a1a1a",
+                          fontFamily: 'Montserrat-SemiBold',
+                        }}
+                      >
+                        {localizedUI[selectedLanguage].timesPerDay}
+                      </Text>
+                      <View style={[styles.inputPill, { width: 120 }]}>
+                        <Picker
+                          selectedValue={newMedDoses}
+                          onValueChange={(val) => setNewMedDoses(Number(val))}
+                          style={styles.picker}
+                          dropdownIconColor="#0A4DA3"
+                        >
+                          {[1, 2, 3, 4].map((n) => (
+                            <Picker.Item key={n} label={`${n}`} value={n} />
+                          ))}
+                        </Picker>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                <View style={styles.reminderRow}>
+                  <View style={styles.reminderColumn}>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        fontWeight: '600',
+                        marginTop: 10,
+                        marginBottom: 4,
+                        color: "#1a1a1a",
+                        fontFamily: 'Montserrat-SemiBold',
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].timeLabel}
+                    </Text>
+                    {selectedTimes.map((time, idx) => (
+                      <View key={idx} style={[styles.inputPill, { marginBottom: 8 }]}>
+                        <Picker
+                          selectedValue={time}
+                          onValueChange={(value) => {
+                            const next = [...selectedTimes];
+                            next[idx] = value;
+                            setSelectedTimes(next);
+                          }}
+                          style={styles.picker}
+                          dropdownIconColor="#0A4DA3"
+                        >
+                          {TIME_OPTIONS.map((t) => (
+                            <Picker.Item key={t} label={t} value={t} />
+                          ))}
+                        </Picker>
+                      </View>
+                    ))}
+                  </View>
+
+                  <View style={styles.reminderColumn}>
+                    <Text
+                      style={{
+                        fontSize: 13,
+                        fontWeight: '600',
+                        marginTop: 10,
+                        marginBottom: 4,
+                        color: "#1a1a1a",
+                        fontFamily: 'Montserrat-SemiBold',
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].repeatLabel}
+                    </Text>
+                    <View style={styles.inputPill}>
+                      <Picker
+                        selectedValue={selectedRepeat}
+                        onValueChange={(value) => setSelectedRepeat(value)}
+                        style={styles.picker}
+                        dropdownIconColor="#0A4DA3"
+                      >
+                        <Picker.Item key="daily" label={localizedUI[selectedLanguage].daily} value="daily" />
+                        <Picker.Item key="weekly" label={localizedUI[selectedLanguage].weekly} value="weekly" />
+                        <Picker.Item key="biweekly" label={localizedUI[selectedLanguage].biweekly} value="biweekly" />
+                        <Picker.Item key="monthly" label={localizedUI[selectedLanguage].monthly} value="monthly" />
+                      </Picker>
+                    </View>
+                  </View>
+                </View>
+              </View>
+
+              <Pressable
+                style={styles.setReminderButtonTall}
+                onPress={() => setSummaryVisible(true)}
+              >
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    color: '#15803D',
+                    textAlign: 'center',
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].setReminderButton}
+                </Text>
+              </Pressable>
+            </View>
+          </Card.Content>
+        </Card>
 
         {/* Follow-up Care */}
         <View style={styles.card}>

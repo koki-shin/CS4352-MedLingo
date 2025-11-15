@@ -1,4 +1,4 @@
-import { View } from 'react-native';
+import { View, Image } from 'react-native';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
 import { Card, Text } from 'react-native-paper';
@@ -69,6 +69,17 @@ export default function HomeScreen() {
         >
           MedLingo
         </Text>
+
+        <Image
+          source={require('../../assets/images/MedLingo-Logo.png')}
+          style={{
+            width: 250,
+            height: 250,
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+          resizeMode="contain"
+        />
 
         {/* Language Picker */}
         <View className="mb-8">

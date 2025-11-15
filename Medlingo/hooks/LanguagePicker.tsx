@@ -122,8 +122,9 @@ export const LanguagePicker: React.FC<LanguagePickerProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    width: '80%',
+    width: '50%',
     marginVertical: 15,
+    marginHorizontal: '25%',
     zIndex: 10,
   },
   label: {

@@ -1,6 +1,6 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform, Keyboard } from 'react-native';
+import { Text, TextInput, View, StyleSheet, TouchableOpacity, Modal, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
 import { useTranslation } from '../../hooks/translate';
@@ -135,6 +135,7 @@ export default function SettingsScreen() {
 
   // translate user test to 
   const [src_one, set_src_one] = useState('');
+  const { translate, isLoading, hasApiKey } = useTranslation();
   async function run_trans() {
         Keyboard.dismiss();
         const result = await translate(src_one);
@@ -165,13 +166,13 @@ export default function SettingsScreen() {
         <View style={styles.labelRow}>
         </View>
          <TextInput
-                value={sourceText}
-                onChangeText={set_source}
+                value={src_one}
+                onChangeText={set_src_one}
                 placeholder={hasApiKey ? "Enter text in any language — press Enter to translate" : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
                 multiline={false}
                 returnKeyType="send"
                 onSubmitEditing={run_trans}
-                style={styles.input}
+                style={styles.subText}
                 editable={!isLoading}
             />
             {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}

@@ -1,6 +1,6 @@
 // app/(tabs)/settings.tsx
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, Modal, Platform, Keyboard } from 'react-native';
 import * as FileSystem from "expo-file-system/legacy";
 import { Audio } from "expo-av";
 import { useTranslation } from '../../hooks/translate';
@@ -135,17 +135,11 @@ export default function SettingsScreen() {
 
   // translate user test to 
   const [src_one, set_src_one] = useState('');
-  async function translateAll() {
-      Keyboard.dismiss();
-      try {
-          if (src_one.trim().length > 0) {
-              const r1 = await translate(src_one);
-              if (r1) set_src_one(r1);
-          }
-  } catch (e) {
-    console.warn('translateAll error', e);
-  }
-}
+  async function run_trans() {
+        Keyboard.dismiss();
+        const result = await translate(src_one);
+        if (result) set_src_one(result);
+    }
 
   return (
     <View style={styles.container}>

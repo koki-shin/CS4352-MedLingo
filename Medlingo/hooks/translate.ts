@@ -17,7 +17,7 @@ export function useTranslation() {
 
   const API_KEY =(Constants.expoConfig && (Constants.expoConfig.extra as any)?.GOOGLE_TRANSLATE_API_KEY);
 
-  const translate = async (text: string): Promise<string | null> => {
+  const translate = async (text: string, targetLang: string): Promise<string | null> => {
     if (!text.trim()) {
       Alert.alert('Enter text', 'Please enter some text to translate.');
       return null;
@@ -35,7 +35,7 @@ export function useTranslation() {
 
     try {
       const url = `https://translation.googleapis.com/language/translate/v2?key=${API_KEY}`;
-      const body = { q: text, target: 'en', format: 'text' };
+      const body = { q: text, target: targetLang, format: 'text' };
 
       const res = await fetch(url, {
         method: 'POST',

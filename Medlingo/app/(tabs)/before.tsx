@@ -80,17 +80,17 @@ export default function BeforeAppointmentCondensed() {
         Keyboard.dismiss();
         try {
             if (src_one.trim().length > 0) {
-                const r1 = await translate(src_one);
+                const r1 = await translate(src_one, "en");
                 if (r1) set_src_one(r1);
             }
 
       if (src_two.trim().length > 0) {
-        const r2 = await translate(src_two);
+        const r2 = await translate(src_two, "en");
         if (r2) set_src_two(r2);
       }
 
       if (src_three.trim().length > 0) {
-        const r3 = await translate(src_three);
+        const r3 = await translate(src_three, "en");
         if (r3) set_src_three(r3);
       }
     } catch (e) {

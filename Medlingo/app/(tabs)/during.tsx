@@ -138,7 +138,7 @@ export default function SettingsScreen() {
   const { translate, isLoading, hasApiKey } = useTranslation();
   async function run_trans() {
         Keyboard.dismiss();
-        const result = await translate(src_one);
+        const result = await translate(src_one, "de");
         if (result) set_src_one(result);
     }
 

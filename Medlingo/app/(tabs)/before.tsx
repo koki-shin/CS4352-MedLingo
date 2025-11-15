@@ -1,8 +1,8 @@
 import * as Print from 'expo-print';
 
 import React, { useState } from 'react';
-import { Button, ScrollView, StyleSheet, Keyboard, TextInput, View } from 'react-native';
-import { Text } from 'react-native-paper';
+import { Button, ScrollView, StyleSheet, Keyboard, View } from 'react-native';
+import { Text, TextInput } from 'react-native-paper';
 import Checkbox from 'expo-checkbox';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
@@ -193,32 +193,38 @@ if (isOutputVisible) {
       <Text variant="headlineSmall" className="my-3 text-center uppercase">
         {localizedUI[selectedLanguage].beforeAppointmentTitle}
       </Text>
-        <Text style={styles.label}>{localizedQuestions[selectedLanguage][0]}</Text>
+        <Text variant="bodyLarge" className="mt-3">
+          {localizedQuestions[selectedLanguage][0]}
+        </Text>
         <TextInput
+                mode="outlined"
                 value={src_one}
                 onChangeText={set_src_one}
                 placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                multiline={false}
-                style={styles.input}
                 editable={!isLoading}
+                className="mt-2"
             />
-        <Text style={styles.label}>{localizedQuestions[selectedLanguage][1]}</Text>
+        <Text variant="bodyLarge" className="mt-3">
+          {localizedQuestions[selectedLanguage][1]}
+        </Text>
         <TextInput
+                mode="outlined"
                 value={src_two}
                 onChangeText={set_src_two}
                 placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                multiline={false}
-                style={styles.input}
                 editable={!isLoading}
+                className="mt-2"
             />
-        <Text style={styles.label}>{localizedQuestions[selectedLanguage][2]}</Text>
+        <Text variant="bodyLarge" className="mt-3">
+          {localizedQuestions[selectedLanguage][2]}
+        </Text>
         <TextInput
+                mode="outlined"
                 value={src_three}
                 onChangeText={set_src_three}
                 placeholder={hasApiKey ? localizedUI[selectedLanguage].inputPlaceholder : "Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment"}
-                multiline={false}
-                style={styles.input}
                 editable={!isLoading}
+                className="mt-2"
             />
 
       {/* Consent Section */}
@@ -258,10 +264,6 @@ if (isOutputVisible) {
 }
 
 const styles = StyleSheet.create({
-  label: { 
-    fontSize: 16, 
-    marginTop: 10 
-  },
   questionBlock: { 
     marginBottom: 15 
   },
@@ -269,13 +271,6 @@ const styles = StyleSheet.create({
      fontSize: 16, 
      marginBottom: 5, 
      fontWeight: 'bold' 
-  },
-  input: { 
-    borderWidth: 1, 
-    borderColor: '#aaa', 
-    borderRadius: 8, 
-    padding: 10, 
-    fontSize: 16 
   },
   aiContainer: {
     backgroundColor: '#CFFFCF',

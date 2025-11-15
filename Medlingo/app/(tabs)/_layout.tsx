@@ -30,7 +30,7 @@ export default function TabLayout() {
               title: 'Before',
               headerShown: false,
               tabBarIcon: ({ color }) => (
-                <Ionicons name="push" size={24} color={color} />
+                <Ionicons name="checkboxß-outline" size={24} color={color} />
               ),
             }}
           />
@@ -41,7 +41,7 @@ export default function TabLayout() {
               title: 'During',
               headerShown: false,
               tabBarIcon: ({ color }) => (
-                <Ionicons name="push" size={24} color={color} />
+                <Ionicons name="mic-outline" size={24} color={color} />
               ),
             }}
           />
@@ -52,7 +52,7 @@ export default function TabLayout() {
               title: 'After',
               headerShown: false,
               tabBarIcon: ({ color }) => (
-                <Ionicons name="push" size={24} color={color} />
+                <Ionicons name="document-text-outline" size={24} color={color} />
               ),
             }}
           />

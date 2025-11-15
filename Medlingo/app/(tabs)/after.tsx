@@ -618,38 +618,94 @@ export default function SettingsScreen() {
         </Card>
 
         {/* Follow-up Care */}
-        <View style={styles.card}>
-          <Text style={styles.cardTitle}>{localizedUI[selectedLanguage].followUpCareTitle}</Text>
-
-          <View style={styles.followRow}>
-            {/* Telehealth Follow-up */}
-            <Pressable
-              style={styles.followButton}
-              onPress={() => {
-                setSelectedTelehealthDate(null);
-                setSelectedTelehealthTime(null);
-                setTelehealthScheduleModalVisible(true);
-              }}
-            >
-              <Text style={styles.followText}>
-                {localizedUI[selectedLanguage].telehealthFollowUp}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: "white",
+            borderColor: "#d7e3ff",
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 12 }}>
+              <Ionicons 
+                name="calendar-outline" 
+                size={22} 
+                color="#0A4DA3" 
+                style={{ marginRight: 10 }} 
+              />
+              <Text
+                style={{
+                  fontSize: 18,
+                  fontWeight: "700",
+                  color: "#0A4DA3",
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedUI[selectedLanguage].followUpCareTitle}
               </Text>
-            </Pressable>
+            </View>
 
-            <Pressable
-              style={styles.followButton}
-              onPress={() => {
-                setSelectedApptDate(null);
-                setSelectedApptTime(null);
-                setScheduleModalVisible(true);
-              }}
-            >
-              <Text style={styles.followText}>
-                {localizedUI[selectedLanguage].scheduleNextAppointment}
-              </Text>
-            </Pressable>
-          </View>
-        </View>
+            <View style={styles.followRow}>
+              {/* Telehealth Follow-up */}
+              <Pressable
+                style={styles.followButton}
+                onPress={() => {
+                  setSelectedTelehealthDate(null);
+                  setSelectedTelehealthTime(null);
+                  setTelehealthScheduleModalVisible(true);
+                }}
+              >
+                <Ionicons 
+                  name="videocam-outline" 
+                  size={20} 
+                  color="#0A4DA3" 
+                  style={{ marginBottom: 4 }} 
+                />
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].telehealthFollowUp}
+                </Text>
+              </Pressable>
+
+              <Pressable
+                style={styles.followButton}
+                onPress={() => {
+                  setSelectedApptDate(null);
+                  setSelectedApptTime(null);
+                  setScheduleModalVisible(true);
+                }}
+              >
+                <Ionicons 
+                  name="calendar-outline" 
+                  size={20} 
+                  color="#0A4DA3" 
+                  style={{ marginBottom: 4 }} 
+                />
+                <Text
+                  style={{
+                    fontSize: 14,
+                    fontWeight: '600',
+                    textAlign: 'center',
+                    color: "#0A4DA3",
+                    fontFamily: 'Montserrat-SemiBold',
+                  }}
+                >
+                  {localizedUI[selectedLanguage].scheduleNextAppointment}
+                </Text>
+              </Pressable>
+            </View>
+          </Card.Content>
+        </Card>
 
         <Modal
           transparent
@@ -1045,17 +1101,19 @@ const styles = StyleSheet.create({
   followRow: {
     flexDirection: 'row',
     marginTop: 10,
+    gap: 12,
   },
   followButton: {
     flex: 1,
-    marginHorizontal: 4,
     borderRadius: 18,
-    borderWidth: 1.5,
-    borderColor: '#000000',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
     backgroundColor: '#E6EEFF',
-    paddingVertical: 12,
-    paddingHorizontal: 8,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 100,
   },
   followText: {
     fontSize: 14,

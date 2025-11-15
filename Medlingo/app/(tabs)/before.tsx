@@ -2,8 +2,8 @@ import * as Print from 'expo-print';
 
 import React, { useState } from 'react';
 import { Button, ScrollView, StyleSheet, Keyboard, View } from 'react-native';
-import { Text, TextInput } from 'react-native-paper';
-import Checkbox from 'expo-checkbox';
+import { Text, TextInput, Checkbox } from 'react-native-paper';
+// import Checkbox from 'expo-checkbox';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useTranslation } from '../../hooks/translate';
@@ -228,18 +228,30 @@ if (isOutputVisible) {
             />
 
       {/* Consent Section */}
-      <View style={{ marginTop: 20, marginBottom: 10 }}>
-        {[3, 4, 5].map((i, index) => (
-          <View key={index} style={{ marginBottom: 10 }}>
-            <Text style={styles.label}>{localizedQuestions[selectedLanguage][i]}</Text>
-            <View style={{ marginTop: 8 }}>
-            <Checkbox
-              value={i === 3 ? consentOne : i === 4 ? consentTwo : consentThree}
-              onValueChange={i === 3 ? setConsentOne : i === 4 ? setConsentTwo : setConsentThree}
-            />
-          </View>
-        </View>
-        ))}
+      <View className="mt-5 mb-3">
+        <Checkbox.Item
+          label={localizedQuestions[selectedLanguage][3]}
+          status={consentOne ? 'checked' : 'unchecked'}
+          onPress={() => setConsentOne(!consentOne)}
+          style={{ padding: 0 }}
+          labelStyle={{ fontSize: 16 }}
+        />
+
+        <Checkbox.Item
+          label={localizedQuestions[selectedLanguage][4]}
+          status={consentTwo ? 'checked' : 'unchecked'}
+          onPress={() => setConsentTwo(!consentTwo)}
+          style={{ padding: 0 }}
+          labelStyle={{ fontSize: 16 }}
+        />
+
+        <Checkbox.Item
+          label={localizedQuestions[selectedLanguage][5]}
+          status={consentThree ? 'checked' : 'unchecked'}
+          onPress={() => setConsentThree(!consentThree)}
+          style={{ padding: 0 }}
+          labelStyle={{ fontSize: 16 }}
+        />
       </View>
 
       {/*AI Assistant*/}

@@ -12,6 +12,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Calendar } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from "@expo/vector-icons";
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
 
@@ -262,7 +263,18 @@ export default function SettingsScreen() {
         className="flex-1 bg-white px-5 pt-6"
         contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <Text style={styles.header}>{localizedUI[selectedLanguage].pageTitle}</Text>
+        <Text
+          style={{
+            fontSize: 28,
+            fontWeight: "800",
+            color: "#0A4DA3",
+            marginBottom: 24,
+            textAlign: "center",
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          {localizedUI[selectedLanguage].pageTitle}
+        </Text>
 
         {/* Diagnosis Summary */}
         <Card

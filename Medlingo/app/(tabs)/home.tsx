@@ -1,7 +1,9 @@
-import { View, Text } from 'react-native';
+import { View } from 'react-native';
 import { Link } from 'expo-router';
 import React, { useState } from 'react';
-import { Card } from 'react-native-paper';
+import { Card, Text } from 'react-native-paper';
+import { Ionicons } from "@expo/vector-icons";
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
 
@@ -18,7 +20,7 @@ const localizedUI: Record<Language, any> = {
     },
     after: {
       title: "After Appointment",
-      subtitle: "Prepare for your visit",
+      subtitle: "Review your visit summary",
     },
     quick: { title: "Quick Access" },
   },
@@ -46,44 +48,218 @@ export default function HomeScreen() {
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   return (
-    <View className="flex-1 justify-center items-center gap-5 p-4">
-      <LanguagePicker
-        selectedLanguage={selectedLanguage}
-        onValueChange={setSelectedLanguage}
-      />
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <View className="flex-1 bg-white px-5 pt-6">
+        
+        {/* Header */}
+        <Text
+          style={{
+            fontSize: 34,
+            fontWeight: "800",
+            color: "#0A4DA3",
+            marginBottom: 18,
+            textAlign: "center",
+          }}
+        >
+          MedLingo
+        </Text>
 
-      <Link href="/before" asChild>
-        <Card mode="contained" className="w-4/5">
-          <Card.Title
-            title={localizedUI[selectedLanguage].before.title}
-            subtitle={localizedUI[selectedLanguage].before.subtitle}
+        {/* Language Picker */}
+        <View className="mb-8">
+          <LanguagePicker
+            selectedLanguage={selectedLanguage}
+            onValueChange={setSelectedLanguage}
           />
-        </Card>
-      </Link>
+        </View>
 
-      <Link href="/during" asChild>
-        <Card mode="contained" className="w-4/5">
-          <Card.Title
-            title={localizedUI[selectedLanguage].during.title}
-            subtitle={localizedUI[selectedLanguage].during.subtitle}
-          />
-        </Card>
-      </Link>
+        {/* Cards */}
+        <View>
 
-      <Link href="/after" asChild>
-        <Card mode="contained" className="w-4/5">
-          <Card.Title
-            title={localizedUI[selectedLanguage].after.title}
-            subtitle={localizedUI[selectedLanguage].after.subtitle}
-          />
-        </Card>
-      </Link>
+          {/* Before Appointment */}
+          <View style={{ marginBottom: 16 }}>
+            <Link href="/before" asChild>
+              <Card
+                mode="outlined"
+                style={{
+                  backgroundColor: "white",
+                  borderColor: "#d7e3ff",
+                  borderWidth: 1.2,
+                  borderRadius: 22,
+                }}
+              >
+                <Card.Content style={{ paddingVertical: 18 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Ionicons 
+                      name="calendar-outline" 
+                      size={24} 
+                      color="#0A4DA3" 
+                      style={{ marginRight: 12 }} 
+                    />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "700",
+                        color: "#0A4DA3",
+                        flex: 1,
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].before.title}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#5b6b7a",
+                      marginTop: 4,
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].before.subtitle}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </Link>
+          </View>
 
-      <Link href="/quick" asChild>
-        <Card mode="contained" className="w-4/5">
-          <Card.Title title={localizedUI[selectedLanguage].quick.title} />
-        </Card>
-      </Link>
-    </View>
+          {/* During Appointment */}
+          <View style={{ marginBottom: 16 }}>
+            <Link href="/during" asChild>
+              <Card
+                mode="outlined"
+                style={{
+                  backgroundColor: "white",
+                  borderColor: "#d7e3ff",
+                  borderWidth: 1.2,
+                  borderRadius: 22,
+                }}
+              >
+                <Card.Content style={{ paddingVertical: 18 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Ionicons 
+                      name="mic-outline" 
+                      size={24} 
+                      color="#0A4DA3" 
+                      style={{ marginRight: 12 }} 
+                    />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "700",
+                        color: "#0A4DA3",
+                        flex: 1,
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].during.title}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#5b6b7a",
+                      marginTop: 4,
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].during.subtitle}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </Link>
+          </View>
+
+          {/* After Appointment */}
+          <View style={{ marginBottom: 16 }}>
+            <Link href="/after" asChild>
+              <Card
+                mode="outlined"
+                style={{
+                  backgroundColor: "white",
+                  borderColor: "#d7e3ff",
+                  borderWidth: 1.2,
+                  borderRadius: 22,
+                }}
+              >
+                <Card.Content style={{ paddingVertical: 18 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Ionicons 
+                      name="document-text-outline" 
+                      size={24} 
+                      color="#0A4DA3" 
+                      style={{ marginRight: 12 }} 
+                    />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "700",
+                        color: "#0A4DA3",
+                        flex: 1,
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].after.title}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#5b6b7a",
+                      marginTop: 4,
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].after.subtitle}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </Link>
+          </View>
+
+          {/* Quick Access */}
+          <View>
+            <Link href="/quick" asChild>
+              <Card
+                mode="outlined"
+                style={{
+                  backgroundColor: "white",
+                  borderColor: "#d7e3ff",
+                  borderWidth: 1.2,
+                  borderRadius: 22,
+                }}
+              >
+                <Card.Content style={{ paddingVertical: 18 }}>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+                    <Ionicons 
+                      name="flash-outline" 
+                      size={24} 
+                      color="#0A4DA3" 
+                      style={{ marginRight: 12 }} 
+                    />
+                    <Text
+                      style={{
+                        fontSize: 20,
+                        fontWeight: "700",
+                        color: "#0A4DA3",
+                        flex: 1,
+                      }}
+                    >
+                      {localizedUI[selectedLanguage].quick.title}
+                    </Text>
+                  </View>
+                  <Text
+                    style={{
+                      fontSize: 14,
+                      color: "#5b6b7a",
+                      marginTop: 4,
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].quick.subtitle}
+                  </Text>
+                </Card.Content>
+              </Card>
+            </Link>
+          </View>
+
+        </View>
+
+        <View className="h-20" />
+
+      </View>
+    </SafeAreaView>
   );
-};
+}

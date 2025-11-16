@@ -73,8 +73,8 @@ export default function HomeScreen() {
         <Image
           source={require('../../assets/images/MedLingo-Logo.png')}
           style={{
-            width: 250,
-            height: 250,
+            width: 225,
+            height: 225,
             marginHorizontal: '17.5%',
           }}
           resizeMode="contain"

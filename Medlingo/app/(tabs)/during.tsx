@@ -55,9 +55,7 @@ export default function SettingsScreen() {
       if (!granted) return alert('Mic permission required.');
 
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true, });
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY,
+       const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
       await recording.startAsync();
 
@@ -72,6 +70,11 @@ export default function SettingsScreen() {
       if (!audioRecording) return;
 
       await audioRecording.stopAndUnloadAsync();
+      await Audio.setAudioModeAsync(
+        {
+          allowsRecordingIOS: false,
+        }
+      );
       const uri = audioRecording.getURI();
       setAudioFileUri(uri);
       setAudioRecording(null);

@@ -1,56 +1,25 @@
-// app/(tabs)/during.tsx
-import React, { useState } from "react";
+// app/(tabs)/settings.tsx
+import React, { useState } from 'react';
 import {
   Text,
+  TextInput,
   View,
   StyleSheet,
   TouchableOpacity,
   Modal,
   Platform,
-} from "react-native";
-import * as FileSystem from "expo-file-system/legacy";
-import { Audio } from "expo-av";
-import { LanguagePicker } from "../../hooks/LanguagePicker";
-import { useLanguage } from "../../hooks/LanguageContext";
-
-const localizedUI: Record<string, any> = {
-  en: {
-    doctor: "Doctor (English)",
-    translation: "Translation (Japanese)",
-    pause: "Pause & Explain",
-    feeling: "How are you feeling?",
-    end: "End Session",
-    tap: "Tap to pause/resume recording",
-    statement: "アレルギー検査の少なくとも3日前から、抗ヒスタミン薬の服用は避けてください。"
-  },
-  es: {
-    doctor: "Doctor (Inglés)",
-    translation: "Traducción",
-    pause: "Pausar y Explicar",
-    feeling: "¿Cómo te sientes?",
-    end: "Terminar sesión",
-    tap: "Toque para pausar/reanudar grabación",
-    statement: "Por favor, evite tomar antihistamínicos durante al menos 3 días antes de su prueba de alergia."
-  },
-  fr: {
-    doctor: "Docteur (Anglais)",
-    translation: "Traduction",
-    pause: "Pause et Explication",
-    feeling: "Comment vous sentez-vous ?",
-    end: "Terminer la session",
-    tap: "Appuyez pour mettre en pause/reprendre l'enregistrement",
-    statement: "Veuillez éviter de prendre des antihistaminiques pendant au moins 3 jours avant votre test d'allergie."
-  },
-  zh: {
-    doctor: "医生（英语）",
-    translation: "翻译",
-    pause: "暂停并解释",
-    feeling: "你感觉如何？",
-    end: "结束会话",
-    tap: "点击以暂停/继续录音",
-    statement: "请在进行过敏测试前至少3天内避免服用任何抗组胺药。"
-  },
-};
+  Keyboard,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
+import { Card } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
+import * as FileSystem from 'expo-file-system/legacy';
+import { Audio } from 'expo-av';
+import { useTranslation } from '../../hooks/translate';
+import { Language } from '../../hooks/LanguagePicker';
+import { useLanguage } from '../../hooks/LanguageContext';
 
 export default function SettingsScreen() {
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
@@ -58,12 +27,18 @@ export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
-  const [recording, setRecording] = useState<Audio.Recording | null>(null);
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
+
+  const [audioRecording, setAudioRecording] = useState<Audio.Recording | null>(
+    null,
+  );
   const [audioFileUri, setAudioFileUri] = useState<string | null>(null);
 
   const [emotions, setEmotions] = useState<
     { emotion: string; timestamp: string }[]
   >([]);
+
+  const [lastSelectedEmotion, setLastSelectedEmotion] = useState<string | null>(null);
 
 
   const toggleRecording = async () => {
@@ -78,18 +53,18 @@ export default function SettingsScreen() {
   const startAudioRecording = async () => {
     try {
       const { granted } = await Audio.requestPermissionsAsync();
-      if (!granted) return alert("Please grant mic access");
+      if (!granted) return alert('Mic permission required.');
 
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync(
-        Audio.RecordingOptionsPresets.HIGH_QUALITY
+        Audio.RecordingOptionsPresets.HIGH_QUALITY,
       );
       await recording.startAsync();
 
       setRecording(recording);
     } catch (err) {
-      console.log("Error starting recording:", err);
+      console.log('Error starting recording:', err);
     }
   };
 
@@ -102,7 +77,7 @@ export default function SettingsScreen() {
       setAudioFileUri(uri);
       setRecording(null);
     } catch (err) {
-      console.log("Error stopping recording:", err);
+      console.log('Error stopping recording:', err);
     }
   };
 
@@ -117,23 +92,23 @@ export default function SettingsScreen() {
     const json = JSON.stringify(summary, null, 2);
     const fileName = `visit_summary_${Date.now()}.json`;
 
-    if (Platform.OS === "web") {
-      const blob = new Blob([json], { type: "application/json" });
+    if (Platform.OS === 'web') {
+      const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
+      const a = document.createElement('a');
       a.href = url;
       a.download = fileName;
       document.body.appendChild(a);
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      console.log("Visit summary downloaded.");
+      console.log('Visit summary downloaded.');
     } else {
       const dir = (FileSystem as any).documentDirectory;
       if (dir) {
         const newPath = `${dir}${fileName}`;
         await FileSystem.writeAsStringAsync(newPath, json);
-        console.log("Visit summary saved locally:", newPath);
+        console.log('Visit summary saved locally:', newPath);
       }
     }
   };
@@ -147,30 +122,30 @@ export default function SettingsScreen() {
         const fileName = `visit_audio_${Date.now()}.m4a`;
         savedUri = fileName;
 
-
-        if (Platform.OS === "web") {
+        if (Platform.OS === 'web') {
+          // web download
           const response = await fetch(audioFileUri);
           const blob = await response.blob();
           const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
+          const a = document.createElement('a');
           a.href = url;
           a.download = fileName;
           document.body.appendChild(a);
           a.click();
           a.remove();
           URL.revokeObjectURL(url);
-          console.log("audio downloaded to PC");
+          console.log('audio downloaded to PC');
         } else {
           const dir = (FileSystem as any).documentDirectory;
           if (dir) {
             const newPath = `${dir}${fileName}`;
             await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
-            console.log("audio saved locally at:", newPath);
+            console.log('audio saved locally at:', newPath);
           }
         }
       }
     } catch (err) {
-      console.error("Couldnt download audio", err);
+      console.error('Error saving/downloading audio:', err);
     }
 
     await generateVisitSummary(savedUri);
@@ -180,307 +155,415 @@ export default function SettingsScreen() {
   const logEmotion = (emotion: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
+    setLastSelectedEmotion(emotion);
   };
+
+  const getEmotionColor = (emotion: string): string => {
+    switch (emotion) {
+      case 'Confused':
+        return '#4B9EFF';
+      case 'Anxious':
+        return '#FFB74B';
+      case 'Good':
+        return '#66BB6A';
+      default:
+        return '#CCC';
+    }
+  };
+
+  const getEmotionIcon = (emotion: string): string => {
+    switch (emotion) {
+      case 'Confused':
+        return 'help-circle-outline';
+      case 'Anxious':
+        return 'warning-outline';
+      case 'Good':
+        return 'happy-outline';
+      default:
+        return 'help-circle-outline';
+    }
+  };
+
+  //translate prompts
+  const localizedUI: Record<Language, Record<string, string>> = {
+    en: {
+      pageTitle: 'During Your Appointment',
+      message: 'Message From Doctor:',
+      start: "Start Recording",
+      end: "End Session",
+      feelings: "How are you feeling?",
+      current: "Current:",
+    },
+    es: {
+      pageTitle: 'Durante su cita',
+      message: 'Mensaje del doctor:',
+      start: "Iniciar grabación",
+      end: "Finalizar sesión",
+      feelings: "¿Cómo se siente?",
+      current: "Actual:",
+    },
+    fr: {
+      pageTitle: 'Pendant votre rendez-vous',
+      message: 'Mensaje del médico:',
+      start: "Démarrer l'enregistrement",
+      end: "Fin de session",
+      feelings: "Comment vous sentez-vous?",
+      current: "Actuel:",
+    },
+    zh: {
+      pageTitle: '预约期间',
+      message: '医生的话:',
+      start: "开始录音",
+      end: "结束会议",
+      feelings: "你感觉如何？",
+      current: "当前:",
+    },
+  };
+
+  // translate user text to
+  const [src_one, set_src_one] = useState('');
+  const { translate, isLoading, hasApiKey } = useTranslation();
+  async function run_trans() {
+    Keyboard.dismiss();
+    const result = await translate(src_one, selectedLanguage);
+    if (result) set_src_one(result);
+  }
+
   return (
-    <View style={styles.container}>
-      <LanguagePicker
-        selectedLanguage={selectedLanguage}
-        onValueChange={setSelectedLanguage}
-      />
-
-      {/* Recording */}
-      <TouchableOpacity
-        style={[
-          styles.box,
-          isRecording ? styles.recordingBox : styles.startBox,
-        ]}
-        onPress={toggleRecording}
-        activeOpacity={0.7}
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <ScrollView
+        className="flex-1 bg-white px-5 pt-6"
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <View
-          style={[
-            styles.recordingCircle,
-            { backgroundColor: isRecording ? "#FF5C5C" : "#4CAF50" },
-          ]}
-        />
         <Text
-          style={[
-            styles.recordingText,
-            { color: isRecording ? "#D33" : "#2E7D32" },
-          ]}
+          style={{
+            fontSize: 28,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 24,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
         >
-          {isRecording ? "Recording in progress" : "Start Recording"}
+          {localizedUI[selectedLanguage].pageTitle}
         </Text>
-      </TouchableOpacity>
 
-      {/* Doctor (English) */}
-      <View style={[styles.box, styles.englishBox]}>
-        <View style={styles.labelRow}>
-          <View style={styles.englishCircle} />
-          <Text style={styles.label}>
-            {localizedUI[selectedLanguage].doctor}
-          </Text>
-        </View>
-        <Text style={styles.subText}>
-          “Please avoid taking any antihistamines for at least 3 days before
-          your allergy test.”
-        </Text>
-      </View>
+        {/* Recording Section */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <TouchableOpacity
+              style={[
+                styles.recordingButton,
+                isRecording && styles.recordingButtonActive,
+              ]}
+              onPress={toggleRecording}
+              activeOpacity={0.7}
+            >
+              <View
+                style={[
+                  styles.recordingCircle,
+                  { backgroundColor: isRecording ? '#FF5C5C' : '#22C55E' },
+                ]}
+              />
+              <Text
+                style={[
+                  styles.recordingText,
+                  { color: isRecording ? '#DC2626' : '#15803D' },
+                ]}
+              >
+                {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage].start}
+              </Text>
+            </TouchableOpacity>
+          </Card.Content>
+        </Card>
 
-      {/* Translations */}
-      <View style={[styles.box, styles.translationBox]}>
-        <View style={styles.labelRow}>
-          <View style={styles.translationCircle} />
-          <Text style={styles.label}>
-            {localizedUI[selectedLanguage].translation}
-          </Text>
-        </View>
-        <Text style={styles.subText}>
-          {localizedUI[selectedLanguage].statement}
-        </Text>
-      </View>
+        {/* Doctor Message Input */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#0A4DA3',
+                marginBottom: 12,
+                fontFamily: 'Montserrat-Bold',
+              }}
+            >
+              {localizedUI[selectedLanguage].message}
+            </Text>
+            <TextInput
+              value={src_one}
+              onChangeText={set_src_one}
+              placeholder={
+                hasApiKey
+                  ? 'Enter text in any language — press Enter to translate'
+                  : 'Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment'
+              }
+              multiline={false}
+              returnKeyType="send"
+              onSubmitEditing={run_trans}
+              style={styles.textInput}
+              editable={!isLoading}
+              placeholderTextColor="#9CA3AF"
+            />
+            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} color="#0A4DA3" />}
+          </Card.Content>
+        </Card>
 
-      {/* Pause or resume */}
-      <TouchableOpacity style={[styles.box, styles.recordButton]}>
-        <View style={styles.circle}></View>
-        <Text style={styles.tapText}>{localizedUI[selectedLanguage].tap}</Text>
-      </TouchableOpacity>
+        {/* Feelings Card */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#0A4DA3',
+                marginBottom: 12,
+                fontFamily: 'Montserrat-Bold',
+              }}
+            >
+              {localizedUI[selectedLanguage].feelings}
+            </Text>
 
-      {/* Pause & Explain w/ Feelings btns */}
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.pauseButton}>
-          <View style={styles.pauseCircle} />
-          <Text style={styles.pauseText}>
-            {localizedUI[selectedLanguage].pause}
+            {/* Display last selected emotion */}
+            {lastSelectedEmotion && (
+              <View style={styles.lastEmotionDisplay}>
+                <Ionicons
+                  name={getEmotionIcon(lastSelectedEmotion) as any}
+                  size={24}
+                  color={getEmotionColor(lastSelectedEmotion)}
+                />
+                <Text style={styles.lastEmotionText}>
+                  {localizedUI[selectedLanguage].current} {lastSelectedEmotion}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.feelingsRow}>
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Confused' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Confused')}
+              >
+                <Ionicons
+                  name="help-circle-outline"
+                  size={32}
+                  color="#4B9EFF"
+                />
+                <Text style={styles.feelingText}>Confused</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Anxious' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Anxious')}
+              >
+                <Ionicons
+                  name="warning-outline"
+                  size={32}
+                  color="#FFB74B"
+                />
+                <Text style={styles.feelingText}>Anxious</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Good' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Good')}
+              >
+                <Ionicons
+                  name="happy-outline"
+                  size={32}
+                  color="#66BB6A"
+                />
+                <Text style={styles.feelingText}>Good</Text>
+              </TouchableOpacity>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* End Session */}
+        <TouchableOpacity
+          style={styles.endSessionButton}
+          onPress={handleEndSession}
+        >
+          <Text style={styles.endSessionText}>
+            {localizedUI[selectedLanguage].end}
           </Text>
         </TouchableOpacity>
 
-        <View style={styles.feelingsContainer}>
-          <Text style={styles.feelingsLabel}>
-            {localizedUI[selectedLanguage].feeling}
-          </Text>
-          <View style={styles.feelingsRow}>
-            <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion("Confused")}
-            >
-              <View
-                style={[styles.feelingCircle, { backgroundColor: "#4B9EFF" }]}
-              />
-              <Text style={styles.feelingText}>Confused</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion("Anxious")}
-            >
-              <View
-                style={[styles.feelingCircle, { backgroundColor: "#FFB74B" }]}
-              />
-              <Text style={styles.feelingText}>Anxious</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion("Good")}
-            >
-              <View
-                style={[styles.feelingCircle, { backgroundColor: "#66BB6A" }]}
-              />
-              <Text style={styles.feelingText}>Good</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
-      {/* End Session */}
-      <TouchableOpacity
-        style={[styles.box, styles.endSession]}
-        onPress={handleEndSession}
-      >
-        <Text style={styles.endText}>{localizedUI[selectedLanguage].end}</Text>
-      </TouchableOpacity>
-
-      {/* Transcript Saved Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.checkCircle}>
-              <Text style={styles.checkText}>✓</Text>
+        {/* Transcript Saved Modal */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.checkCircle}>
+                <Ionicons name="checkmark" size={36} color="#FFFFFF" />
+              </View>
+              <Text style={styles.modalTitle}>Transcript Saved</Text>
+              <Text style={styles.modalSubtitle}>
+                Your appointment transcript has been saved for review
+              </Text>
+              <TouchableOpacity
+                style={styles.continueButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.continueText}>Continue</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.modalTitle}>Transcript Saved</Text>
-            <Text style={styles.modalSubtitle}>
-              Your appointment transcript has been saved for review
-            </Text>
-            <TouchableOpacity
-              style={styles.continueButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.continueText}>Continue</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    display: 'flex',
-    backgroundColor: "#FFF",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 20,
-    height: '100%'
-  },
-  box: {
-    width: "85%",
-    borderWidth: 2,
-    borderColor: "#CCC",
-    borderRadius: 8,
-    padding: 20,
-    alignItems: "center",
-  },
-  startBox: {
-    backgroundColor: "#E9F7EF",
-    borderColor: "#4CAF50",
-    flexDirection: "row",
+  recordingButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     gap: 10,
-    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    backgroundColor: '#E7F9EE',
+    borderWidth: 1.2,
+    borderColor: '#22C55E',
   },
-  recordingBox: {
-    backgroundColor: "#FFFADB",
-    borderColor: "#FF5C5C",
-    flexDirection: "row",
-    gap: 10,
-    justifyContent: "center",
+  recordingButtonActive: {
+    backgroundColor: '#FEF3C7',
+    borderColor: '#FF5C5C',
   },
   recordingCircle: {
     width: 20,
     height: 20,
-    borderRadius: 50,
+    borderRadius: 10,
   },
   recordingText: {
-    fontWeight: "600",
+    fontSize: 16,
+    fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
   },
-  englishBox: {
-    backgroundColor: "#E6F3FF",
-    borderColor: "#4B9EFF",
-    alignItems: "flex-start",
-    gap: 5,
+  textInput: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-Regular',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
+    backgroundColor: '#F9FAFB',
   },
-  labelRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
+  lastEmotionDisplay: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#F0F9FF',
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E0F2FE',
   },
-  englishCircle: {
+  lastEmotionCircle: {
     width: 20,
     height: 20,
-    backgroundColor: "#4B9EFF",
-    borderRadius: 50,
+    borderRadius: 10,
   },
-  translationBox: {
-    backgroundColor: "#E9F7EF",
-    borderColor: "#66BB6A",
-    alignItems: "flex-start",
-    gap: 5,
-  },
-  translationCircle: {
-    width: 20,
-    height: 20,
-    backgroundColor: "#66BB6A",
-    borderRadius: 50,
-  },
-  label: {
-    fontWeight: "700",
-  },
-  subText: {
+  lastEmotionText: {
+    fontWeight: '600',
     fontSize: 14,
-    lineHeight: 18,
-  },
-  recordButton: {
-    backgroundColor: "#F5F5F5",
-  },
-  circle: {
-    width: 40,
-    height: 40,
-    backgroundColor: "#4B9EFF",
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  tapText: {
-    fontWeight: "500",
-  },
-  actionsContainer: {
-    flexDirection: "row",
-    width: "85%",
-    gap: 10,
-  },
-  pauseButton: {
-    flex: 1,
-    backgroundColor: "#F5F5F5",
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: "#CCC",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 10,
-  },
-  pauseCircle: {
-    width: 30,
-    height: 30,
-    backgroundColor: "#FF5C5C",
-    borderRadius: 50,
-  },
-  pauseText: {
-    fontWeight: "500",
-  },
-  feelingsContainer: {
-    flex: 2,
-    borderWidth: 2,
-    borderColor: "#CCC",
-    borderRadius: 10,
-    padding: 10,
-  },
-  feelingsLabel: {
-    fontWeight: "600",
-    marginBottom: 8,
-    textAlign: "center",
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-SemiBold',
   },
   feelingsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    alignItems: "center",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    marginTop: 8,
   },
   feelingsItem: {
-    alignItems: "center",
-    gap: 5,
+    alignItems: 'center',
+    gap: 6,
+    padding: 10,
+    borderRadius: 12,
+  },
+  feelingsItemSelected: {
+    backgroundColor: '#E3F2FD',
+    borderWidth: 2,
+    borderColor: '#4B9EFF',
   },
   feelingCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   feelingText: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-Medium',
   },
-  endSession: {
-    backgroundColor: "#FF5C5C",
-    borderColor: "#D33",
+  endSessionButton: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#DC2626',
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginTop: 8,
+    borderWidth: 1.2,
+    borderColor: '#B91C1C',
   },
-  endText: {
-    color: "#FFF",
-    fontWeight: "700",
+  endSessionText: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 16,
+    fontFamily: 'Montserrat-Bold',
   },
-
-  // Modal (come back to add visit summary info?)
   modalOverlay: {
     display: 'flex',
     backgroundColor: "rgba(0,0,0,0.4)",
@@ -488,48 +571,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   modalContent: {
-    width: "75%",
-    backgroundColor: "#FFF",
-    borderRadius: 15,
+    width: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
     padding: 25,
-    alignItems: "center",
-    elevation: 10,
+    alignItems: 'center',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
   },
   checkCircle: {
     width: 60,
     height: 60,
-    backgroundColor: "#66BB6A",
-    borderRadius: 50,
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#22C55E',
+    borderRadius: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 15,
-  },
-  checkText: {
-    fontSize: 36,
-    color: "#FFF",
   },
   modalTitle: {
     fontSize: 20,
-    fontWeight: "700",
+    fontWeight: '700',
+    color: '#0A4DA3',
     marginBottom: 8,
+    fontFamily: 'Montserrat-Bold',
   },
   modalSubtitle: {
     fontSize: 14,
-    color: "#555",
-    textAlign: "center",
+    color: '#5b6b7a',
+    textAlign: 'center',
     marginBottom: 20,
+    fontFamily: 'Montserrat-Regular',
   },
   continueButton: {
-    width: "100%",
-    borderWidth: 2,
-    borderColor: "#4B9EFF",
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: "center",
+    width: '100%',
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
+    borderRadius: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+    backgroundColor: '#E6EEFF',
   },
   continueText: {
-    color: "#4B9EFF",
-    fontWeight: "600",
+    color: '#0A4DA3',
+    fontWeight: '600',
     fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

@@ -22,7 +22,6 @@ import { Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
 
 export default function SettingsScreen() {
-
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
 
@@ -37,8 +36,9 @@ export default function SettingsScreen() {
     { emotion: string; timestamp: string }[]
   >([]);
 
-  const [lastSelectedEmotion, setLastSelectedEmotion] = useState<string | null>(null);
-
+  const [lastSelectedEmotion, setLastSelectedEmotion] = useState<string | null>(
+    null,
+  );
 
   const toggleRecording = async () => {
     if (isRecording) {
@@ -54,31 +54,34 @@ export default function SettingsScreen() {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) return alert('Mic permission required.');
 
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true, });
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      });
 
       const recordingOptions: Audio.RecordingOptions = {
-      android: {
-        extension: '.m4a',
-        outputFormat: Audio.AndroidOutputFormat.MPEG_4,
-        audioEncoder: Audio.AndroidAudioEncoder.AAC,
-        sampleRate: 44100,
-        numberOfChannels: 2,
-        bitRate: 128000,
-      },
-      ios: {
-        extension: '.caf', 
-        outputFormat: Audio.IOSOutputFormat.LINEARPCM,
-        audioQuality: Audio.IOSAudioQuality.HIGH,
-        sampleRate: 44100,
-        numberOfChannels: 2,
-        bitRate: 128000,
-        linearPCMBitDepth: 16,
-        linearPCMIsBigEndian: false,
-        linearPCMIsFloat: false,
-      },
-      web: {}
-    };
-       const { recording } = await Audio.Recording.createAsync(recordingOptions);
+        android: {
+          extension: '.m4a',
+          outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+          audioEncoder: Audio.AndroidAudioEncoder.AAC,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+        },
+        ios: {
+          extension: '.caf',
+          outputFormat: Audio.IOSOutputFormat.LINEARPCM,
+          audioQuality: Audio.IOSAudioQuality.HIGH,
+          sampleRate: 44100,
+          numberOfChannels: 2,
+          bitRate: 128000,
+          linearPCMBitDepth: 16,
+          linearPCMIsBigEndian: false,
+          linearPCMIsFloat: false,
+        },
+        web: {},
+      };
+      const { recording } = await Audio.Recording.createAsync(recordingOptions);
 
       setAudioRecording(recording);
     } catch (err) {
@@ -91,11 +94,9 @@ export default function SettingsScreen() {
       if (!audioRecording) return;
 
       await audioRecording.stopAndUnloadAsync();
-      await Audio.setAudioModeAsync(
-        {
-          allowsRecordingIOS: false,
-        }
-      );
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+      });
       const uri = audioRecording.getURI();
       setAudioFileUri(uri);
       setAudioRecording(null);
@@ -111,38 +112,15 @@ export default function SettingsScreen() {
       audioFile: file,
       totalEmotions: emotions.length,
     };
-
-    const json = JSON.stringify(summary, null, 2);
-    const fileName = `visit_summary_${Date.now()}.json`;
-
-    // if (Platform.OS === 'web') {
-    //   const blob = new Blob([json], { type: 'application/json' });
-    //   const url = URL.createObjectURL(blob);
-    //   const a = document.createElement('a');
-    //   a.href = url;
-    //   a.download = fileName;
-    //   document.body.appendChild(a);
-    //   a.click();
-    //   a.remove();
-    //   URL.revokeObjectURL(url);
-    //   console.log('Visit summary downloaded.');
-    // } else {
-    //   const dir = (FileSystem as any).documentDirectory;
-    //   if (dir) {
-    //     const newPath = `${dir}${fileName}`;
-    //     await FileSystem.writeAsStringAsync(newPath, json);
-    //     console.log('Visit summary saved locally:', newPath);
-    //   }
-    // }
   };
 
   const handleEndSession = async () => {
     setIsRecording(false);
-    let savedUri: string = "";
+    let savedUri: string = '';
 
     try {
       if (audioFileUri) {
-         const fileExtension = Platform.OS === 'ios' ? '.caf' : '.m4a'; 
+        const fileExtension = Platform.OS === 'ios' ? '.caf' : '.m4a';
 
         const fileName = `visit_audio_${Date.now()}${fileExtension}`;
         savedUri = fileName;
@@ -161,24 +139,25 @@ export default function SettingsScreen() {
           URL.revokeObjectURL(url);
           console.log('audio downloaded to PC');
         } else {
-          const dir = FileSystem.documentDirectory
+          const dir = FileSystem.documentDirectory;
           if (dir) {
             const recDir = `${dir}recordings/`;
 
-            const dirInfo = await FileSystem.getInfoAsync(recDir)
+            const dirInfo = await FileSystem.getInfoAsync(recDir);
 
             if (!dirInfo.exists) {
-              await FileSystem.makeDirectoryAsync(recDir, {intermediates: true})
+              await FileSystem.makeDirectoryAsync(recDir, {
+                intermediates: true,
+              });
             }
 
             const newPath = `${recDir}${fileName}`;
             await FileSystem.moveAsync({
               from: audioFileUri,
-              to: newPath
-            })
-          
-          console.log('audio saved locally at ', newPath)
+              to: newPath,
+            });
 
+            console.log('audio saved locally at ', newPath);
           }
         }
       }
@@ -227,34 +206,34 @@ export default function SettingsScreen() {
     en: {
       pageTitle: 'During Your Appointment',
       message: 'Message From Doctor:',
-      start: "Start Recording",
-      end: "End Session",
-      feelings: "How are you feeling?",
-      current: "Current:",
+      start: 'Start Recording',
+      end: 'End Session',
+      feelings: 'How are you feeling?',
+      current: 'Current:',
     },
     es: {
       pageTitle: 'Durante su cita',
       message: 'Mensaje del doctor:',
-      start: "Iniciar grabación",
-      end: "Finalizar sesión",
-      feelings: "¿Cómo se siente?",
-      current: "Actual:",
+      start: 'Iniciar grabación',
+      end: 'Finalizar sesión',
+      feelings: '¿Cómo se siente?',
+      current: 'Actual:',
     },
     fr: {
       pageTitle: 'Pendant votre rendez-vous',
       message: 'Mensaje del médico:',
       start: "Démarrer l'enregistrement",
-      end: "Fin de session",
-      feelings: "Comment vous sentez-vous?",
-      current: "Actuel:",
+      end: 'Fin de session',
+      feelings: 'Comment vous sentez-vous?',
+      current: 'Actuel:',
     },
     zh: {
       pageTitle: '预约期间',
       message: '医生的话:',
-      start: "开始录音",
-      end: "结束会议",
-      feelings: "你感觉如何？",
-      current: "当前:",
+      start: '开始录音',
+      end: '结束会议',
+      feelings: '你感觉如何？',
+      current: '当前:',
     },
   };
 
@@ -318,7 +297,9 @@ export default function SettingsScreen() {
                   { color: isRecording ? '#DC2626' : '#15803D' },
                 ]}
               >
-                {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage as Language].start}
+                {isRecording
+                  ? 'Recording in progress'
+                  : localizedUI[selectedLanguage as Language].start}
               </Text>
             </TouchableOpacity>
           </Card.Content>
@@ -362,7 +343,9 @@ export default function SettingsScreen() {
               editable={!isLoading}
               placeholderTextColor="#9CA3AF"
             />
-            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} color="#0A4DA3" />}
+            {isLoading && (
+              <ActivityIndicator style={{ marginTop: 12 }} color="#0A4DA3" />
+            )}
           </Card.Content>
         </Card>
 
@@ -399,7 +382,8 @@ export default function SettingsScreen() {
                   color={getEmotionColor(lastSelectedEmotion)}
                 />
                 <Text style={styles.lastEmotionText}>
-                  {localizedUI[selectedLanguage as Language].current} {lastSelectedEmotion}
+                  {localizedUI[selectedLanguage as Language].current}{' '}
+                  {lastSelectedEmotion}
                 </Text>
               </View>
             )}
@@ -408,7 +392,8 @@ export default function SettingsScreen() {
               <TouchableOpacity
                 style={[
                   styles.feelingsItem,
-                  lastSelectedEmotion === 'Confused' && styles.feelingsItemSelected,
+                  lastSelectedEmotion === 'Confused' &&
+                    styles.feelingsItemSelected,
                 ]}
                 onPress={() => logEmotion('Confused')}
               >
@@ -423,15 +408,12 @@ export default function SettingsScreen() {
               <TouchableOpacity
                 style={[
                   styles.feelingsItem,
-                  lastSelectedEmotion === 'Anxious' && styles.feelingsItemSelected,
+                  lastSelectedEmotion === 'Anxious' &&
+                    styles.feelingsItemSelected,
                 ]}
                 onPress={() => logEmotion('Anxious')}
               >
-                <Ionicons
-                  name="warning-outline"
-                  size={32}
-                  color="#FFB74B"
-                />
+                <Ionicons name="warning-outline" size={32} color="#FFB74B" />
                 <Text style={styles.feelingText}>Anxious</Text>
               </TouchableOpacity>
 
@@ -442,11 +424,7 @@ export default function SettingsScreen() {
                 ]}
                 onPress={() => logEmotion('Good')}
               >
-                <Ionicons
-                  name="happy-outline"
-                  size={32}
-                  color="#66BB6A"
-                />
+                <Ionicons name="happy-outline" size={32} color="#66BB6A" />
                 <Text style={styles.feelingText}>Good</Text>
               </TouchableOpacity>
             </View>
@@ -604,9 +582,9 @@ const styles = StyleSheet.create({
   },
   modalOverlay: {
     display: 'flex',
-    backgroundColor: "rgba(0,0,0,0.4)",
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   modalContent: {
     width: '80%',

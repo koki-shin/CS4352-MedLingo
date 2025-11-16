@@ -155,7 +155,6 @@ export default function SettingsScreen() {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
     setLastSelectedEmotion(emotion);
-    console.log(`Emotion logged: ${emotion} at ${timestamp}`);
   };
 
   const getEmotionColor = (emotion: string): string => {

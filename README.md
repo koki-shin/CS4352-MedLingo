@@ -159,58 +159,29 @@ Follow the steps below to explore the MedLingo prototype and test each of the th
 
 
 
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Project Scaffolding & Repo Setup  
-    - [X] Initialize React project and folder structure  
-    - [X] Create `.gitignore`, README, and initial commit  
-    - [ ] Add TAs as collaborators  
-    - [ ] Set up branches for each task (previsit, translation, recap)
-
-- [ ] Design Refinement  
-    - [ ] Update wireframes and task flows based on DP3 feedback  
-    - [ ] Define data structure for translated content (JSON format)
-
-- [ ] Task 1: Pre-Visit Assessment (Simple) - Working by Oct 29 Progress Check  
-    - [ ] Build appointment overview screen  
-    - [ ] Implement pre-visit form (symptoms, allergies, meds)  
-    - [ ] Add "Translate & Submit" confirmation flow  
-    - [ ] Test for smooth form submission & translation simulation  
-
-- [ ] Task 2: Translative Interface (Medium)  
-    - [ ] Design bilingual chat UI  
-    - [ ] Add emoji quick responses  
-    - [ ] Implement mock translation function (simulated API)  
-    - [ ] Ensure doctor-patient chat flow feels real  
-
-- [ ] Task 3: Post-Appointment Recap (Complex)  
-    - [ ] Create medical summary view (diagnosis, prescriptions, follow-ups)  
-    - [ ] Add visual aids section with images and text  
-    - [ ] Implement translation for recap text  
-    - [ ] (Optional) Simulate downloadable PDF summary  
-
-- [ ] Usability & Polish  
-    - [ ] Conduct internal heuristic evaluation  
-    - [ ] Fix navigation, spacing, and color consistency  
-    - [ ] Add loading/error/empty states  
-
-- [ ] Demo & Documentation  
-    - [ ] Prepare 2–3 slides for progress check  
-    - [ ] Record 2-min walkthrough video  
-    - [ ] Write Source.pdf, ReadMe.pdf, and Team.pdf  
-    - [ ] Package .zip with PDFs and PowerPoint  
-    - [ ] Submit peer evaluation form (due Nov 15)
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
 <!-- CONTRIBUTING -->
 ## Contributing
 
-Include teammate names + branch responsibilities
+### Team Members & Branch Responsibilities
+- **`main`** — Production branch
+  - Maintained by: **Tanner Raley**
+  - All feature branches merge here after review
+    
+- **`before-appointment`** — Pre-visit assessment
+  - Maintained by: **Jonathan Tyler**
+  - Features: Health questionnaire, translation, PDF export
 
+- **`during-appointment`** — Real-time translation interface
+  - Maintained by: **Dave Aigbe**
+  - Features: Chat interface, audio recording, emotion tracking
+
+- **`after-appointment`** — Post-visit summary
+  - Maintained by: **Oluwabukunmi Adegbonmire**
+  - Features: Diagnosis summary, medication reminders, scheduling
+
+- **`styling`** — UI/UX improvements
+  - Maintained by: **Koki Shin**
+  - Features: Design system, component styling, theme, feature improvement
 
 
 <!-- LICENSE -->

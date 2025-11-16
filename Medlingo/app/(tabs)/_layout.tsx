@@ -30,7 +30,7 @@ export default function TabLayout() {
               title: 'Before',
               headerShown: false,
               tabBarIcon: ({ color }) => (
-                <Ionicons name="checkboxß-outline" size={24} color={color} />
+                <Ionicons name="checkbox-outline" size={24} color={color} />
               ),
             }}
           />

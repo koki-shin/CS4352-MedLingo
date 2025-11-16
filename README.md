@@ -76,9 +76,6 @@ Our focus is to enhance accessibility and comfort for patients who face language
 
 
 ### Built With
-
-This project uses modern web technologies to deliver an interactive, accessible, and user-friendly experience.
-
 **Core:**
 - **Expo** - React Native framework for cross-platform mobile development
 - **Expo Router** - File-based routing system for navigation
@@ -120,23 +117,43 @@ List things we need to use the software and how to install them.
 Follow the steps below to explore the MedLingo prototype and test each of the three main tasks.
 
 ### 1. Before Appointment – *Pre-Visit Assessment*
-- Navigate to **“Before Appointment”** from the home screen.  
-- Review upcoming appointment details (doctor, date, time).  
-- Fill out the **Pre-Visit Form** with your symptoms, allergies, and medications.  
-- Press **“Translate & Submit”** to see your responses translated into English for the doctor’s view.  
-*(Simulated translation for demo purposes.)*
+- From the home screen, select your language using the language picker.
+- Navigate to "Before Appointment".
+- Fill out the Pre-Visit Form:
+  - What brings you in today? (symptoms/reason for visit)
+  - List any current medications
+  - List any allergies
+- Complete the consent checkboxes (medical evaluation, confidentiality, privacy/payment policies).
+- Press "Submit" to translate your responses to English for the doctor's view.
+- Review the translated summary.
+- Use "Print to PDF" to export and share the form.
+(Translation requires a Google Translate API key configured in app.json.)
 
 ### 2. During Appointment – *Translative Interface*
-- Select **“During Appointment.”**  
-- Use the **chat interface** to communicate in your preferred language.  
-- Send **emoji cues** (😷 🤕 😊) or text messages to describe how you feel.  
-- Observe real-time English ↔ patient-language translations to simulate doctor–patient dialogue.
+- Select "During Appointment".
+- Use "Start Recording" to record audio during the visit (optional).
+- In the "Message From Doctor" field, enter text in any language and press Enter to translate it to your selected language.
+- Use the emotion buttons (Confused, Anxious, Good) to log how you're feeling; the current selection is displayed.
+- Press "End Session" when finished:
+  - Saves the audio recording (if used)
+  - Generates a visit summary JSON file with emotions and timestamps
+  - Shows a confirmation modal
+(Translation requires a Google Translate API key. Audio recording requires microphone permissions.)
 
 ### 3. After Appointment – *Post-Visit Recap*
-- Choose **“After Appointment.”**  
-- View your **medical summary**, including diagnosis, prescriptions, and follow-up instructions — automatically translated into your language.  
-- Click **“View Visual Aid”** to see educational graphics related to your diagnosis.  
-*(Some data is hardcoded for demo consistency.)*
+- Navigate to "After Appointment".
+- Review the Diagnosis Summary (translated to your language).
+- View Prescribed Medications with dosage instructions.
+- Set Medication Reminders:
+  - Select a medication (or add a custom one)
+  - Choose times per day and specific times
+  - Set repeat frequency (Daily, Weekly, Bi-weekly, Monthly)
+  - Press "Set Reminder" to confirm
+- Schedule Follow-up Care:
+  - Telehealth Follow-up: Schedule a virtual appointment using the calendar and time picker
+  - Schedule Next Appointment: Schedule an in-person visit with date and time selection
+- Both scheduling options show confirmation modals with appointment details.
+(All content is automatically translated based on your selected language preference.)
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

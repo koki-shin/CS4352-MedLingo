@@ -22,7 +22,6 @@ import { Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
 
 export default function SettingsScreen() {
-  const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   const [isRecording, setIsRecording] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -55,14 +54,14 @@ export default function SettingsScreen() {
       const { granted } = await Audio.requestPermissionsAsync();
       if (!granted) return alert('Mic permission required.');
 
-      await Audio.setAudioModeAsync({ allowsRecordingIOS: true });
+      await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true, });
       const recording = new Audio.Recording();
       await recording.prepareToRecordAsync(
         Audio.RecordingOptionsPresets.HIGH_QUALITY,
       );
       await recording.startAsync();
 
-      setRecording(recording);
+      setAudioRecording(recording);
     } catch (err) {
       console.log('Error starting recording:', err);
     }
@@ -70,12 +69,12 @@ export default function SettingsScreen() {
 
   const stopAudioRecording = async () => {
     try {
-      if (!recording) return;
+      if (!audioRecording) return;
 
-      await recording.stopAndUnloadAsync();
-      const uri = recording.getURI();
+      await audioRecording.stopAndUnloadAsync();
+      const uri = audioRecording.getURI();
       setAudioFileUri(uri);
-      setRecording(null);
+      setAudioRecording(null);
     } catch (err) {
       console.log('Error stopping recording:', err);
     }
@@ -92,25 +91,25 @@ export default function SettingsScreen() {
     const json = JSON.stringify(summary, null, 2);
     const fileName = `visit_summary_${Date.now()}.json`;
 
-    if (Platform.OS === 'web') {
-      const blob = new Blob([json], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      console.log('Visit summary downloaded.');
-    } else {
-      const dir = (FileSystem as any).documentDirectory;
-      if (dir) {
-        const newPath = `${dir}${fileName}`;
-        await FileSystem.writeAsStringAsync(newPath, json);
-        console.log('Visit summary saved locally:', newPath);
-      }
-    }
+    // if (Platform.OS === 'web') {
+    //   const blob = new Blob([json], { type: 'application/json' });
+    //   const url = URL.createObjectURL(blob);
+    //   const a = document.createElement('a');
+    //   a.href = url;
+    //   a.download = fileName;
+    //   document.body.appendChild(a);
+    //   a.click();
+    //   a.remove();
+    //   URL.revokeObjectURL(url);
+    //   console.log('Visit summary downloaded.');
+    // } else {
+    //   const dir = (FileSystem as any).documentDirectory;
+    //   if (dir) {
+    //     const newPath = `${dir}${fileName}`;
+    //     await FileSystem.writeAsStringAsync(newPath, json);
+    //     console.log('Visit summary saved locally:', newPath);
+    //   }
+    // }
   };
 
   const handleEndSession = async () => {
@@ -245,7 +244,7 @@ export default function SettingsScreen() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
-          {localizedUI[selectedLanguage].pageTitle}
+          {localizedUI[selectedLanguage as Language].pageTitle}
         </Text>
 
         {/* Recording Section */}
@@ -280,7 +279,7 @@ export default function SettingsScreen() {
                   { color: isRecording ? '#DC2626' : '#15803D' },
                 ]}
               >
-                {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage].start}
+                {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage as Language].start}
               </Text>
             </TouchableOpacity>
           </Card.Content>
@@ -307,7 +306,7 @@ export default function SettingsScreen() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedUI[selectedLanguage].message}
+              {localizedUI[selectedLanguage as Language].message}
             </Text>
             <TextInput
               value={src_one}
@@ -349,7 +348,7 @@ export default function SettingsScreen() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedUI[selectedLanguage].feelings}
+              {localizedUI[selectedLanguage as Language].feelings}
             </Text>
 
             {/* Display last selected emotion */}
@@ -361,7 +360,7 @@ export default function SettingsScreen() {
                   color={getEmotionColor(lastSelectedEmotion)}
                 />
                 <Text style={styles.lastEmotionText}>
-                  {localizedUI[selectedLanguage].current} {lastSelectedEmotion}
+                  {localizedUI[selectedLanguage as Language].current} {lastSelectedEmotion}
                 </Text>
               </View>
             )}
@@ -421,7 +420,7 @@ export default function SettingsScreen() {
           onPress={handleEndSession}
         >
           <Text style={styles.endSessionText}>
-            {localizedUI[selectedLanguage].end}
+            {localizedUI[selectedLanguage as Language].end}
           </Text>
         </TouchableOpacity>
 

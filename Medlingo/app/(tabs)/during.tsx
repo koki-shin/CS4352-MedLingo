@@ -55,8 +55,30 @@ export default function SettingsScreen() {
       if (!granted) return alert('Mic permission required.');
 
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true, });
-       const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY
-      );
+
+      const recordingOptions: Audio.RecordingOptions = {
+      android: {
+        extension: '.m4a',
+        outputFormat: Audio.AndroidOutputFormat.MPEG_4,
+        audioEncoder: Audio.AndroidAudioEncoder.AAC,
+        sampleRate: 44100,
+        numberOfChannels: 2,
+        bitRate: 128000,
+      },
+      ios: {
+        extension: '.caf', 
+        outputFormat: Audio.IOSOutputFormat.LINEARPCM,
+        audioQuality: Audio.IOSAudioQuality.HIGH,
+        sampleRate: 44100,
+        numberOfChannels: 2,
+        bitRate: 128000,
+        linearPCMBitDepth: 16,
+        linearPCMIsBigEndian: false,
+        linearPCMIsFloat: false,
+      },
+      web: {}
+    };
+       const { recording } = await Audio.Recording.createAsync(recordingOptions);
 
       setAudioRecording(recording);
     } catch (err) {
@@ -120,7 +142,9 @@ export default function SettingsScreen() {
 
     try {
       if (audioFileUri) {
-        const fileName = `visit_audio_${Date.now()}.m4a`;
+         const fileExtension = Platform.OS === 'ios' ? '.caf' : '.m4a'; 
+
+        const fileName = `visit_audio_${Date.now()}${fileExtension}`;
         savedUri = fileName;
 
         if (Platform.OS === 'web') {

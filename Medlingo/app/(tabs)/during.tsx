@@ -57,7 +57,6 @@ export default function SettingsScreen() {
       await Audio.setAudioModeAsync({ allowsRecordingIOS: true, playsInSilentModeIOS: true, });
        const { recording } = await Audio.Recording.createAsync( Audio.RecordingOptionsPresets.HIGH_QUALITY
       );
-      await recording.startAsync();
 
       setAudioRecording(recording);
     } catch (err) {
@@ -138,11 +137,24 @@ export default function SettingsScreen() {
           URL.revokeObjectURL(url);
           console.log('audio downloaded to PC');
         } else {
-          const dir = (FileSystem as any).documentDirectory;
+          const dir = FileSystem.documentDirectory
           if (dir) {
-            const newPath = `${dir}${fileName}`;
-            await FileSystem.copyAsync({ from: audioFileUri, to: newPath });
-            console.log('audio saved locally at:', newPath);
+            const recDir = `${dir}recordings/`;
+
+            const dirInfo = await FileSystem.getInfoAsync(recDir)
+
+            if (!dirInfo.exists) {
+              await FileSystem.makeDirectoryAsync(recDir, {intermediates: true})
+            }
+
+            const newPath = `${recDir}${fileName}`;
+            await FileSystem.moveAsync({
+              from: audioFileUri,
+              to: newPath
+            })
+          
+          console.log('audio saved locally at ', newPath)
+
           }
         }
       }

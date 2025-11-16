@@ -10,7 +10,11 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
+  ScrollView,
 } from 'react-native';
+import { Card } from 'react-native-paper';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 import * as FileSystem from 'expo-file-system/legacy';
 import { Audio } from 'expo-av';
 import { useTranslation } from '../../hooks/translate';
@@ -31,6 +35,8 @@ export default function SettingsScreen() {
   const [emotions, setEmotions] = useState<
     { emotion: string; timestamp: string }[]
   >([]);
+
+  const [lastSelectedEmotion, setLastSelectedEmotion] = useState<string | null>(null);
 
   let savedUri: string | null;
 
@@ -138,7 +144,7 @@ export default function SettingsScreen() {
         }
       }
     } catch (err) {
-      console.error('❌ Error saving/downloading audio:', err);
+      console.error('Error saving/downloading audio:', err);
     }
 
     await generateVisitSummary(audioFileUri);
@@ -148,34 +154,69 @@ export default function SettingsScreen() {
   const logEmotion = (emotion: string) => {
     const timestamp = new Date().toLocaleTimeString();
     setEmotions((prev) => [...prev, { emotion, timestamp }]);
-    console.log(`🧠 Emotion logged: ${emotion} at ${timestamp}`);
+    setLastSelectedEmotion(emotion);
+    console.log(`Emotion logged: ${emotion} at ${timestamp}`);
+  };
+
+  const getEmotionColor = (emotion: string): string => {
+    switch (emotion) {
+      case 'Confused':
+        return '#4B9EFF';
+      case 'Anxious':
+        return '#FFB74B';
+      case 'Good':
+        return '#66BB6A';
+      default:
+        return '#CCC';
+    }
+  };
+
+  const getEmotionIcon = (emotion: string): string => {
+    switch (emotion) {
+      case 'Confused':
+        return 'help-circle-outline';
+      case 'Anxious':
+        return 'warning-outline';
+      case 'Good':
+        return 'happy-outline';
+      default:
+        return 'help-circle-outline';
+    }
   };
 
   //translate prompts
   const localizedUI: Record<Language, Record<string, string>> = {
     en: {
+      pageTitle: 'During Your Appointment',
       message: 'Message From Doctor:',
       start: "Start Recording",
       end: "End Session",
-      pause: "Tap to pause/resume recording"
+      feelings: "How are you feeling?",
+      current: "Current:",
     },
     es: {
+      pageTitle: 'Durante su cita',
       message: 'Mensaje del doctor:',
       start: "Iniciar grabación",
       end: "Finalizar sesión",
-      pause: "Toca para pausar/reanudar la grabación"
+      feelings: "¿Cómo se siente?",
+      current: "Actual:",
     },
     fr: {
+      pageTitle: 'Pendant votre rendez-vous',
       message: 'Mensaje del médico:',
       start: "Démarrer l'enregistrement",
       end: "Fin de session",
-      pause: "Appuyez pour mettre en pause/reprendre l'enregistrement"
+      feelings: "Comment vous sentez-vous?",
+      current: "Actuel:",
     },
     zh: {
+      pageTitle: '预约期间',
       message: '医生的话:',
       start: "开始录音",
       end: "结束会议",
-      pause: "点击暂停/恢复录制"
+      feelings: "你感觉如何？",
+      current: "当前:",
     },
   };
 
@@ -189,292 +230,340 @@ export default function SettingsScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      {/* Recording Section */}
-      <TouchableOpacity
-        style={[
-          styles.box,
-          isRecording ? styles.recordingBox : styles.startBox,
-        ]}
-        onPress={toggleRecording}
-        activeOpacity={0.7}
+    <SafeAreaView className="flex-1 bg-white" edges={['top']}>
+      <ScrollView
+        className="flex-1 bg-white px-5 pt-6"
+        contentContainerStyle={{ paddingBottom: 40 }}
       >
-        <View
-          style={[
-            styles.recordingCircle,
-            { backgroundColor: isRecording ? '#FF5C5C' : '#4CAF50' },
-          ]}
-        />
         <Text
-          style={[
-            styles.recordingText,
-            { color: isRecording ? '#D33' : '#2E7D32' },
-          ]}
+          style={{
+            fontSize: 28,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 24,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
         >
-          {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage].start}
+          {localizedUI[selectedLanguage].pageTitle}
         </Text>
-      </TouchableOpacity>
 
-      {/* Doctor (English) */}
-      <View style={[styles.box, styles.englishBox]}>
-        <View style={styles.labelRow}>
-          <Text style={styles.label}>
-            {localizedUI[selectedLanguage].message}
-          </Text>
-        </View>
-        <TextInput
-          value={src_one}
-          onChangeText={set_src_one}
-          placeholder={
-            hasApiKey
-              ? 'Enter text in any language — press Enter to translate'
-              : 'Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment'
-          }
-          multiline={false}
-          returnKeyType="send"
-          onSubmitEditing={run_trans}
-          style={styles.subText}
-          editable={!isLoading}
-        />
-        {isLoading && <ActivityIndicator style={{ marginTop: 12 }} />}
-      </View>
-
-      {/* Tap to pause/resume recording */}
-      <TouchableOpacity style={[styles.box, styles.recordButton]}>
-        <View style={styles.circle}></View>
-        <Text style={styles.label}>
-            {localizedUI[selectedLanguage].pause}
-          </Text>
-      </TouchableOpacity>
-
-      {/* Pause & Explain + Feelings */}
-      <View style={styles.actionsContainer}>
-          <View style={styles.feelingsContainer}>
-          <Text style={styles.feelingsLabel}>How are you feeling?</Text>
-          <View style={styles.feelingsRow}>
+        {/* Recording Section */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
             <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion('Confused')}
+              style={[
+                styles.recordingButton,
+                isRecording && styles.recordingButtonActive,
+              ]}
+              onPress={toggleRecording}
+              activeOpacity={0.7}
             >
               <View
-                style={[styles.feelingCircle, { backgroundColor: '#4B9EFF' }]}
+                style={[
+                  styles.recordingCircle,
+                  { backgroundColor: isRecording ? '#FF5C5C' : '#22C55E' },
+                ]}
               />
-              <Text style={styles.feelingText}>Confused</Text>
+              <Text
+                style={[
+                  styles.recordingText,
+                  { color: isRecording ? '#DC2626' : '#15803D' },
+                ]}
+              >
+                {isRecording ? 'Recording in progress' : localizedUI[selectedLanguage].start}
+              </Text>
             </TouchableOpacity>
+          </Card.Content>
+        </Card>
 
-            <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion('Anxious')}
+        {/* Doctor Message Input */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#0A4DA3',
+                marginBottom: 12,
+                fontFamily: 'Montserrat-Bold',
+              }}
             >
-              <View
-                style={[styles.feelingCircle, { backgroundColor: '#FFB74B' }]}
-              />
-              <Text style={styles.feelingText}>Anxious</Text>
-            </TouchableOpacity>
+              {localizedUI[selectedLanguage].message}
+            </Text>
+            <TextInput
+              value={src_one}
+              onChangeText={set_src_one}
+              placeholder={
+                hasApiKey
+                  ? 'Enter text in any language — press Enter to translate'
+                  : 'Translation requires API key — configure GOOGLE_TRANSLATE_API_KEY in app.json or environment'
+              }
+              multiline={false}
+              returnKeyType="send"
+              onSubmitEditing={run_trans}
+              style={styles.textInput}
+              editable={!isLoading}
+              placeholderTextColor="#9CA3AF"
+            />
+            {isLoading && <ActivityIndicator style={{ marginTop: 12 }} color="#0A4DA3" />}
+          </Card.Content>
+        </Card>
 
-            <TouchableOpacity
-              style={styles.feelingsItem}
-              onPress={() => logEmotion('Good')}
+        {/* Feelings Card */}
+        <Card
+          mode="outlined"
+          style={{
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 16,
+          }}
+        >
+          <Card.Content style={{ paddingVertical: 18 }}>
+            <Text
+              style={{
+                fontSize: 18,
+                fontWeight: '700',
+                color: '#0A4DA3',
+                marginBottom: 12,
+                fontFamily: 'Montserrat-Bold',
+              }}
             >
-              <View
-                style={[styles.feelingCircle, { backgroundColor: '#66BB6A' }]}
-              />
-              <Text style={styles.feelingText}>Good</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
+              {localizedUI[selectedLanguage].feelings}
+            </Text>
 
-      {/* End Session */}
-      <TouchableOpacity
-        style={[styles.box, styles.endSession]}
-        onPress={handleEndSession}
-      >
-        <Text style={styles.label}>
+            {/* Display last selected emotion */}
+            {lastSelectedEmotion && (
+              <View style={styles.lastEmotionDisplay}>
+                <Ionicons
+                  name={getEmotionIcon(lastSelectedEmotion) as any}
+                  size={24}
+                  color={getEmotionColor(lastSelectedEmotion)}
+                />
+                <Text style={styles.lastEmotionText}>
+                  {localizedUI[selectedLanguage].current} {lastSelectedEmotion}
+                </Text>
+              </View>
+            )}
+
+            <View style={styles.feelingsRow}>
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Confused' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Confused')}
+              >
+                <Ionicons
+                  name="help-circle-outline"
+                  size={32}
+                  color="#4B9EFF"
+                />
+                <Text style={styles.feelingText}>Confused</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Anxious' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Anxious')}
+              >
+                <Ionicons
+                  name="warning-outline"
+                  size={32}
+                  color="#FFB74B"
+                />
+                <Text style={styles.feelingText}>Anxious</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[
+                  styles.feelingsItem,
+                  lastSelectedEmotion === 'Good' && styles.feelingsItemSelected,
+                ]}
+                onPress={() => logEmotion('Good')}
+              >
+                <Ionicons
+                  name="happy-outline"
+                  size={32}
+                  color="#66BB6A"
+                />
+                <Text style={styles.feelingText}>Good</Text>
+              </TouchableOpacity>
+            </View>
+          </Card.Content>
+        </Card>
+
+        {/* End Session */}
+        <TouchableOpacity
+          style={styles.endSessionButton}
+          onPress={handleEndSession}
+        >
+          <Text style={styles.endSessionText}>
             {localizedUI[selectedLanguage].end}
           </Text>
-      </TouchableOpacity>
+        </TouchableOpacity>
 
-      {/* Transcript Saved Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.checkCircle}>
-              <Text style={styles.checkText}>✓</Text>
+        {/* Transcript Saved Modal */}
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContent}>
+              <View style={styles.checkCircle}>
+                <Ionicons name="checkmark" size={36} color="#FFFFFF" />
+              </View>
+              <Text style={styles.modalTitle}>Transcript Saved</Text>
+              <Text style={styles.modalSubtitle}>
+                Your appointment transcript has been saved for review
+              </Text>
+              <TouchableOpacity
+                style={styles.continueButton}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.continueText}>Continue</Text>
+              </TouchableOpacity>
             </View>
-            <Text style={styles.modalTitle}>Transcript Saved</Text>
-            <Text style={styles.modalSubtitle}>
-              Your appointment transcript has been saved for review
-            </Text>
-            <TouchableOpacity
-              style={styles.continueButton}
-              onPress={() => setModalVisible(false)}
-            >
-              <Text style={styles.continueText}>Continue</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
-// ======= Styles =======
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 20,
-  },
-  box: {
-    width: '85%',
-    borderWidth: 2,
-    borderColor: '#CCC',
-    borderRadius: 8,
-    padding: 20,
-    alignItems: 'center',
-  },
-  startBox: {
-    backgroundColor: '#E9F7EF',
-    borderColor: '#4CAF50',
+  recordingButton: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
     justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 18,
+    backgroundColor: '#E7F9EE',
+    borderWidth: 1.2,
+    borderColor: '#22C55E',
   },
-  recordingBox: {
-    backgroundColor: '#FFFADB',
+  recordingButtonActive: {
+    backgroundColor: '#FEF3C7',
     borderColor: '#FF5C5C',
-    flexDirection: 'row',
-    gap: 10,
-    justifyContent: 'center',
   },
   recordingCircle: {
     width: 20,
     height: 20,
-    borderRadius: 50,
+    borderRadius: 10,
   },
   recordingText: {
+    fontSize: 16,
     fontWeight: '600',
+    fontFamily: 'Montserrat-SemiBold',
   },
-  englishBox: {
-    backgroundColor: '#E6F3FF',
-    borderColor: '#4B9EFF',
-    alignItems: 'flex-start',
-    gap: 5,
+  textInput: {
+    fontSize: 15,
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-Regular',
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
+    backgroundColor: '#F9FAFB',
   },
-  labelRow: {
+  lastEmotionDisplay: {
     flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  englishCircle: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#4B9EFF',
-    borderRadius: 50,
-  },
-  translationBox: {
-    backgroundColor: '#E9F7EF',
-    borderColor: '#66BB6A',
-    alignItems: 'flex-start',
-    gap: 5,
-  },
-  translationCircle: {
-    width: 20,
-    height: 20,
-    backgroundColor: '#66BB6A',
-    borderRadius: 50,
-  },
-  label: {
-    fontWeight: '700',
-  },
-  subText: {
-    fontSize: 14,
-    lineHeight: 18,
-  },
-  recordButton: {
-    backgroundColor: '#F5F5F5',
-  },
-  circle: {
-    width: 40,
-    height: 40,
-    backgroundColor: '#4B9EFF',
-    borderRadius: 50,
-    marginBottom: 10,
-  },
-  tapText: {
-    fontWeight: '500',
-  },
-  actionsContainer: {
-    flexDirection: 'row',
-    width: '85%',
-    gap: 10,
-  },
-  pauseButton: {
-    flex: 1,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    borderWidth: 2,
-    borderColor: '#CCC',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#F0F9FF',
+    borderRadius: 12,
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: '#E0F2FE',
   },
-  pauseCircle: {
-    width: 30,
-    height: 30,
-    backgroundColor: '#FF5C5C',
-    borderRadius: 50,
-  },
-  pauseText: {
-    fontWeight: '500',
-  },
-  feelingsContainer: {
-    flex: 2,
-    borderWidth: 2,
-    borderColor: '#CCC',
+  lastEmotionCircle: {
+    width: 20,
+    height: 20,
     borderRadius: 10,
-    padding: 10,
   },
-  feelingsLabel: {
+  lastEmotionText: {
     fontWeight: '600',
-    marginBottom: 8,
-    textAlign: 'center',
+    fontSize: 14,
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-SemiBold',
   },
   feelingsRow: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
+    marginTop: 8,
   },
   feelingsItem: {
     alignItems: 'center',
-    gap: 5,
+    gap: 6,
+    padding: 10,
+    borderRadius: 12,
+  },
+  feelingsItemSelected: {
+    backgroundColor: '#E3F2FD',
+    borderWidth: 2,
+    borderColor: '#4B9EFF',
   },
   feelingCircle: {
-    width: 30,
-    height: 30,
-    borderRadius: 20,
+    width: 32,
+    height: 32,
+    borderRadius: 16,
   },
   feelingText: {
-    fontSize: 12,
+    fontSize: 13,
+    fontWeight: '500',
+    color: '#1a1a1a',
+    fontFamily: 'Montserrat-Medium',
   },
-  endSession: {
-    backgroundColor: '#FF5C5C',
-    borderColor: '#D33',
+  endSessionButton: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#DC2626',
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginTop: 8,
+    borderWidth: 1.2,
+    borderColor: '#B91C1C',
   },
-  endText: {
-    color: '#FFF',
+  endSessionText: {
+    color: '#FFFFFF',
     fontWeight: '700',
+    fontSize: 16,
+    fontFamily: 'Montserrat-Bold',
   },
-
-  // Modal styles
   modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.4)',
@@ -482,48 +571,50 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalContent: {
-    width: '75%',
-    backgroundColor: '#FFF',
-    borderRadius: 15,
+    width: '80%',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 22,
     padding: 25,
     alignItems: 'center',
-    elevation: 10,
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
   },
   checkCircle: {
     width: 60,
     height: 60,
-    backgroundColor: '#66BB6A',
-    borderRadius: 50,
+    backgroundColor: '#22C55E',
+    borderRadius: 30,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 15,
   },
-  checkText: {
-    fontSize: 36,
-    color: '#FFF',
-  },
   modalTitle: {
     fontSize: 20,
     fontWeight: '700',
+    color: '#0A4DA3',
     marginBottom: 8,
+    fontFamily: 'Montserrat-Bold',
   },
   modalSubtitle: {
     fontSize: 14,
-    color: '#555',
+    color: '#5b6b7a',
     textAlign: 'center',
     marginBottom: 20,
+    fontFamily: 'Montserrat-Regular',
   },
   continueButton: {
     width: '100%',
-    borderWidth: 2,
-    borderColor: '#4B9EFF',
-    borderRadius: 10,
-    paddingVertical: 10,
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
+    borderRadius: 20,
+    paddingVertical: 12,
     alignItems: 'center',
+    backgroundColor: '#E6EEFF',
   },
   continueText: {
-    color: '#4B9EFF',
+    color: '#0A4DA3',
     fontWeight: '600',
     fontSize: 16,
+    fontFamily: 'Montserrat-SemiBold',
   },
 });

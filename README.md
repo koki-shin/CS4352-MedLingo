@@ -95,21 +95,6 @@ Our focus is to enhance accessibility and comfort for patients who face language
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
-
-<!-- GETTING STARTED -->
-## Getting Started
-
-Give instructions on setting up the project locally.
-To get a local copy up and running follow these simple example steps.
-
-### Prerequisites
-
-List things we need to use the software and how to install them.
-
-<p align="right">(<a href="#top">back to top</a>)</p>
-
-
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 

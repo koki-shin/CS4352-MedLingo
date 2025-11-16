@@ -79,23 +79,22 @@ Our focus is to enhance accessibility and comfort for patients who face language
 
 This project uses modern web technologies to deliver an interactive, accessible, and user-friendly experience.
 
-<!--
-- **React.js** – Frontend framework for building the user interface  
-- **Material UI (MUI)** – Component library for consistent and responsive design  
-- **React Router** – Navigation between pages (Before, During, After appointment)  
-- **JSON / LocalStorage** – Hardcoded data for translation and mock appointment info  
-- **Vercel / Netlify** – Hosting and live demo deployment  
-- **GitHub** – Version control with branch-per-task collaboration
+**Core:**
+- **Expo** - React Native framework for cross-platform mobile development
+- **Expo Router** - File-based routing system for navigation
+- **React Native** - Mobile app framework for iOS, Android, and Web
+- **React** - UI library for building component-based interfaces
+- **TypeScript** - Typed JavaScript for type safety and better tooling
 
-* [Next.js](https://nextjs.org/)
-* [React.js](https://reactjs.org/)
-* [Vue.js](https://vuejs.org/)
-* [Angular](https://angular.io/)
-* [Svelte](https://svelte.dev/)
-* [Laravel](https://laravel.com)
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
--->
+**Styling:**
+- **NativeWind** - Tailwind CSS integration for React Native
+- **Tailwind CSS** - Utlity-first CSS framework
+- **Montserrat font family** - Custom typography
+
+**Dev Tools**
+- **ESLint** — Code linting and quality checks
+- **Prettier** — Code formatting
+- **Babel** — JavaScript compiler/transpiler
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 

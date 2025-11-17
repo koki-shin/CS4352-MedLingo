@@ -202,7 +202,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedQuestions[selectedLanguage][0]}
+              {localizedQuestions["en"][0]}
             </Text>
             <Text
               style={{
@@ -237,7 +237,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedQuestions[selectedLanguage][1]}
+              {localizedQuestions["en"][1]}
             </Text>
             <Text
               style={{
@@ -272,7 +272,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedQuestions[selectedLanguage][2]}
+              {localizedQuestions["en"][2]}
             </Text>
             <Text
               style={{
@@ -324,7 +324,7 @@ export default function BeforeAppointmentCondensed() {
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
-                {localizedQuestions[selectedLanguage][3]}
+                {localizedQuestions["en"][3]}
               </Text>
               <Text
                 style={{
@@ -351,7 +351,7 @@ export default function BeforeAppointmentCondensed() {
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
-                {localizedQuestions[selectedLanguage][4]}
+                {localizedQuestions["en"][4]}
               </Text>
               <Text
                 style={{
@@ -372,7 +372,7 @@ export default function BeforeAppointmentCondensed() {
                   fontFamily: 'Montserrat-Regular',
                 }}
               >
-                {localizedQuestions[selectedLanguage][5]}
+                {localizedQuestions["en"][5]}
               </Text>
               <Text
                 style={{
@@ -395,19 +395,19 @@ export default function BeforeAppointmentCondensed() {
               const consentHtml = `
               <p><b>CONSENT:</b></p>
               <ul>
-                <li>${localizedQuestions[selectedLanguage][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
-                <li>${localizedQuestions[selectedLanguage][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
-                <li>${localizedQuestions[selectedLanguage][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
+                <li>${localizedQuestions["en"][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
+                <li>${localizedQuestions["en"][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
+                <li>${localizedQuestions["en"][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
               </ul>
             `;
 
               const htmlContent = `
               <html>
                 <body style="font-family: Arial; padding: 20px;">
-                  <h1 style="text-align: center;">${localizedUI[selectedLanguage].beforeAppointmentTitle}</h1>
-                  <p><strong>${localizedQuestions[selectedLanguage][0]}</strong><br>${src_one}</p>
-                  <p><strong>${localizedQuestions[selectedLanguage][1]}</strong><br>${src_two}</p>
-                  <p><strong>${localizedQuestions[selectedLanguage][2]}</strong><br>${src_three}</p>
+                  <h1 style="text-align: center;">${localizedUI["en"].beforeAppointmentTitle}</h1>
+                  <p><strong>${localizedQuestions["en"][0]}</strong><br>${src_one}</p>
+                  <p><strong>${localizedQuestions["en"][1]}</strong><br>${src_two}</p>
+                  <p><strong>${localizedQuestions["en"][2]}</strong><br>${src_three}</p>
                   ${consentHtml}
                 </body>
               </html>
@@ -417,7 +417,6 @@ export default function BeforeAppointmentCondensed() {
                 const { uri } = await Print.printToFileAsync({
                   html: htmlContent,
                 });
-                console.log('PDF saved to:', uri);
 
                 if (uri && (await Sharing.isAvailableAsync())) {
                   await Sharing.shareAsync(uri);

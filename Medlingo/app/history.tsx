@@ -1,9 +1,24 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, Pressable } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import React from 'react';
-import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { log_appt } from '../hooks/log_appt';
 
 export default function HistoryScreen() {
+  const { readAppointments } = log_appt();
+  const [csvText, setCsvText] = useState("");
+
+  async function loadCsv() {
+    const contents = await readAppointments();
+    setCsvText(contents);
+  }
+
+  useFocusEffect(
+  React.useCallback(() => {
+    loadCsv();
+  }, [])
+);
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <View className="flex-1 bg-white px-5 pt-6">
@@ -20,7 +35,9 @@ export default function HistoryScreen() {
         >
           Appointment History
         </Text>
-      <Text style={styles.subtitle}>No appointments yet.</Text>
+      <Text selectable style={{ marginTop: 12 }}>
+        {csvText}
+      </Text>
       <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />
         <View className="h-20" />
         </View>

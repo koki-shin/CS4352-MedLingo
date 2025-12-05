@@ -14,6 +14,9 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
+import { log_appt } from '../../hooks/log_appt';
+
+const { writeAppointment } = log_appt();
 
 const MEDICATION_OPTIONS = ['Ipratropium Bromide', 'Ryaltis'];
 
@@ -849,8 +852,11 @@ export default function SettingsScreen() {
                   },
                 ]}
                 disabled={!selectedApptDate || !selectedApptTime}
-                onPress={() => {
+                onPress={async () => {
                   setScheduleModalVisible(false);
+                  if (selectedApptDate && selectedApptTime) {
+                    await writeAppointment("In-Person", selectedApptDate, selectedApptTime);
+                  }
                   setApptSummaryVisible(true);
                 }}
               >

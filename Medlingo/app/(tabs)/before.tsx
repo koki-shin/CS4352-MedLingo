@@ -16,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { LanguagePicker, Language } from '../../hooks/LanguagePicker';
 import { useTranslation } from '../../hooks/translate';
+import { router } from 'expo-router';
 
 // Page based on language
 const localizedUI: Record<Language, Record<string, string>> = {
@@ -29,6 +30,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     submit: 'Submit',
     print: 'Print to PDF',
     back: 'Back',
+    continue: 'Continue to During Appointment',
   },
   es: {
     beforeAppointmentTitle: 'Antes de su cita',
@@ -41,6 +43,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     submit: 'Enviar',
     print: 'Imprimir PDF',
     back: 'Atrás',
+    continue: 'Continuar durante la cita',
   },
   fr: {
     beforeAppointmentTitle: 'Avant votre rendez-vous',
@@ -53,6 +56,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     submit: 'Soumettre',
     print: 'Imprimer PDF',
     back: 'Retour',
+    continue: 'Continuer pendant le rendez-vous',
   },
   zh: {
     beforeAppointmentTitle: '预约前',
@@ -64,6 +68,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     submit: '提交',
     print: '打印 PDF',
     back: '返回',
+    continue: '继续进行预约流程',
   },
 };
 
@@ -387,8 +392,20 @@ export default function BeforeAppointmentCondensed() {
           </Card.Content>
         </Card>
 
+        {/* Back Button */}
+        <Button
+          title={localizedUI[selectedLanguage].back}
+          onPress={() => setIsOutputVisible(false)}
+        />
+
+        {/* Continue Button */}
+        <Button
+          title={localizedUI[selectedLanguage].continue}
+          onPress={() => router.push("/(tabs)/during")}
+        />
+
         {/* Print PDF Button */}
-        <View style={{ marginVertical: 20 }}>
+        <View style={{ marginVertical: 0 }}>
           <Button
             title={localizedUI[selectedLanguage].print}
             onPress={async () => {
@@ -427,12 +444,6 @@ export default function BeforeAppointmentCondensed() {
             }}
           />
         </View>
-
-        {/* Back Button */}
-        <Button
-          title={localizedUI[selectedLanguage].back}
-          onPress={() => setIsOutputVisible(false)}
-        />
       </ScrollView>
     );
   }

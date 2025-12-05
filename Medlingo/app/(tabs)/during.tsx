@@ -20,6 +20,7 @@ import { Audio } from 'expo-av';
 import { useTranslation } from '../../hooks/translate';
 import { Language } from '../../hooks/LanguagePicker';
 import { useLanguage } from '../../hooks/LanguageContext';
+import { router } from 'expo-router';
 
 export default function SettingsScreen() {
   const [isRecording, setIsRecording] = useState(false);
@@ -461,7 +462,14 @@ export default function SettingsScreen() {
                 style={styles.continueButton}
                 onPress={() => setModalVisible(false)}
               >
-                <Text style={styles.continueText}>Continue</Text>
+                <Text style={styles.continueText}>Return</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.continueButton}
+                onPress={() => {setModalVisible(false); router.push("/(tabs)/after")}}
+              >
+                <Text style={styles.continueText}>Continue to After Appointment</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -625,6 +633,7 @@ const styles = StyleSheet.create({
     borderColor: '#d7e3ff',
     borderRadius: 20,
     paddingVertical: 12,
+    marginBottom: 8,
     alignItems: 'center',
     backgroundColor: '#E6EEFF',
   },

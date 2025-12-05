@@ -4,13 +4,12 @@ const LOG_PATH = FileSystem.documentDirectory + 'appointments.csv';
 
 export function log_appt() {
   async function writeAppointment(type: string, date: string, time: string) {
-    const line = `${type},${date},${time}\n`;
+    const line = `${type}: ${date} at ${time}\n`;
 
     try {
       const fileInfo = await FileSystem.getInfoAsync(LOG_PATH);
 
       if (!fileInfo.exists) {
-        // create new file
         await FileSystem.writeAsStringAsync(LOG_PATH, line, {
           encoding: FileSystem.EncodingType.UTF8,
         });
@@ -35,5 +34,19 @@ export function log_appt() {
     }
   }
 
-  return { writeAppointment, readAppointments };
+  async function deleteAppointmentLine(lineToDelete: string) {
+    try {
+        const contents = await FileSystem.readAsStringAsync(LOG_PATH);
+        const lines = contents.split("\n");
+        const filtered = lines.filter((line) => line.trim() !== lineToDelete.trim());
+        const newCsv = filtered.join("\n");
+
+        await FileSystem.writeAsStringAsync(LOG_PATH, newCsv, {
+        encoding: FileSystem.EncodingType.UTF8,
+        });
+    } catch (error) {
+        console.error("Error deleting line from CSV:", error);
+    }
+    }
+  return { writeAppointment, readAppointments, deleteAppointmentLine };
 }

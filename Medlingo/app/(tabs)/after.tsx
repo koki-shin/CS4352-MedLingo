@@ -1026,8 +1026,11 @@ export default function SettingsScreen() {
                   },
                 ]}
                 disabled={!selectedTelehealthDate || !selectedTelehealthTime}
-                onPress={() => {
+                onPress={async () => {
                   setTelehealthScheduleModalVisible(false);
+                  if (selectedTelehealthDate && selectedTelehealthTime) {
+                    await writeAppointment("Virtual", selectedTelehealthDate, selectedTelehealthTime);
+                  }
                   setTelehealthSummaryVisible(true);
                 }}
               >

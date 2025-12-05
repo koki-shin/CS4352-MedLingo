@@ -11,42 +11,37 @@ import { useLanguage } from '../../hooks/LanguageContext';
 const localizedUI: Record<Language, any> = {
   en: {
     before: {
-      title: 'Before Appointment',
-      subtitle: 'Prepare for your visit',
+      title: 'Start Appointment',
+      subtitle: 'Begin the Appointment Process',
     },
     during: {
-      title: 'During Appointment',
-      subtitle: 'Real-time Translation',
+      title: 'Appointment History',
+      subtitle: 'Access Audio and Transcripts',
     },
-    after: {
-      title: 'After Appointment',
-      subtitle: 'Review your visit summary',
-    },
-    quick: { title: 'Quick Access' },
   },
   es: {
-    before: { title: 'Antes de la cita', subtitle: 'Prepare su visita' },
-    during: { title: 'Durante la cita', subtitle: 'Traducción en tiempo real' },
-    after: { title: 'Después de la cita', subtitle: 'Prepare su visita' },
-    quick: { title: 'Acceso rápido' },
+    before: { 
+    title: 'Iniciar cita', 
+    subtitle: 'Iniciar el proceso de cita' 
+    },
+    during: { 
+    title: 'Historial de citas', 
+    subtitle: 'Acceder a los audios y las transcripciones' 
+    },
   },
   fr: {
     before: {
-      title: 'Avant le rendez-vous',
-      subtitle: 'Préparez votre visite',
+      title: 'Commencer le rendez-vous',
+      subtitle: 'Commencer le processus de prise de rendez-vous',
     },
     during: {
-      title: 'Pendant le rendez-vous',
-      subtitle: 'Traduction en temps réel',
+      title: 'Historique des rendez-vous',
+      subtitle: 'Accéder aux enregistrements audio et aux transcriptions',
     },
-    after: { title: 'Après le rendez-vous', subtitle: 'Préparez votre visite' },
-    quick: { title: 'Accès rapide' },
   },
   zh: {
-    before: { title: '预约前', subtitle: '准备您的访问' },
-    during: { title: '预约中', subtitle: '实时翻译' },
-    after: { title: '预约后', subtitle: '准备您的访问' },
-    quick: { title: '快速访问' },
+    before: { title: '开始预约', subtitle: '开始预约流程' },
+    during: { title: '预约记录', subtitle: '访问音频和文字记录' },
   },
 };
 
@@ -190,59 +185,6 @@ export default function HomeScreen() {
                     }}
                   >
                     {localizedUI[selectedLanguage].during.subtitle}
-                  </Text>
-                </Card.Content>
-              </Card>
-            </Link>
-          </View>
-
-          {/* After Appointment */}
-          <View style={{ marginBottom: 16 }}>
-            <Link href="/after" asChild>
-              <Card
-                mode="outlined"
-                style={{
-                  backgroundColor: 'white',
-                  borderColor: '#d7e3ff',
-                  borderWidth: 1.2,
-                  borderRadius: 22,
-                }}
-              >
-                <Card.Content style={{ paddingVertical: 18 }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      marginBottom: 8,
-                    }}
-                  >
-                    <Ionicons
-                      name="document-text-outline"
-                      size={24}
-                      color="#0A4DA3"
-                      style={{ marginRight: 12 }}
-                    />
-                    <Text
-                      style={{
-                        fontSize: 20,
-                        fontWeight: '700',
-                        color: '#0A4DA3',
-                        flex: 1,
-                        fontFamily: 'Montserrat-Bold',
-                      }}
-                    >
-                      {localizedUI[selectedLanguage].after.title}
-                    </Text>
-                  </View>
-                  <Text
-                    style={{
-                      fontSize: 14,
-                      color: '#5b6b7a',
-                      marginTop: 4,
-                      fontFamily: 'Montserrat-Regular',
-                    }}
-                  >
-                    {localizedUI[selectedLanguage].after.subtitle}
                   </Text>
                 </Card.Content>
               </Card>

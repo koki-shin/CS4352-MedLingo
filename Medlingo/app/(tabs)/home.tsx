@@ -138,9 +138,9 @@ export default function HomeScreen() {
             </Link>
           </View>
 
-          {/* During Appointment */}
+          {/* Appointment History */}
           <View style={{ marginBottom: 16 }}>
-            <Link href="/during" asChild>
+            <Link href="/history" asChild>
               <Card
                 mode="outlined"
                 style={{

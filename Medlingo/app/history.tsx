@@ -1,9 +1,30 @@
-import { View, Text, StyleSheet, Button } from 'react-native';
+import { View, Text, StyleSheet, Button, Pressable, ScrollView } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
-import React from 'react';
-import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { router, useFocusEffect } from 'expo-router';
+import { log_appt } from '../hooks/log_appt';
 
 export default function HistoryScreen() {
+  const { readAppointments, deleteAppointmentLine } = log_appt();
+  const [appointments, setAppointments] = useState<string[]>([]);
+
+  async function loadCsv() {
+    const contents = await readAppointments();
+
+    const list = contents
+      .split("\n")
+      .map((l) => l.trim())
+      .filter((l) => l.length > 0);
+
+    setAppointments(list);
+  }
+
+  useFocusEffect(
+    React.useCallback(() => {
+      loadCsv();
+    }, [])
+  );
+
   return (
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <View className="flex-1 bg-white px-5 pt-6">
@@ -20,7 +41,35 @@ export default function HistoryScreen() {
         >
           Appointment History
         </Text>
-      <Text style={styles.subtitle}>No appointments yet.</Text>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+          {appointments.map((line, index) => (
+            <View
+              key={index}
+              style={styles.row}
+            >
+              <Text style={styles.lineText}>{line}</Text>
+
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await deleteAppointmentLine(line);
+                  await loadCsv(); // refresh list
+                }}
+              >
+                <Text style={styles.deleteText}>Delete</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          {appointments.length === 0 && (
+            <Text style={styles.empty}>No appointments logged.</Text>
+          )}
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+
+
       <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />
         <View className="h-20" />
         </View>
@@ -29,23 +78,36 @@ export default function HistoryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 20, // Add some space between elements
+  row: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: "#d7e3ff",
   },
-  title: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: '#0A4DA3',
-    fontFamily: 'Montserrat-ExtraBold',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#5b6b7a',
-    justifyContent: 'center',
-    alignItems: 'center',
+  lineText: {
+    fontSize: 18,
+    color: "#1a1a1a",
     fontFamily: 'Montserrat-Regular',
+    flex: 1,
   },
+  deleteButton: {
+    backgroundColor: "#ffefef",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    marginLeft: 12,
+  },
+  deleteText: {
+    color: "red",
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  empty: {
+    textAlign: "center",
+    marginTop: 30,
+    fontSize: 18,
+    color: "#777",
+  }
 });

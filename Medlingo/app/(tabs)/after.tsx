@@ -812,7 +812,7 @@ export default function SettingsScreen() {
               </Pressable>
                 <Text
                   style={{
-                    fontSize: 18,
+                    fontSize: 15,
                     fontWeight: '700',
                     textAlign: 'center',
                     marginBottom: 8,
@@ -1003,7 +1003,7 @@ export default function SettingsScreen() {
               </Pressable>
               <Text
                 style={{
-                  fontSize: 18,
+                  fontSize: 13,
                   fontWeight: '700',
                   textAlign: 'center',
                   marginBottom: 8,
@@ -1484,9 +1484,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 10,
     right: 10,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
     borderWidth: 1.2,
     borderColor: '#d7e3ff',
     backgroundColor: '#F3F4F6',
@@ -1496,9 +1496,9 @@ const styles = StyleSheet.create({
     elevation: 10,
   },
   closeTxt: {
-    fontSize: 18,
+    fontSize: 28,
     fontWeight: '700',
-    lineHeight: 18,
+    lineHeight: 28,
     color: "#1a1a1a",
   },
   modalButton: {

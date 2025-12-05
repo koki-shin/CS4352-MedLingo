@@ -43,6 +43,39 @@ const formatApptDate = (iso: string | null) => {
   });
 };
 
+const getToday = () => {
+  const date = new Date();
+  const year  = date.getFullYear();
+  const monthNum = (date.getMonth() + 1);
+  const month = monthNum < 10 ? '0' + monthNum : String(monthNum);
+  const dayNum = date.getDate();
+  const day = dayNum < 10 ? '0' + dayNum : String(dayNum);
+  return `${year}-${month}-${day}`;
+};
+
+const timeToAMPM = (time: string) => {
+  const parts = time.split(' ');
+  const hm = parts[0];
+  const ampm = parts[1] ?? '';
+  const [hStr, mStr] = hm.split(':');
+  let hour = parseInt(hStr, 10);
+  const minute = parseInt(mStr, 10);
+  if (ampm.toLowerCase() === 'pm' && hour < 12) {
+    hour += 12;
+  } else if (ampm.toLowerCase() === 'am' && hour === 12) {
+    hour = 0;
+  }
+  return { hour, minute };
+};
+
+const isDateTimePast = (dateStr: string | null, timeStr: string | null) => {
+  if (!dateStr || !timeStr) return true;
+  const [year, month, day] = dateStr.split('-').map((s) => parseInt(s, 10));
+  const { hour, minute } = timeToAMPM(timeStr);
+  const apptDate = new Date(year, month - 1, day, hour, minute);
+  return apptDate.getTime() <= Date.now();
+};
+
 // Language chooser
 const localizedUI: Record<Language, Record<string, string>> = {
   en: {
@@ -792,8 +825,12 @@ export default function SettingsScreen() {
 
               <Calendar
                 onDayPress={(day: any) => {
-                  setSelectedApptDate(day.dateString);
+                  if (day.dateString >= getToday()) {
+                    setSelectedApptDate(day.dateString);
+                    setSelectedApptTime(null);
+                  }
                 }}
+                minDate={getToday()}
                 markedDates={
                   selectedApptDate
                     ? {
@@ -821,37 +858,53 @@ export default function SettingsScreen() {
               </Text>
 
               <View style={styles.timeGrid}>
-                {TIME_OPTIONS.map((time) => (
-                  <Pressable
-                    key={time}
-                    style={[
-                      styles.timeSlot,
-                      selectedApptTime === time && styles.timeSlotSelected,
-                    ]}
-                    onPress={() => setSelectedApptTime(time)}
-                  >
-                    <Text
+                {TIME_OPTIONS.map((time: string) => {
+                  const disabled = !selectedApptDate || isDateTimePast(selectedApptDate, time);
+                  return (
+                    <Pressable
+                      key={time}
+                      disabled={disabled}
                       style={[
-                        styles.timeSlotText,
-                        selectedApptTime === time && styles.timeSlotTextSelected,
+                        styles.timeSlot,
+                        disabled && styles.timeSlotDisabled,
+                        selectedApptTime === time && !disabled && styles.timeSlotSelected,
                       ]}
+                      onPress={() => {
+                        if (!disabled) setSelectedApptTime(time);
+                      }}
                     >
-                      {time}
-                    </Text>
-                  </Pressable>
-                ))}
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          selectedApptTime === time && !disabled && styles.timeSlotTextSelected,
+                          disabled && { color: '#9CA3AF' },
+                        ]}
+                      >
+                        {time}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
               </View>
-
               <Pressable
                 style={[
                   styles.modalButton,
                   styles.modalButtonFullWidth,
                   {
                     marginTop: 18,
-                    opacity: selectedApptDate && selectedApptTime ? 1 : 0.5,
+                    opacity:
+                      selectedApptDate &&
+                      selectedApptTime &&
+                      !isDateTimePast(selectedApptDate, selectedApptTime)
+                        ? 1
+                        : 0.5,
                   },
                 ]}
-                disabled={!selectedApptDate || !selectedApptTime}
+                disabled={
+                  !selectedApptDate ||
+                  !selectedApptTime ||
+                  isDateTimePast(selectedApptDate, selectedApptTime)
+                }
                 onPress={async () => {
                   setScheduleModalVisible(false);
                   if (selectedApptDate && selectedApptTime) {
@@ -963,8 +1016,12 @@ export default function SettingsScreen() {
 
               <Calendar
                 onDayPress={(day: any) => {
-                  setSelectedTelehealthDate(day.dateString); 
+                  if (day.dateString >= getToday()) {
+                    setSelectedTelehealthDate(day.dateString);
+                    setSelectedTelehealthTime(null);
+                  }
                 }}
+                minDate={getToday()}
                 markedDates={
                   selectedTelehealthDate
                     ? {
@@ -991,28 +1048,36 @@ export default function SettingsScreen() {
                 {localizedUI[selectedLanguage].availableTimes}
               </Text>
 
+              
               <View style={styles.timeGrid}>
-                {TIME_OPTIONS.map((time) => (
-                  <Pressable
-                    key={time}
-                    style={[
-                      styles.timeSlot,
-                      selectedTelehealthTime === time &&
-                        styles.timeSlotSelected,
-                    ]}
-                    onPress={() => setSelectedTelehealthTime(time)}
-                  >
-                    <Text
+                {TIME_OPTIONS.map((time) => {
+                  const disabled = !selectedTelehealthDate || isDateTimePast(selectedTelehealthDate, time);
+                  return (
+                    <Pressable
+                      key={time}
+                      disabled={disabled} 
                       style={[
-                        styles.timeSlotText,
-                        selectedTelehealthTime === time &&
-                          styles.timeSlotTextSelected,
+                        styles.timeSlot,
+                        disabled && styles.timeSlotDisabled,  
+                        selectedTelehealthTime === time && !disabled &&
+                          styles.timeSlotSelected,
                       ]}
+                      onPress={() => {
+                        if (!disabled) setSelectedTelehealthTime(time);
+                      }}
                     >
-                      {time}
-                    </Text>
-                  </Pressable>
-                ))}
+                      <Text
+                        style={[
+                          styles.timeSlotText,
+                          selectedTelehealthTime === time && !disabled &&
+                            styles.timeSlotTextSelected, disabled && { color: '#9CA3AF' }
+                        ]}
+                      >
+                        {time}
+                      </Text>
+                    </Pressable>
+                  );
+                })}
               </View>
 
               <Pressable
@@ -1022,7 +1087,7 @@ export default function SettingsScreen() {
                   {
                     marginTop: 18,
                     opacity:
-                      selectedTelehealthDate && selectedTelehealthTime ? 1 : 0.5,
+                      selectedTelehealthDate && selectedTelehealthTime && !isDateTimePast(selectedTelehealthDate, selectedTelehealthTime) ? 1 : 0.5,
                   },
                 ]}
                 disabled={!selectedTelehealthDate || !selectedTelehealthTime}
@@ -1117,7 +1182,7 @@ export default function SettingsScreen() {
             </View>
             
             <ScrollView style={{ maxHeight: 300 }}>
-              {medicationOptions.map((med) => (
+              {medicationOptions.map((med: string) => (
                 <Pressable
                   key={med}
                   style={[
@@ -1185,25 +1250,25 @@ export default function SettingsScreen() {
         </View>
       </Modal>
 
-      {showTimesPicker.map((idx) => (
+      {showTimesPicker.map((idx: number) => (
         <Modal
           key={idx}
           visible={true}
           transparent
           animationType="slide"
-          onRequestClose={() => setShowTimesPicker(showTimesPicker.filter(i => i !== idx))}
+          onRequestClose={() => setShowTimesPicker(showTimesPicker.filter((i: number) => i !== idx))}
         >
           <View style={styles.pickerModalOverlay}>
             <View style={styles.pickerModalContent}>
               <View style={styles.pickerModalHeader}>
                 <Text style={styles.pickerModalTitle}>{localizedUI[selectedLanguage].selectTime}</Text>
-                <Pressable onPress={() => setShowTimesPicker(showTimesPicker.filter(i => i !== idx))}>
+                <Pressable onPress={() => setShowTimesPicker(showTimesPicker.filter((i: number) => i !== idx))}>
                   <Text style={styles.pickerCloseButton}>✕</Text>
                 </Pressable>
               </View>
               
               <ScrollView style={{ maxHeight: 300 }}>
-                {TIME_OPTIONS.map((t) => (
+                {TIME_OPTIONS.map((t: string) => (
                   <Pressable
                     key={t}
                     style={[
@@ -1471,6 +1536,11 @@ const styles = StyleSheet.create({
   timeSlotSelected: {
     backgroundColor: '#0A4DA3',
     borderColor: '#0A4DA3',
+  },
+  timeSlotDisabled: {
+    backgroundColor: '#F3F4F6',
+    borderColor: '#E5E7EB',
+    opacity: 0.6,
   },
   timeSlotText: {
     fontSize: 13,

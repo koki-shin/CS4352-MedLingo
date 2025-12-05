@@ -10,7 +10,7 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
-  ScrollView,
+  ScrollView, // 67
 } from 'react-native';
 import { Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';

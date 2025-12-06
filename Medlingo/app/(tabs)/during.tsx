@@ -10,7 +10,7 @@ import {
   Platform,
   Keyboard,
   ActivityIndicator,
-  ScrollView,
+  ScrollView, // 67
 } from 'react-native';
 import { Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -211,6 +211,10 @@ export default function SettingsScreen() {
       end: 'End Session',
       feelings: 'How are you feeling?',
       current: 'Current:',
+      transcriptSavedTitle: 'Transcript Saved!',
+      transcriptSavedSubtitle: 'Your recording and notes have been securely saved.',
+      return: 'Return',
+      continueToAfter: 'Continue to After Your Appointment',
     },
     es: {
       pageTitle: 'Durante su cita',
@@ -219,6 +223,10 @@ export default function SettingsScreen() {
       end: 'Finalizar sesión',
       feelings: '¿Cómo se siente?',
       current: 'Actual:',
+      transcriptSavedTitle: '¡Transcripción guardada!',
+      transcriptSavedSubtitle: 'Su grabación y notas se han guardado de forma segura.',
+      return: 'Regresar',
+      continueToAfter: 'Continuar a Después de su Cita',
     },
     fr: {
       pageTitle: 'Pendant votre rendez-vous',
@@ -227,6 +235,10 @@ export default function SettingsScreen() {
       end: 'Fin de session',
       feelings: 'Comment vous sentez-vous?',
       current: 'Actuel:',
+      transcriptSavedTitle: 'Transcription enregistrée !',
+      transcriptSavedSubtitle: 'Votre enregistrement et vos notes ont été sauvegardés.',
+      return: 'Retour',
+      continueToAfter: "Continuer vers Après le Rendez-Vous",
     },
     zh: {
       pageTitle: '预约期间',
@@ -235,6 +247,10 @@ export default function SettingsScreen() {
       end: '结束会议',
       feelings: '你感觉如何？',
       current: '当前:',
+      transcriptSavedTitle: '记录已保存！',
+      transcriptSavedSubtitle: '您的录音和备注已成功保存。',
+      return: '返回',
+      continueToAfter: '前往预约后页面',
     },
   };
 
@@ -442,38 +458,55 @@ export default function SettingsScreen() {
           </Text>
         </TouchableOpacity>
 
-        {/* Transcript Saved Modal */}
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => setModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <View style={styles.checkCircle}>
-                <Ionicons name="checkmark" size={36} color="#FFFFFF" />
-              </View>
-              <Text style={styles.modalTitle}>Transcript Saved</Text>
-              <Text style={styles.modalSubtitle}>
-                Your appointment transcript has been saved for review
-              </Text>
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.continueText}>Return</Text>
-              </TouchableOpacity>
+{/* Transcript Saved Modal */} 
+<Modal
+  animationType="fade"
+  transparent={true}
+  visible={modalVisible}
+  onRequestClose={() => setModalVisible(false)}
+>
+  <View style={styles.modalOverlay}>
+    <View style={styles.modalContent}>
+      <View style={styles.checkCircle}>
+        <Ionicons name="checkmark" size={36} color="#FFFFFF" />
+      </View>
 
-              <TouchableOpacity
-                style={styles.continueButton}
-                onPress={() => {setModalVisible(false); router.push("/(tabs)/after")}}
-              >
-                <Text style={styles.continueText}>Continue to After Appointment</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </Modal>
+      {/* Title */}
+      <Text style={styles.modalTitle}>
+        {localizedUI[selectedLanguage as Language].transcriptSavedTitle}
+      </Text>
+
+      {/* Subtitle */}
+      <Text style={styles.modalSubtitle}>
+        {localizedUI[selectedLanguage as Language].transcriptSavedSubtitle}
+      </Text>
+
+      {/* Return Button */}
+      <TouchableOpacity
+        style={styles.continueButton}
+        onPress={() => setModalVisible(false)}
+      >
+        <Text style={styles.continueText}>
+          {localizedUI[selectedLanguage as Language].return}
+        </Text>
+      </TouchableOpacity>
+
+      {/* Continue Button */}
+      <TouchableOpacity
+        style={styles.continueButton}
+        onPress={() => {
+          setModalVisible(false);
+          router.push("/(tabs)/after");
+        }}
+      >
+        <Text style={styles.continueText}>
+          {localizedUI[selectedLanguage as Language].continueToAfter}
+        </Text>
+      </TouchableOpacity>
+
+    </View>
+  </View>
+</Modal>
       </ScrollView>
     </SafeAreaView>
   );

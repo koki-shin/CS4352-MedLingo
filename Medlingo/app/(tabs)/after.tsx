@@ -245,18 +245,14 @@ export default function SettingsScreen() {
   const [scheduleModalVisible, setScheduleModalVisible] = useState(false);
   const [selectedApptDate, setSelectedApptDate] = useState<string | null>(null);
   const [selectedApptTime, setSelectedApptTime] = useState<string | null>(null);
+  const [apptConfirmVisible, setApptConfirmVisible] = useState(false);
   const [apptSummaryVisible, setApptSummaryVisible] = useState(false);
 
-  const [telehealthScheduleModalVisible, setTelehealthScheduleModalVisible] =
-    useState(false);
-  const [selectedTelehealthDate, setSelectedTelehealthDate] = useState<
-    string | null
-  >(null);
-  const [selectedTelehealthTime, setSelectedTelehealthTime] = useState<
-    string | null
-  >(null);
-  const [telehealthSummaryVisible, setTelehealthSummaryVisible] =
-    useState(false);
+  const [telehealthScheduleModalVisible, setTelehealthScheduleModalVisible] = useState(false);
+  const [selectedTelehealthDate, setSelectedTelehealthDate] = useState<string | null>(null);
+  const [selectedTelehealthTime, setSelectedTelehealthTime] = useState<string | null>(null);
+  const [telehealthConfirmVisible, setTelehealthConfirmVisible] = useState(false);
+  const [telehealthSummaryVisible, setTelehealthSummaryVisible] = useState(false);
 
   const [showMedicationPicker, setShowMedicationPicker] = useState(false);
   const [showDosesPicker, setShowDosesPicker] = useState(false);
@@ -905,12 +901,9 @@ export default function SettingsScreen() {
                   !selectedApptTime ||
                   isDateTimePast(selectedApptDate, selectedApptTime)
                 }
-                onPress={async () => {
+                onPress={() => {
                   setScheduleModalVisible(false);
-                  if (selectedApptDate && selectedApptTime) {
-                    await writeAppointment("In-Person", selectedApptDate, selectedApptTime);
-                  }
-                  setApptSummaryVisible(true);
+                  setApptConfirmVisible(true);
                 }}
               >
                 <Text
@@ -925,6 +918,41 @@ export default function SettingsScreen() {
                   {localizedUI[selectedLanguage].scheduleAppointmentButton}
                 </Text>
               </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={apptConfirmVisible}
+          animationType="fade"
+          onRequestClose={() => setApptConfirmVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <Text style={{ fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8, color: "#0A4DA3", fontFamily: 'Montserrat-Bold' }}>
+                Confirm Appointment
+              </Text>
+              <Text style={{ fontSize: 14, textAlign: 'center', marginBottom: 16, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>
+                {appointmentSummaryText}
+              </Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Pressable style={[styles.modalButton, { flex: 1, marginRight: 8 }]} onPress={() => setApptConfirmVisible(false)}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.modalButton, { flex: 1, backgroundColor: '#0A4DA3' }]}
+                  onPress={async () => {
+                    setApptConfirmVisible(false);
+                    if (selectedApptDate && selectedApptTime) {
+                      await writeAppointment("In-Person", selectedApptDate, selectedApptTime);
+                    }
+                    setApptSummaryVisible(true);
+                  }}
+                >
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>Confirm</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </Modal>
@@ -1091,12 +1119,9 @@ export default function SettingsScreen() {
                   },
                 ]}
                 disabled={!selectedTelehealthDate || !selectedTelehealthTime}
-                onPress={async () => {
+                onPress={() => {
                   setTelehealthScheduleModalVisible(false);
-                  if (selectedTelehealthDate && selectedTelehealthTime) {
-                    await writeAppointment("Virtual", selectedTelehealthDate, selectedTelehealthTime);
-                  }
-                  setTelehealthSummaryVisible(true);
+                  setTelehealthConfirmVisible(true);
                 }}
               >
                 <Text
@@ -1111,6 +1136,41 @@ export default function SettingsScreen() {
                   {localizedUI[selectedLanguage].scheduleTelehealthButton}
                 </Text>
               </Pressable>
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          transparent
+          visible={telehealthConfirmVisible}
+          animationType="fade"
+          onRequestClose={() => setTelehealthConfirmVisible(false)}
+        >
+          <View style={styles.modalBackdrop}>
+            <View style={styles.modalCard}>
+              <Text style={{ fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8, color: "#0A4DA3", fontFamily: 'Montserrat-Bold' }}>
+                Confirm Virtual Appointment
+              </Text>
+              <Text style={{ fontSize: 14, textAlign: 'center', marginBottom: 16, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>
+                {telehealthSummaryText}
+              </Text>
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Pressable style={[styles.modalButton, { flex: 1, marginRight: 8 }]} onPress={() => setTelehealthConfirmVisible(false)}>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>Cancel</Text>
+                </Pressable>
+                <Pressable
+                  style={[styles.modalButton, { flex: 1, backgroundColor: '#0A4DA3' }]}
+                  onPress={async () => {
+                    setTelehealthConfirmVisible(false);
+                    if (selectedTelehealthDate && selectedTelehealthTime) {
+                      await writeAppointment("Virtual", selectedTelehealthDate, selectedTelehealthTime);
+                    }
+                    setTelehealthSummaryVisible(true);
+                  }}
+                >
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>Confirm</Text>
+                </Pressable>
+              </View>
             </View>
           </View>
         </Modal>

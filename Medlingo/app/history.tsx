@@ -75,7 +75,6 @@ export default function HistoryScreen() {
               style={styles.row}
             >
               <Text style={styles.lineText}>{line}</Text>
-
               <Pressable
                 style={styles.deleteButton}
                 onPress={async () => {
@@ -109,47 +108,53 @@ export default function HistoryScreen() {
           Saved Appointment Forms
         </Text>
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 20 }}>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
           {savedForms.map((filename, index) => (
-            <Pressable
+            <View
               key={index}
-              style={{
-                paddingVertical: 12,
-                borderBottomWidth: 1,
-                borderBottomColor: "#d7e3ff",
-              }}
-              onPress={() => {
-                const uri = FileSystem.documentDirectory + filename;
-                router.push({
-                  pathname: "/view",
-                  params: { uri },
-                });
-                  console.log('Opening PDF:', uri);
-              }}
+              style={styles.row}
             >
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: "#0A4DA3",
-                  fontFamily: "Montserrat-Regular",
+              {/* Filename */}
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => {
+                  const uri = FileSystem.documentDirectory + filename;
+                  router.push({
+                    pathname: "/view",
+                    params: { uri, title: filename },
+                  });
                 }}
               >
-                {filename}
-              </Text>
-            </Pressable>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: "#0A4DA3",
+                    fontFamily: "Montserrat-Regular",
+                  }}
+                >
+                  {filename}
+                </Text>
+              </Pressable>
+
+              {/* add delete button */}
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await FileSystem.deleteAsync(
+                    FileSystem.documentDirectory + filename,
+                    { idempotent: true }
+                  );
+                  await loadSavedForms();
+                }}
+              >
+                <Text style={styles.deleteText}>Delete</Text>
+              </Pressable>
+            </View>
           ))}
 
           {savedForms.length === 0 && (
-            <Text
-              style={{
-                textAlign: "center",
-                marginTop: 10,
-                fontSize: 16,
-                color: "#777",
-              }}
-            >
-              No saved form PDFs.
-            </Text>
+            <Text style={styles.empty}>No forms saved.</Text>
           )}
         </ScrollView>
 
@@ -190,7 +195,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     textAlign: "center",
-    marginTop: 30,
+    marginTop: 15,
     fontSize: 18,
     color: "#777",
   }

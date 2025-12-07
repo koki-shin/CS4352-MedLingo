@@ -42,7 +42,21 @@ export default function HistoryScreen() {
           Appointment History
         </Text>
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* change */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          Upcoming Appointments
+        </Text>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
           {appointments.map((line, index) => (
             <View
               key={index}
@@ -68,6 +82,20 @@ export default function HistoryScreen() {
 
           <View style={{ height: 40 }} />
         </ScrollView>
+
+        {/* change */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          Saved Appointment Forms
+        </Text>
 
 
       <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />

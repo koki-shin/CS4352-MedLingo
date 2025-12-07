@@ -113,6 +113,10 @@ const localizedUI: Record<Language, Record<string, string>> = {
     selectMedication: 'Select Medication',
     selectTime: 'Select Time',
     selectFrequency: 'Select Frequency',
+    confirmAppointmentTitle: 'Confirm Appointment',
+    confirmVirtualTitle: 'Confirm Virtual Appointment',
+    cancel: 'Cancel',
+    confirm: 'Confirm',
   },
   es: {
     pageTitle: 'Después de su Visita',
@@ -149,6 +153,10 @@ const localizedUI: Record<Language, Record<string, string>> = {
     selectMedication: 'Seleccionar Medicamento',
     selectTime: 'Seleccionar Hora',
     selectFrequency: 'Seleccionar Frecuencia',
+    confirmAppointmentTitle: 'Confirmar Cita',
+    confirmVirtualTitle: 'Confirmar Cita Virtual',
+    cancel: 'Cancelar',
+    confirm: 'Confirmar',
   },
   fr: {
     pageTitle: 'Après Votre Visite',
@@ -185,6 +193,10 @@ const localizedUI: Record<Language, Record<string, string>> = {
     selectMedication: 'Sélectionner Médicament',
     selectTime: 'Sélectionner Heure',
     selectFrequency: 'Sélectionner Fréquence',
+    confirmAppointmentTitle: 'Confirmer Rendez-vous',
+    confirmVirtualTitle: 'Confirmer Consultation Virtuelle',
+    cancel: 'Annuler',
+    confirm: 'Confirmer',
   },
   zh: {
     pageTitle: '就诊后',
@@ -221,6 +233,10 @@ const localizedUI: Record<Language, Record<string, string>> = {
     selectMedication: '选择药物',
     selectTime: '选择时间',
     selectFrequency: '选择频率',
+    confirmAppointmentTitle: '确认预约',
+    confirmVirtualTitle: '确认虚拟预约',
+    cancel: '取消',
+    confirm: '确认',
   },
 };
 
@@ -931,14 +947,14 @@ export default function SettingsScreen() {
           <View style={styles.modalBackdrop}>
             <View style={styles.modalCard}>
               <Text style={{ fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8, color: "#0A4DA3", fontFamily: 'Montserrat-Bold' }}>
-                Confirm Appointment
+                {localizedUI[selectedLanguage].confirmAppointmentTitle}
               </Text>
               <Text style={{ fontSize: 14, textAlign: 'center', marginBottom: 16, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>
                 {appointmentSummaryText}
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Pressable style={[styles.modalButton, { flex: 1, marginRight: 8 }]} onPress={() => setApptConfirmVisible(false)}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>Cancel</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>{localizedUI[selectedLanguage].cancel}</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.modalButton, { flex: 1, backgroundColor: '#0A4DA3' }]}
@@ -950,7 +966,7 @@ export default function SettingsScreen() {
                     setApptSummaryVisible(true);
                   }}
                 >
-                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>Confirm</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>{localizedUI[selectedLanguage].confirm}</Text>
                 </Pressable>
               </View>
             </View>
@@ -1149,14 +1165,14 @@ export default function SettingsScreen() {
           <View style={styles.modalBackdrop}>
             <View style={styles.modalCard}>
               <Text style={{ fontSize: 18, fontWeight: '700', textAlign: 'center', marginBottom: 8, color: "#0A4DA3", fontFamily: 'Montserrat-Bold' }}>
-                Confirm Virtual Appointment
+                {localizedUI[selectedLanguage].confirmVirtualTitle}
               </Text>
               <Text style={{ fontSize: 14, textAlign: 'center', marginBottom: 16, color: "#1a1a1a", fontFamily: 'Montserrat-Regular' }}>
                 {telehealthSummaryText}
               </Text>
               <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Pressable style={[styles.modalButton, { flex: 1, marginRight: 8 }]} onPress={() => setTelehealthConfirmVisible(false)}>
-                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>Cancel</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#A30A0A', fontFamily: 'Montserrat-SemiBold' }}>{localizedUI[selectedLanguage].cancel}</Text>
                 </Pressable>
                 <Pressable
                   style={[styles.modalButton, { flex: 1, backgroundColor: '#0A4DA3' }]}
@@ -1168,7 +1184,7 @@ export default function SettingsScreen() {
                     setTelehealthSummaryVisible(true);
                   }}
                 >
-                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>Confirm</Text>
+                  <Text style={{ fontSize: 14, fontWeight: '600', textAlign: 'center', color: '#fff', fontFamily: 'Montserrat-SemiBold' }}>{localizedUI[selectedLanguage].confirm}</Text>
                 </Pressable>
               </View>
             </View>

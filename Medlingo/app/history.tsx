@@ -16,6 +16,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     appointment_history: "Appointment History",
     back: "Back",
     delete: "Delete",
+    recordings: "Audio Recordings",
+    no_audio: "No audio recordings saved.",
   },
   es: {
     upcoming_appointments: "Próximas citas",
@@ -25,6 +27,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     appointment_history: "Historial de citas",
     back: "Atrás",
     delete: "Eliminar",
+    recordings: "Grabaciones de audio",
+    no_audio: "No hay grabaciones de audio guardadas.",
   },
   fr: {
     upcoming_appointments: "Rendez-vous à venir",
@@ -34,6 +38,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     appointment_history: "Historique des rendez-vous",
     back: "Retour",
     delete: "Supprimer",
+    recordings: "Enregistrements audio",
+    no_audio: "Aucun enregistrement audio enregistré.",
   },
   zh: {
     upcoming_appointments: "即将到来的预约",
@@ -43,6 +49,8 @@ const localizedUI: Record<Language, Record<string, string>> = {
     appointment_history: "预约历史",
     back: "返回",
     delete: "删除",
+    recordings: "音频录音",
+    no_audio: "没有保存的音频录音。",
   },
 };
 
@@ -50,6 +58,7 @@ export default function HistoryScreen() {
   const { readAppointments, deleteAppointmentLine } = log_appt();
   const [appointments, setAppointments] = useState<string[]>([]);
   const [savedForms, setSavedForms] = useState<string[]>([]);
+  const [savedAudio, setSavedAudio] = useState<string[]>([]);
   const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   async function loadCsv() {
@@ -71,11 +80,20 @@ export default function HistoryScreen() {
     setSavedForms(pdfs);
   }
 
+  async function loadAudioFiles() {
+    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!);
+
+    const cafs = files.filter((file) => file.endsWith(".caf"));
+
+    setSavedAudio(cafs);
+  }
+
 
   useFocusEffect(
     React.useCallback(() => {
       loadCsv();
       loadSavedForms();
+      loadAudioFiles();
     }, [])
   );
 
@@ -188,8 +206,61 @@ export default function HistoryScreen() {
           {appointments.length === 0 && (
             <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_appointments}</Text>
           )}
+        </ScrollView>
 
-          <View style={{ height: 40 }} />
+        {/* audio */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          {localizedUI[selectedLanguage as Language].recordings}
+        </Text>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+          {savedAudio.map((filename, index) => (
+            <View
+              key={index}
+              style={styles.row}
+            >
+              {/* Filename */}
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => {
+                  const uri = FileSystem.documentDirectory + filename;
+                  router.push({
+                    pathname: "/view",
+                    params: { uri, title: filename },
+                  });
+                }}
+              >
+              <Text style={styles.fileText}>{filename}</Text>
+              </Pressable>
+
+              {/* add delete button */}
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await FileSystem.deleteAsync(
+                    FileSystem.documentDirectory + filename,
+                    { idempotent: true }
+                  );
+                  await loadAudioFiles();
+                }}
+              >
+                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          {savedAudio.length === 0 && (
+            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_audio}</Text>
+          )}
         </ScrollView>
 
         {/* End Session */}

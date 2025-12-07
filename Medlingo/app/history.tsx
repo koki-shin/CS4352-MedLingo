@@ -4,11 +4,53 @@ import React, { useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
 import * as FileSystem from "expo-file-system/legacy";
 import { log_appt } from '../hooks/log_appt';
+import { Language } from '../hooks/LanguagePicker';
+import { useLanguage } from '@/hooks/LanguageContext';
+
+const localizedUI: Record<Language, Record<string, string>> = {
+  en: {
+    upcoming_appointments: "Upcoming Appointments",
+    saved_forms: "Saved Appointment Forms",
+    no_appointments: "No appointments logged.",
+    no_forms: "No forms saved.",
+    appointment_history: "Appointment History",
+    back: "Back",
+    delete: "Delete",
+  },
+  es: {
+    upcoming_appointments: "Próximas citas",
+    saved_forms: "Formularios de citas guardados",
+    no_appointments: "No hay citas registradas.",
+    no_forms: "No hay formularios guardados.",
+    appointment_history: "Historial de citas",
+    back: "Atrás",
+    delete: "Eliminar",
+  },
+  fr: {
+    upcoming_appointments: "Rendez-vous à venir",
+    saved_forms: "Formulaires de rendez-vous enregistrés",
+    no_appointments: "Aucun rendez-vous enregistré.",
+    no_forms: "Aucun formulaire enregistré.",
+    appointment_history: "Historique des rendez-vous",
+    back: "Retour",
+    delete: "Supprimer",
+  },
+  zh: {
+    upcoming_appointments: "即将到来的预约",
+    saved_forms: "已保存的预约表格",
+    no_appointments: "没有记录的预约。",
+    no_forms: "没有保存的表格。",
+    appointment_history: "预约历史",
+    back: "返回",
+    delete: "删除",
+  },
+};
 
 export default function HistoryScreen() {
   const { readAppointments, deleteAppointmentLine } = log_appt();
   const [appointments, setAppointments] = useState<string[]>([]);
   const [savedForms, setSavedForms] = useState<string[]>([]);
+  const { selectedLanguage, setSelectedLanguage } = useLanguage();
 
   async function loadCsv() {
     const contents = await readAppointments();
@@ -22,7 +64,7 @@ export default function HistoryScreen() {
   }
 
   async function loadSavedForms() {
-    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!);
 
     const pdfs = files.filter((file) => file.endsWith(".pdf"));
 
@@ -51,7 +93,7 @@ export default function HistoryScreen() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
-          Appointment History
+          {localizedUI[selectedLanguage as Language].appointment_history}
         </Text>
 
         {/* change */}
@@ -65,7 +107,7 @@ export default function HistoryScreen() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
-          Upcoming Appointments
+          {localizedUI[selectedLanguage as Language].upcoming_appointments}
         </Text>
 
         <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
@@ -82,13 +124,13 @@ export default function HistoryScreen() {
                   await loadCsv(); // refresh list
                 }}
               >
-                <Text style={styles.deleteText}>Delete</Text>
+                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
               </Pressable>
             </View>
           ))}
 
           {appointments.length === 0 && (
-            <Text style={styles.empty}>No appointments logged.</Text>
+            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_appointments}</Text>
           )}
 
           <View style={{ height: 40 }} />
@@ -105,7 +147,7 @@ export default function HistoryScreen() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
-          Saved Appointment Forms
+          {localizedUI[selectedLanguage as Language].saved_forms}
         </Text>
 
 
@@ -148,13 +190,13 @@ export default function HistoryScreen() {
                   await loadSavedForms();
                 }}
               >
-                <Text style={styles.deleteText}>Delete</Text>
+                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
               </Pressable>
             </View>
           ))}
 
           {savedForms.length === 0 && (
-            <Text style={styles.empty}>No forms saved.</Text>
+            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_forms}</Text>
           )}
         </ScrollView>
 
@@ -165,7 +207,7 @@ export default function HistoryScreen() {
           onPress={() => router.push("/(tabs)/home")}
         >
           <Text style={styles.button_text}>
-            Back
+            {localizedUI[selectedLanguage as Language].back}
           </Text>
         </TouchableOpacity>
         <View className="h-20" />

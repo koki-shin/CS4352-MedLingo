@@ -28,7 +28,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     aiText: 'Need help understanding medical terms?\n\nAsk me anything!',
     startChat: 'Start Chat',
     submit: 'Submit',
-    print: 'Print to PDF',
+    print: 'Confirm and Print to PDF',
     back: 'Back',
     continue: 'Continue to During Appointment',
   },
@@ -41,7 +41,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
       '¿Necesita ayuda para entender términos médicos?\n\n¡Pregúntame cualquier cosa!',
     startChat: 'Iniciar Chat',
     submit: 'Enviar',
-    print: 'Imprimir PDF',
+    print: 'Confirmar y Imprimir PDF',
     back: 'Atrás',
     continue: 'Continuar durante la cita',
   },
@@ -54,7 +54,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
       "Besoin d'aide pour comprendre les termes médicaux ?\n\nPosez-moi n'importe quoi !",
     startChat: 'Démarrer Chat',
     submit: 'Soumettre',
-    print: 'Imprimer PDF',
+    print: 'Confirmer et Imprimer PDF',
     back: 'Retour',
     continue: 'Continuer pendant le rendez-vous',
   },
@@ -66,7 +66,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     aiText: '需要帮助理解医学术语吗？\n\n随便问我！',
     startChat: '开始聊天',
     submit: '提交',
-    print: '打印 PDF',
+    print: '确认并打印 PDF',
     back: '返回',
     continue: '继续进行预约流程',
   },
@@ -437,7 +437,7 @@ export default function BeforeAppointmentCondensed() {
                   from: tempUri,
                   to: newPath,
                 });
-                console.log('PDF saved to:', newPath);
+                router.push({pathname: "/view",params: {uri: newPath,title: `Saved Form`,},});
               } catch (error) {}
             }}
           />

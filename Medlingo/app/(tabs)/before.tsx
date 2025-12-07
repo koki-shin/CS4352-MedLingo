@@ -9,8 +9,9 @@ import {
   Keyboard,
   View,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
-import { Text, TextInput, Checkbox, Card } from 'react-native-paper';
+import { Text, TextInput, Card } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
@@ -28,7 +29,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     aiText: 'Need help understanding medical terms?\n\nAsk me anything!',
     startChat: 'Start Chat',
     submit: 'Submit',
-    print: 'Confirm and Print to PDF',
+    print: 'Confirm',
     back: 'Back',
     continue: 'Continue to During Appointment',
   },
@@ -41,7 +42,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
       '¿Necesita ayuda para entender términos médicos?\n\n¡Pregúntame cualquier cosa!',
     startChat: 'Iniciar Chat',
     submit: 'Enviar',
-    print: 'Confirmar y Imprimir PDF',
+    print: 'Confirmar',
     back: 'Atrás',
     continue: 'Continuar durante la cita',
   },
@@ -54,7 +55,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
       "Besoin d'aide pour comprendre les termes médicaux ?\n\nPosez-moi n'importe quoi !",
     startChat: 'Démarrer Chat',
     submit: 'Soumettre',
-    print: 'Confirmer et Imprimer PDF',
+    print: 'Confirmer',
     back: 'Retour',
     continue: 'Continuer pendant le rendez-vous',
   },
@@ -66,7 +67,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     aiText: '需要帮助理解医学术语吗？\n\n随便问我！',
     startChat: '开始聊天',
     submit: '提交',
-    print: '确认并打印 PDF',
+    print: '确认',
     back: '返回',
     continue: '继续进行预约流程',
   },
@@ -175,6 +176,25 @@ export default function BeforeAppointmentCondensed() {
       marginBottom: 16,
       fontFamily: 'Montserrat-Regular',
     },
+    bottom_button: {
+      alignSelf: 'center',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#0A4DA3',
+      borderRadius: 22,
+      paddingVertical: 16,
+      paddingHorizontal: 24,
+      marginTop: 8,
+      borderWidth: 2,
+      borderColor: '#000000ff',
+    },
+    button_text: {
+      color: '#FFFFFF',
+      fontWeight: '700',
+      fontSize: 16,
+      fontFamily: 'Montserrat-Bold',
+    }
   });
 
   // Review Screen after submit
@@ -392,56 +412,69 @@ export default function BeforeAppointmentCondensed() {
           </Card.Content>
         </Card>
 
-        {/* Back Button */}
-        <Button
-          title={localizedUI[selectedLanguage].back}
-          onPress={() => setIsOutputVisible(false)}
-        />
+        <View style={{ flexDirection: 'row', gap: 12, marginTop: -8, justifyContent: 'center' }}>
+          {/* Back Button */}
+          <TouchableOpacity
+            style={styles.bottom_button}
+            onPress={() => setIsOutputVisible(false)}
+          >
+            <Text style={styles.button_text}>
+              {localizedUI[selectedLanguage as Language].back}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Print PDF Button */}
+          <TouchableOpacity
+            style={styles.bottom_button}
+            onPress={async () => {
+                const consentHtml = `
+                <p><b>CONSENT:</b></p>
+                <ul>
+                  <li>${localizedQuestions["en"][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
+                  <li>${localizedQuestions["en"][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
+                  <li>${localizedQuestions["en"][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
+                </ul>
+              `;
+
+                const htmlContent = `
+                <html>
+                  <body style="font-family: Arial; padding: 20px;">
+                    <h1 style="text-align: center;">${localizedUI["en"].beforeAppointmentTitle}</h1>
+                    <p><strong>${localizedQuestions["en"][0]}</strong><br>${src_one}</p>
+                    <p><strong>${localizedQuestions["en"][1]}</strong><br>${src_two}</p>
+                    <p><strong>${localizedQuestions["en"][2]}</strong><br>${src_three}</p>
+                    ${consentHtml}
+                  </body>
+                </html>
+              `;
+
+                try {
+                  const { uri: tempUri } = await Print.printToFileAsync({ html: htmlContent });
+                  const newPath = FileSystem.documentDirectory + `form-${Date.now()}.pdf`;
+                  await FileSystem.moveAsync({
+                    from: tempUri,
+                    to: newPath,
+                  });
+                  router.push({pathname: "/view",params: {uri: newPath,title: `Saved Form`,},});
+                } catch (error) {}
+              }}
+          >
+            <Text style={styles.button_text}>
+              {localizedUI[selectedLanguage as Language].print}
+            </Text>
+          </TouchableOpacity>
+        </View>
+
 
         {/* Continue Button */}
-        <Button
-          title={localizedUI[selectedLanguage].continue}
+        <TouchableOpacity
+          style={styles.bottom_button}
           onPress={() => router.push("/(tabs)/during")}
-        />
-
-        {/* Print PDF Button */}
-        <View style={{ marginVertical: 0 }}>
-          <Button
-            title={localizedUI[selectedLanguage].print}
-            onPress={async () => {
-              const consentHtml = `
-              <p><b>CONSENT:</b></p>
-              <ul>
-                <li>${localizedQuestions["en"][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
-                <li>${localizedQuestions["en"][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
-                <li>${localizedQuestions["en"][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
-              </ul>
-            `;
-
-              const htmlContent = `
-              <html>
-                <body style="font-family: Arial; padding: 20px;">
-                  <h1 style="text-align: center;">${localizedUI["en"].beforeAppointmentTitle}</h1>
-                  <p><strong>${localizedQuestions["en"][0]}</strong><br>${src_one}</p>
-                  <p><strong>${localizedQuestions["en"][1]}</strong><br>${src_two}</p>
-                  <p><strong>${localizedQuestions["en"][2]}</strong><br>${src_three}</p>
-                  ${consentHtml}
-                </body>
-              </html>
-            `;
-
-              try {
-                const { uri: tempUri } = await Print.printToFileAsync({ html: htmlContent });
-                const newPath = FileSystem.documentDirectory + `form-${Date.now()}.pdf`;
-                await FileSystem.moveAsync({
-                  from: tempUri,
-                  to: newPath,
-                });
-                router.push({pathname: "/view",params: {uri: newPath,title: `Saved Form`,},});
-              } catch (error) {}
-            }}
-          />
-        </View>
+        >
+          <Text style={styles.button_text}>
+            {localizedUI[selectedLanguage as Language].continue}
+          </Text>
+        </TouchableOpacity>
       </ScrollView>
     );
   }
@@ -756,13 +789,17 @@ export default function BeforeAppointmentCondensed() {
         </Card>
 
         {/*Submit*/}
-        <Button
-          title={localizedUI[selectedLanguage].submit}
+        <TouchableOpacity
+          style={styles.bottom_button}
           onPress={() => {
             translateAll();
             setIsOutputVisible(true);
           }}
-        />
+        >
+          <Text style={styles.button_text}>
+            {localizedUI[selectedLanguage as Language].submit}
+          </Text>
+        </TouchableOpacity>
         <View style={{ height: 50 }} />
       </ScrollView>
     </SafeAreaView>

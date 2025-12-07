@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Button, Pressable, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Button, Pressable, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
@@ -159,7 +159,15 @@ export default function HistoryScreen() {
         </ScrollView>
 
 
-        <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />
+        {/* End Session */}
+        <TouchableOpacity
+          style={styles.bottom_button}
+          onPress={() => router.push("/(tabs)/home")}
+        >
+          <Text style={styles.button_text}>
+            Back
+          </Text>
+        </TouchableOpacity>
         <View className="h-20" />
         </View>
       </SafeAreaView>
@@ -198,5 +206,24 @@ const styles = StyleSheet.create({
     marginTop: 15,
     fontSize: 18,
     color: "#777",
+  },
+  bottom_button: {
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#0A4DA3',
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    marginTop: 8,
+    borderWidth: 2,
+    borderColor: '#000000ff',
+  },
+  button_text: {
+    color: '#FFFFFF',
+    fontWeight: '700',
+    fontSize: 16,
+    fontFamily: 'Montserrat-Bold',
   }
 });

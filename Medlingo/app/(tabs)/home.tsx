@@ -70,8 +70,7 @@ export default function HomeScreen() {
           style={{
             width: 225,
             height: 225,
-            marginHorizontal: '17.5%',
-          }}
+            alignSelf: 'center',}}
           resizeMode="contain"
         />
 
@@ -120,7 +119,7 @@ export default function HomeScreen() {
                         fontFamily: 'Montserrat-Bold',
                       }}
                     >
-                      {localizedUI[selectedLanguage].before.title}
+                      {localizedUI[selectedLanguage as Language].before.title}
                     </Text>
                   </View>
                   <Text
@@ -131,7 +130,7 @@ export default function HomeScreen() {
                       fontFamily: 'Montserrat-Regular',
                     }}
                   >
-                    {localizedUI[selectedLanguage].before.subtitle}
+                    {localizedUI[selectedLanguage as Language].before.subtitle}
                   </Text>
                 </Card.Content>
               </Card>
@@ -173,7 +172,7 @@ export default function HomeScreen() {
                         fontFamily: 'Montserrat-Bold',
                       }}
                     >
-                      {localizedUI[selectedLanguage].during.title}
+                      {localizedUI[selectedLanguage as Language].during.title}
                     </Text>
                   </View>
                   <Text
@@ -184,7 +183,7 @@ export default function HomeScreen() {
                       fontFamily: 'Montserrat-Regular',
                     }}
                   >
-                    {localizedUI[selectedLanguage].during.subtitle}
+                    {localizedUI[selectedLanguage as Language].during.subtitle}
                   </Text>
                 </Card.Content>
               </Card>

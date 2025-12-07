@@ -129,8 +129,7 @@ export default function HistoryScreen() {
           {localizedUI[selectedLanguage as Language].saved_forms}
         </Text>
 
-
-        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
           {savedForms.map((filename, index) => (
             <View
               key={index}
@@ -185,7 +184,7 @@ export default function HistoryScreen() {
           {localizedUI[selectedLanguage as Language].recordings}
         </Text>
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
           {savedAudio.map((filename, index) => (
             <View
               key={index}
@@ -243,7 +242,7 @@ export default function HistoryScreen() {
           {localizedUI[selectedLanguage as Language].upcoming_appointments}
         </Text>
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
           {appointments.map((line, index) => (
             <View
               key={index}

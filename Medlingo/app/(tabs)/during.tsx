@@ -208,21 +208,19 @@ const MOCK_TRANSLATIONS: Record<Language, string[]> = {
     }
   };
 
-  const stopAudioRecording = async () => {
-    try {
-      if (!audioRecording) return;
+const stopAudioRecording = async () => {
+  try {
+    if (!audioRecording) return;
+    await audioRecording.stopAndUnloadAsync();
 
-      await audioRecording.stopAndUnloadAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: false,
-      });
-      const uri = audioRecording.getURI();
-      setAudioFileUri(uri);
-      setAudioRecording(null);
-    } catch (err) {
-      console.log('Error stopping recording:', err);
-    }
-  };
+    const uri = audioRecording.getURI();
+    if (uri) setAudioFileUri(uri);
+
+    setAudioRecording(null);
+  } catch (err) {
+    console.log("Error stopping recording:", err);
+  }
+};
 
   const startMockTranslation = () => {
     phraseIndexRef.current = 0;
@@ -275,24 +273,9 @@ const stopMockTranslation = () => {
 
         const fileName = `visit_audio_${Date.now()}${fileExtension}`;
         savedUri = fileName;
-
-        if (Platform.OS === 'web') {
-          // web download
-          const response = await fetch(audioFileUri);
-          const blob = await response.blob();
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-          a.remove();
-          URL.revokeObjectURL(url);
-          console.log('audio downloaded to PC');
-        } else {
           const dir = FileSystem.documentDirectory;
           if (dir) {
-            const recDir = `${dir}recordings/`;
+            const recDir = `${dir}`;
 
             const dirInfo = await FileSystem.getInfoAsync(recDir);
 
@@ -307,9 +290,7 @@ const stopMockTranslation = () => {
               from: audioFileUri,
               to: newPath,
             });
-
-            console.log('audio saved locally at ', newPath);
-          }
+            console.log('audio saved to device:', newPath);
         }
       }
     } catch (err) {
@@ -640,15 +621,19 @@ const stopMockTranslation = () => {
           </Card.Content>
         </Card>
 
-        {/* End Session */}
         <TouchableOpacity
-          style={styles.endSessionButton}
+          style={[
+            styles.endSessionButton,
+            isRecording && { opacity: 0.5 }, // dim the button while recording
+          ]}
           onPress={handleEndSession}
+          disabled={isRecording} // disable press when recording
         >
           <Text style={styles.endSessionText}>
             {localizedUI[selectedLanguage as Language].end}
           </Text>
         </TouchableOpacity>
+
 
 {/* Transcript Saved Modal */} 
 <Modal

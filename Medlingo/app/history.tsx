@@ -64,7 +64,7 @@ export default function HistoryScreen() {
   }
 
   async function loadSavedForms() {
-    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory!);
 
     const pdfs = files.filter((file) => file.endsWith(".pdf"));
 

@@ -203,7 +203,7 @@ export default function BeforeAppointmentCondensed() {
       <ScrollView style={styles.container}>
         <View style={{ height: 30 }} />
         <Text style={styles.outputTitle}>
-          {localizedUI[selectedLanguage].beforeAppointmentTitle}
+          {localizedUI[selectedLanguage as Language].beforeAppointmentTitle}
         </Text>
 
         {/* Question: What brings you in today? */}
@@ -496,7 +496,7 @@ export default function BeforeAppointmentCondensed() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
-          {localizedUI[selectedLanguage].beforeAppointmentTitle}
+          {localizedUI[selectedLanguage as Language].beforeAppointmentTitle}
         </Text>
 
         {/* General Health Questions */}
@@ -531,7 +531,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-SemiBold',
               }}
             >
-              {localizedQuestions[selectedLanguage][0]}
+              {localizedQuestions[selectedLanguage as Language][0]}
             </Text>
             <TextInput
               mode="outlined"
@@ -539,7 +539,7 @@ export default function BeforeAppointmentCondensed() {
               onChangeText={set_src_one}
               placeholder={
                 hasApiKey
-                  ? localizedUI[selectedLanguage].inputPlaceholder
+                  ? localizedUI[selectedLanguage as Language].inputPlaceholder
                   : 'Translation requires API key'
               }
               editable={!isLoading}
@@ -581,7 +581,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedQuestions[selectedLanguage][1]}
+              {localizedQuestions[selectedLanguage as Language][1]}
             </Text>
             <TextInput
               mode="outlined"
@@ -589,7 +589,7 @@ export default function BeforeAppointmentCondensed() {
               onChangeText={set_src_two}
               placeholder={
                 hasApiKey
-                  ? localizedUI[selectedLanguage].inputPlaceholder
+                  ? localizedUI[selectedLanguage as Language].inputPlaceholder
                   : 'Translation requires API key'
               }
               editable={!isLoading}
@@ -631,7 +631,7 @@ export default function BeforeAppointmentCondensed() {
                 fontFamily: 'Montserrat-Bold',
               }}
             >
-              {localizedQuestions[selectedLanguage][2]}
+              {localizedQuestions[selectedLanguage as Language][2]}
             </Text>
             <TextInput
               mode="outlined"
@@ -639,7 +639,7 @@ export default function BeforeAppointmentCondensed() {
               onChangeText={set_src_three}
               placeholder={
                 hasApiKey
-                  ? localizedUI[selectedLanguage].inputPlaceholder
+                  ? localizedUI[selectedLanguage as Language].inputPlaceholder
                   : 'Translation requires API key'
               }
               editable={!isLoading}
@@ -713,7 +713,7 @@ export default function BeforeAppointmentCondensed() {
                     fontFamily: 'Montserrat-Regular',
                   }}
                 >
-                  {localizedQuestions[selectedLanguage][3]}
+                  {localizedQuestions[selectedLanguage as Language][3]}
                 </Text>
               </Pressable>
             </View>
@@ -747,7 +747,7 @@ export default function BeforeAppointmentCondensed() {
                     fontFamily: 'Montserrat-Regular',
                   }}
                 >
-                  {localizedQuestions[selectedLanguage][4]}
+                  {localizedQuestions[selectedLanguage as Language][4]}
                 </Text>
               </Pressable>
             </View>
@@ -781,7 +781,7 @@ export default function BeforeAppointmentCondensed() {
                     fontFamily: 'Montserrat-Regular',
                   }}
                 >
-                  {localizedQuestions[selectedLanguage][5]}
+                  {localizedQuestions[selectedLanguage as Language][5]}
                 </Text>
               </Pressable>
             </View>

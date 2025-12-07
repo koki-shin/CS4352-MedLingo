@@ -856,48 +856,52 @@ export default function SettingsScreen() {
                 style={styles.calendar}
               />
 
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '600',
-                  marginTop: 12,
-                  marginBottom: 8,
-                  color: "#1a1a1a",
-                  fontFamily: 'Montserrat-SemiBold',
-                }}
-              >
-                {localizedUI[selectedLanguage].availableTimes}
-              </Text>
+              {selectedApptDate && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '600',
+                      marginTop: 12,
+                      marginBottom: 8,
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].availableTimes}
+                  </Text>
 
-              <View style={styles.timeGrid}>
-                {TIME_OPTIONS.map((time: string) => {
-                  const disabled = !selectedApptDate || isDateTimePast(selectedApptDate, time);
-                  return (
-                    <Pressable
-                      key={time}
-                      disabled={disabled}
-                      style={[
-                        styles.timeSlot,
-                        disabled && styles.timeSlotDisabled,
-                        selectedApptTime === time && !disabled && styles.timeSlotSelected,
-                      ]}
-                      onPress={() => {
-                        if (!disabled) setSelectedApptTime(time);
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.timeSlotText,
-                          selectedApptTime === time && !disabled && styles.timeSlotTextSelected,
-                          disabled && { color: '#9CA3AF' },
-                        ]}
-                      >
-                        {time}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+                  <View style={styles.timeGrid}>
+                    {TIME_OPTIONS.map((time: string) => {
+                      const disabled = isDateTimePast(selectedApptDate, time);
+                      return (
+                        <Pressable
+                          key={time}
+                          disabled={disabled}
+                          style={[
+                            styles.timeSlot,
+                            disabled && styles.timeSlotDisabled,
+                            selectedApptTime === time && !disabled && styles.timeSlotSelected,
+                          ]}
+                          onPress={() => {
+                            if (!disabled) setSelectedApptTime(time);
+                          }}
+                        >
+                          <Text
+                            style={[
+                              styles.timeSlotText,
+                              selectedApptTime === time && !disabled && styles.timeSlotTextSelected,
+                              disabled && { color: '#9CA3AF' },
+                            ]}
+                          >
+                            {time}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </>
+              )}
               <Pressable
                 style={[
                   styles.modalButton,
@@ -1079,50 +1083,53 @@ export default function SettingsScreen() {
                 style={styles.calendar}
               />
 
-              <Text
-                style={{
-                  fontSize: 13,
-                  fontWeight: '600',
-                  marginTop: 12,
-                  marginBottom: 8,
-                  color: "#1a1a1a",
-                  fontFamily: 'Montserrat-SemiBold',
-                }}
-              >
-                {localizedUI[selectedLanguage].availableTimes}
-              </Text>
+              {selectedTelehealthDate && (
+                <>
+                  <Text
+                    style={{
+                      fontSize: 13,
+                      fontWeight: '600',
+                      marginTop: 12,
+                      marginBottom: 8,
+                      color: "#1a1a1a",
+                      fontFamily: 'Montserrat-SemiBold',
+                    }}
+                  >
+                    {localizedUI[selectedLanguage].availableTimes}
+                  </Text>
 
-              
-              <View style={styles.timeGrid}>
-                {TIME_OPTIONS.map((time) => {
-                  const disabled = !selectedTelehealthDate || isDateTimePast(selectedTelehealthDate, time);
-                  return (
-                    <Pressable
-                      key={time}
-                      disabled={disabled} 
-                      style={[
-                        styles.timeSlot,
-                        disabled && styles.timeSlotDisabled,  
-                        selectedTelehealthTime === time && !disabled &&
-                          styles.timeSlotSelected,
-                      ]}
-                      onPress={() => {
-                        if (!disabled) setSelectedTelehealthTime(time);
-                      }}
-                    >
-                      <Text
-                        style={[
-                          styles.timeSlotText,
-                          selectedTelehealthTime === time && !disabled &&
-                            styles.timeSlotTextSelected, disabled && { color: '#9CA3AF' }
-                        ]}
-                      >
-                        {time}
-                      </Text>
-                    </Pressable>
-                  );
-                })}
-              </View>
+                  <View style={styles.timeGrid}>
+                    {TIME_OPTIONS.map((time) => {
+                      const disabled = isDateTimePast(selectedTelehealthDate, time);
+                      return (
+                        <Pressable
+                          key={time}
+                          disabled={disabled} 
+                          style={[
+                            styles.timeSlot,
+                            disabled && styles.timeSlotDisabled,  
+                            selectedTelehealthTime === time && !disabled &&
+                              styles.timeSlotSelected,
+                          ]}
+                          onPress={() => {
+                            if (!disabled) setSelectedTelehealthTime(time);
+                          }}
+                        >
+                          <Text
+                            style={[
+                              styles.timeSlotText,
+                              selectedTelehealthTime === time && !disabled &&
+                                styles.timeSlotTextSelected, disabled && { color: '#9CA3AF' }
+                            ]}
+                          >
+                            {time}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
+                  </View>
+                </>
+              )}
 
               <Pressable
                 style={[

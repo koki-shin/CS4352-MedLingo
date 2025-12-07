@@ -2,11 +2,13 @@ import { View, Text, StyleSheet, Button, Pressable, ScrollView } from 'react-nat
 import { SafeAreaView } from "react-native-safe-area-context";
 import React, { useState } from 'react';
 import { router, useFocusEffect } from 'expo-router';
+import * as FileSystem from "expo-file-system/legacy";
 import { log_appt } from '../hooks/log_appt';
 
 export default function HistoryScreen() {
   const { readAppointments, deleteAppointmentLine } = log_appt();
   const [appointments, setAppointments] = useState<string[]>([]);
+  const [savedForms, setSavedForms] = useState<string[]>([]);
 
   async function loadCsv() {
     const contents = await readAppointments();
@@ -19,9 +21,19 @@ export default function HistoryScreen() {
     setAppointments(list);
   }
 
+  async function loadSavedForms() {
+    const files = await FileSystem.readDirectoryAsync(FileSystem.documentDirectory);
+
+    const pdfs = files.filter((file) => file.endsWith(".pdf"));
+
+    setSavedForms(pdfs);
+  }
+
+
   useFocusEffect(
     React.useCallback(() => {
       loadCsv();
+      loadSavedForms();
     }, [])
   );
 
@@ -42,14 +54,27 @@ export default function HistoryScreen() {
           Appointment History
         </Text>
 
-        <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+        {/* change */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          Upcoming Appointments
+        </Text>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
           {appointments.map((line, index) => (
             <View
               key={index}
               style={styles.row}
             >
               <Text style={styles.lineText}>{line}</Text>
-
               <Pressable
                 style={styles.deleteButton}
                 onPress={async () => {
@@ -69,8 +94,72 @@ export default function HistoryScreen() {
           <View style={{ height: 40 }} />
         </ScrollView>
 
+        {/* change */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          Saved Appointment Forms
+        </Text>
 
-      <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+          {savedForms.map((filename, index) => (
+            <View
+              key={index}
+              style={styles.row}
+            >
+              {/* Filename */}
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => {
+                  const uri = FileSystem.documentDirectory + filename;
+                  router.push({
+                    pathname: "/view",
+                    params: { uri, title: filename },
+                  });
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: "#0A4DA3",
+                    fontFamily: "Montserrat-Regular",
+                  }}
+                >
+                  {filename}
+                </Text>
+              </Pressable>
+
+              {/* add delete button */}
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await FileSystem.deleteAsync(
+                    FileSystem.documentDirectory + filename,
+                    { idempotent: true }
+                  );
+                  await loadSavedForms();
+                }}
+              >
+                <Text style={styles.deleteText}>Delete</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          {savedForms.length === 0 && (
+            <Text style={styles.empty}>No forms saved.</Text>
+          )}
+        </ScrollView>
+
+
+        <Button title= "Back" onPress={() => router.push("/(tabs)/home")} />
         <View className="h-20" />
         </View>
       </SafeAreaView>
@@ -106,7 +195,7 @@ const styles = StyleSheet.create({
   },
   empty: {
     textAlign: "center",
-    marginTop: 30,
+    marginTop: 15,
     fontSize: 18,
     color: "#777",
   }

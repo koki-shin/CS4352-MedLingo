@@ -1,5 +1,5 @@
 import * as Print from 'expo-print';
-import * as Sharing from 'expo-sharing';
+import * as FileSystem from 'expo-file-system/legacy';
 
 import React, { useState } from 'react';
 import {
@@ -431,15 +431,13 @@ export default function BeforeAppointmentCondensed() {
             `;
 
               try {
-                const { uri } = await Print.printToFileAsync({
-                  html: htmlContent,
+                const { uri: tempUri } = await Print.printToFileAsync({ html: htmlContent });
+                const newPath = FileSystem.documentDirectory + `form-${Date.now()}.pdf`;
+                await FileSystem.moveAsync({
+                  from: tempUri,
+                  to: newPath,
                 });
-
-                if (uri && (await Sharing.isAvailableAsync())) {
-                  await Sharing.shareAsync(uri);
-                } else {
-                  alert(`PDF created at: ${uri}`);
-                }
+                console.log('PDF saved to:', newPath);
               } catch (error) {}
             }}
           />

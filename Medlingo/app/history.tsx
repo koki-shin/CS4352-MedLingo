@@ -107,6 +107,62 @@ export default function HistoryScreen() {
             fontFamily: 'Montserrat-ExtraBold',
           }}
         >
+          {localizedUI[selectedLanguage as Language].saved_forms}
+        </Text>
+
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+          {savedForms.map((filename, index) => (
+            <View
+              key={index}
+              style={styles.row}
+            >
+              {/* Filename */}
+              <Pressable
+                style={{ flex: 1 }}
+                onPress={() => {
+                  const uri = FileSystem.documentDirectory + filename;
+                  router.push({
+                    pathname: "/view",
+                    params: { uri, title: filename },
+                  });
+                }}
+              >
+              <Text style={styles.fileText}>{filename}</Text>
+              </Pressable>
+
+              {/* add delete button */}
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await FileSystem.deleteAsync(
+                    FileSystem.documentDirectory + filename,
+                    { idempotent: true }
+                  );
+                  await loadSavedForms();
+                }}
+              >
+                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          {savedForms.length === 0 && (
+            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_forms}</Text>
+          )}
+        </ScrollView>
+
+        {/* change */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
           {localizedUI[selectedLanguage as Language].upcoming_appointments}
         </Text>
 
@@ -136,71 +192,6 @@ export default function HistoryScreen() {
           <View style={{ height: 40 }} />
         </ScrollView>
 
-        {/* change */}
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: '800',
-            color: '#0A4DA3',
-            marginBottom: 18,
-            textAlign: 'center',
-            fontFamily: 'Montserrat-ExtraBold',
-          }}
-        >
-          {localizedUI[selectedLanguage as Language].saved_forms}
-        </Text>
-
-
-        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
-          {savedForms.map((filename, index) => (
-            <View
-              key={index}
-              style={styles.row}
-            >
-              {/* Filename */}
-              <Pressable
-                style={{ flex: 1 }}
-                onPress={() => {
-                  const uri = FileSystem.documentDirectory + filename;
-                  router.push({
-                    pathname: "/view",
-                    params: { uri, title: filename },
-                  });
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 16,
-                    color: "#0A4DA3",
-                    fontFamily: "Montserrat-Regular",
-                  }}
-                >
-                  {filename}
-                </Text>
-              </Pressable>
-
-              {/* add delete button */}
-              <Pressable
-                style={styles.deleteButton}
-                onPress={async () => {
-                  await FileSystem.deleteAsync(
-                    FileSystem.documentDirectory + filename,
-                    { idempotent: true }
-                  );
-                  await loadSavedForms();
-                }}
-              >
-                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
-              </Pressable>
-            </View>
-          ))}
-
-          {savedForms.length === 0 && (
-            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_forms}</Text>
-          )}
-        </ScrollView>
-
-
         {/* End Session */}
         <TouchableOpacity
           style={styles.bottom_button}
@@ -227,7 +218,15 @@ const styles = StyleSheet.create({
   },
   lineText: {
     fontSize: 18,
+    marginLeft: 10,
     color: "#1a1a1a",
+    fontFamily: 'Montserrat-Regular',
+    flex: 1,
+  },
+  fileText: {
+    fontSize: 18,
+    marginLeft: 10,
+    color: "#0A4DA3",
     fontFamily: 'Montserrat-Regular',
     flex: 1,
   },

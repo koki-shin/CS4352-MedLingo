@@ -7,6 +7,7 @@ import { log_appt } from '../hooks/log_appt';
 import { Language } from '../hooks/LanguagePicker';
 import { useLanguage } from '@/hooks/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
+import { Card } from 'react-native-paper';
 
 const localizedUI: Record<Language, Record<string, string>> = {
   en: {
@@ -115,156 +116,191 @@ export default function HistoryScreen() {
           {localizedUI[selectedLanguage as Language].appointment_history}
         </Text>
 
-        {/* change */}
-        <Text
+        <Card
+          mode="outlined"
           style={{
-            fontSize: 20,
-            fontWeight: '800',
-            color: '#0A4DA3',
-            marginBottom: 18,
-            textAlign: 'center',
-            fontFamily: 'Montserrat-ExtraBold',
-          }}
-        >
-          {localizedUI[selectedLanguage as Language].saved_forms}
-        </Text>
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            maxHeight: 215,
+          }}>
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '800',
+              color: '#0A4DA3',
+              marginTop: 4,
+              marginBottom: 18,
+              textAlign: 'center',
+              fontFamily: 'Montserrat-ExtraBold',
+            }}
+          >
+            {localizedUI[selectedLanguage as Language].saved_forms}
+          </Text>
 
-        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
-          {savedForms.map((filename, index) => (
-            <View
-              key={index}
-              style={styles.row}
-            >
-              {/* Filename */}
-              <Pressable
-                style={{ flex: 1 }}
-                onPress={() => {
-                  const uri = FileSystem.documentDirectory + filename;
-                  router.push({
-                    pathname: "/view",
-                    params: { uri, title: filename },
-                  });
-                }}
+          <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+            {savedForms.map((filename, index) => (
+              <View
+                key={index}
+                style={styles.row}
               >
-              <Text style={styles.fileText}>{filename}</Text>
-              </Pressable>
+                {/* Filename */}
+                <Pressable
+                  style={{ flex: 1 }}
+                  onPress={() => {
+                    const uri = FileSystem.documentDirectory + filename;
+                    router.push({
+                      pathname: "/view",
+                      params: { uri, title: filename },
+                    });
+                  }}
+                >
+                <Text style={styles.fileText}>{filename}</Text>
+                </Pressable>
 
-              {/* add delete button */}
-              <Pressable
-                style={styles.deleteButton}
-                onPress={async () => {
-                  await FileSystem.deleteAsync(
-                    FileSystem.documentDirectory + filename,
-                    { idempotent: true }
-                  );
-                  await loadSavedForms();
-                }}
-              >
-                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
-              </Pressable>
-            </View>
-          ))}
+                {/* add delete button */}
+                <Pressable
+                  style={styles.deleteButton}
+                  onPress={async () => {
+                    await FileSystem.deleteAsync(
+                      FileSystem.documentDirectory + filename,
+                      { idempotent: true }
+                    );
+                    await loadSavedForms();
+                  }}
+                >
+                  <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+                </Pressable>
+              </View>
+            ))}
 
-          {savedForms.length === 0 && (
-            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_forms}</Text>
-          )}
-        </ScrollView>
-
-                {/* audio */}
-        <Text
+            {savedForms.length === 0 && (
+              <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_forms}</Text>
+            )}
+          </ScrollView>
+        </Card>
+        
+        <Card
+          mode="outlined"
           style={{
-            fontSize: 20,
-            fontWeight: '800',
-            color: '#0A4DA3',
-            marginBottom: 18,
-            textAlign: 'center',
-            fontFamily: 'Montserrat-ExtraBold',
-          }}
-        >
-          {localizedUI[selectedLanguage as Language].recordings}
-        </Text>
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginTop: 8,
+            marginBottom: 8,
+            maxHeight: 215,
+          }}>
+          {/* audio */}
+          <Text
+            style={{
+              fontSize: 20,
+              fontWeight: '800',
+              color: '#0A4DA3',
+              marginBottom: 18,
+              marginTop: 4,
+              textAlign: 'center',
+              fontFamily: 'Montserrat-ExtraBold',
+            }}
+          >
+            {localizedUI[selectedLanguage as Language].recordings}
+          </Text>
 
-        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
-          {savedAudio.map((filename, index) => (
-            <View
-              key={index}
-              style={styles.row}
-            >
-              {/* Filename */}
-              <Pressable
-                style={{ flex: 1 }}
+          <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+            {savedAudio.map((filename, index) => (
+              <View
+                key={index}
+                style={styles.row}
               >
-              <Text style={styles.lineText}>{filename}</Text>
-              </Pressable>
+                {/* Filename */}
+                <Pressable
+                  style={{ flex: 1 }}
+                >
+                <Text style={styles.lineText}>{filename}</Text>
+                </Pressable>
 
-              <Pressable
-                style={[styles.actionButton]}
-              >
-                <Ionicons
-                  name= "play-circle"
-                  size={26}
-                  color="#0A4DA3"
-                />
-              </Pressable>
+                <Pressable
+                  style={[styles.actionButton]}
+                >
+                  <Ionicons
+                    name= "play-circle"
+                    size={26}
+                    color="#0A4DA3"
+                  />
+                </Pressable>
 
-              {/* add delete button */}
-              <Pressable
-                style={styles.deleteButton}
-                onPress={async () => {
-                  await FileSystem.deleteAsync(
-                    FileSystem.documentDirectory + filename,
-                    { idempotent: true }
-                  );
-                  await loadAudioFiles();
-                }}
-              >
-                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
-              </Pressable>
-            </View>
-          ))}
+                {/* add delete button */}
+                <Pressable
+                  style={styles.deleteButton}
+                  onPress={async () => {
+                    await FileSystem.deleteAsync(
+                      FileSystem.documentDirectory + filename,
+                      { idempotent: true }
+                    );
+                    await loadAudioFiles();
+                  }}
+                >
+                  <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+                </Pressable>
+              </View>
+            ))}
 
-          {savedAudio.length === 0 && (
-            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_audio}</Text>
-          )}
-        </ScrollView>
+            {savedAudio.length === 0 && (
+              <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_audio}</Text>
+            )}
+          </ScrollView>
+        </Card>
 
-        {/* change */}
-        <Text
+        <Card
+          mode="outlined"
           style={{
-            fontSize: 20,
-            fontWeight: '800',
-            color: '#0A4DA3',
-            marginBottom: 18,
-            textAlign: 'center',
-            fontFamily: 'Montserrat-ExtraBold',
-          }}
-        >
-          {localizedUI[selectedLanguage as Language].upcoming_appointments}
-        </Text>
-
-        <ScrollView style={{ maxHeight: "27.5%" }} contentContainerStyle={{ paddingBottom: 10 }}>
-          {appointments.map((line, index) => (
-            <View
-              key={index}
-              style={styles.row}
+            backgroundColor: 'white',
+            borderColor: '#d7e3ff',
+            borderWidth: 1.2,
+            borderRadius: 22,
+            marginBottom: 8,
+            maxHeight: 215,
+          }}>
+            {/* change */}
+            <Text
+              style={{
+                fontSize: 20,
+                fontWeight: '800',
+                color: '#0A4DA3',
+                marginTop: 4,
+                marginBottom: 18,
+                textAlign: 'center',
+                fontFamily: 'Montserrat-ExtraBold',
+              }}
             >
-              <Text style={styles.lineText}>{line}</Text>
-              <Pressable
-                style={styles.deleteButton}
-                onPress={async () => {
-                  await deleteAppointmentLine(line);
-                  await loadCsv(); // refresh list
-                }}
-              >
-                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
-              </Pressable>
-            </View>
-          ))}
+              {localizedUI[selectedLanguage as Language].upcoming_appointments}
+            </Text>
 
-          {appointments.length === 0 && (
-            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_appointments}</Text>
-          )}
-        </ScrollView>
+            <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+              {appointments.map((line, index) => (
+                <View
+                  key={index}
+                  style={styles.row}
+                >
+                  <Text style={styles.lineText}>{line}</Text>
+                  <Pressable
+                    style={styles.deleteButton}
+                    onPress={async () => {
+                      await deleteAppointmentLine(line);
+                      await loadCsv(); // refresh list
+                    }}
+                  >
+                    <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+                  </Pressable>
+                </View>
+              ))}
+
+              {appointments.length === 0 && (
+                <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_appointments}</Text>
+              )}
+            </ScrollView>
+          </Card>
 
         {/* End Session */}
         <TouchableOpacity

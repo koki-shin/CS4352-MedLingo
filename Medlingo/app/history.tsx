@@ -6,6 +6,7 @@ import * as FileSystem from "expo-file-system/legacy";
 import { log_appt } from '../hooks/log_appt';
 import { Language } from '../hooks/LanguagePicker';
 import { useLanguage } from '@/hooks/LanguageContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const localizedUI: Record<Language, Record<string, string>> = {
   en: {
@@ -170,6 +171,64 @@ export default function HistoryScreen() {
           )}
         </ScrollView>
 
+                {/* audio */}
+        <Text
+          style={{
+            fontSize: 20,
+            fontWeight: '800',
+            color: '#0A4DA3',
+            marginBottom: 18,
+            textAlign: 'center',
+            fontFamily: 'Montserrat-ExtraBold',
+          }}
+        >
+          {localizedUI[selectedLanguage as Language].recordings}
+        </Text>
+
+        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
+          {savedAudio.map((filename, index) => (
+            <View
+              key={index}
+              style={styles.row}
+            >
+              {/* Filename */}
+              <Pressable
+                style={{ flex: 1 }}
+              >
+              <Text style={styles.lineText}>{filename}</Text>
+              </Pressable>
+
+              <Pressable
+                style={[styles.actionButton]}
+              >
+                <Ionicons
+                  name= "play-circle"
+                  size={26}
+                  color="#0A4DA3"
+                />
+              </Pressable>
+
+              {/* add delete button */}
+              <Pressable
+                style={styles.deleteButton}
+                onPress={async () => {
+                  await FileSystem.deleteAsync(
+                    FileSystem.documentDirectory + filename,
+                    { idempotent: true }
+                  );
+                  await loadAudioFiles();
+                }}
+              >
+                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
+              </Pressable>
+            </View>
+          ))}
+
+          {savedAudio.length === 0 && (
+            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_audio}</Text>
+          )}
+        </ScrollView>
+
         {/* change */}
         <Text
           style={{
@@ -208,61 +267,6 @@ export default function HistoryScreen() {
           )}
         </ScrollView>
 
-        {/* audio */}
-        <Text
-          style={{
-            fontSize: 20,
-            fontWeight: '800',
-            color: '#0A4DA3',
-            marginBottom: 18,
-            textAlign: 'center',
-            fontFamily: 'Montserrat-ExtraBold',
-          }}
-        >
-          {localizedUI[selectedLanguage as Language].recordings}
-        </Text>
-
-        <ScrollView contentContainerStyle={{ paddingBottom: 10 }}>
-          {savedAudio.map((filename, index) => (
-            <View
-              key={index}
-              style={styles.row}
-            >
-              {/* Filename */}
-              <Pressable
-                style={{ flex: 1 }}
-                onPress={() => {
-                  const uri = FileSystem.documentDirectory + filename;
-                  router.push({
-                    pathname: "/view",
-                    params: { uri, title: filename },
-                  });
-                }}
-              >
-              <Text style={styles.fileText}>{filename}</Text>
-              </Pressable>
-
-              {/* add delete button */}
-              <Pressable
-                style={styles.deleteButton}
-                onPress={async () => {
-                  await FileSystem.deleteAsync(
-                    FileSystem.documentDirectory + filename,
-                    { idempotent: true }
-                  );
-                  await loadAudioFiles();
-                }}
-              >
-                <Text style={styles.deleteText}>{localizedUI[selectedLanguage as Language].delete}</Text>
-              </Pressable>
-            </View>
-          ))}
-
-          {savedAudio.length === 0 && (
-            <Text style={styles.empty}>{localizedUI[selectedLanguage as Language].no_audio}</Text>
-          )}
-        </ScrollView>
-
         {/* End Session */}
         <TouchableOpacity
           style={styles.bottom_button}
@@ -289,6 +293,7 @@ const styles = StyleSheet.create({
   },
   lineText: {
     fontSize: 18,
+    lineHeight: 36,
     marginLeft: 10,
     color: "#1a1a1a",
     fontFamily: 'Montserrat-Regular',
@@ -300,6 +305,16 @@ const styles = StyleSheet.create({
     color: "#0A4DA3",
     fontFamily: 'Montserrat-Regular',
     flex: 1,
+  },
+  actionButton: {
+    paddingHorizontal: 8,
+    paddingVertical: 0,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  actionText: {
+    color: '#0A4DA3',
+    fontWeight: '700',
   },
   deleteButton: {
     backgroundColor: "#ffefef",

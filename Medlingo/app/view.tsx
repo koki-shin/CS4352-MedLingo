@@ -5,7 +5,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function ViewPDF() {
-  const { uri, title } = useLocalSearchParams();
+  const { uri } = useLocalSearchParams();
   const router = useRouter();
   return (
     <SafeAreaView 

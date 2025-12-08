@@ -758,6 +758,9 @@ export default function SettingsScreen() {
         >
           <View style={styles.modalBackdrop}>
             <View style={styles.modalCard}>
+              <View style={styles.checkCircle}>
+                <Ionicons name="checkmark" size={36} color="#FFFFFF" />
+              </View>
               <Text
                 style={{
                   fontSize: 18,
@@ -1683,5 +1686,15 @@ const styles = StyleSheet.create({
     color: '#007AFF',
     fontWeight: '600',
     fontFamily: 'Montserrat-SemiBold',
+  },
+  checkCircle: {
+    width: 60,
+    height: 60,
+    backgroundColor: '#22C55E',
+    borderRadius: 30,
+    alignItems: 'center',
+    alignSelf: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
   },
 });

@@ -153,7 +153,6 @@ export default function BeforeAppointmentCondensed() {
     container: {
       flex: 1,
       backgroundColor: 'white',
-      padding: 20,
     },
     outputTitle: {
       fontSize: 28,

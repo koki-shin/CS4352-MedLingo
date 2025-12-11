@@ -305,7 +305,7 @@ export default function HistoryScreen() {
         {/* End Session */}
         <TouchableOpacity
           style={styles.bottom_button}
-          onPress={() => router.push("/(tabs)/home")}
+          onPress={() => router.back()}
         >
           <Text style={styles.button_text}>
             {localizedUI[selectedLanguage as Language].back}

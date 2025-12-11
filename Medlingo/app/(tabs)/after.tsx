@@ -7,6 +7,7 @@ import {
   Pressable,
   TextInput,
   StyleSheet,
+  TouchableOpacity,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Card } from 'react-native-paper';
@@ -15,6 +16,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../../hooks/LanguageContext';
 import { Language } from '../../hooks/LanguagePicker';
 import { log_appt } from '../../hooks/log_appt';
+import { router } from 'expo-router';
 
 const { writeAppointment } = log_appt();
 
@@ -117,6 +119,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     confirmVirtualTitle: 'Confirm Virtual Appointment',
     cancel: 'Cancel',
     confirm: 'Confirm',
+    end: 'View Appointments',
   },
   es: {
     pageTitle: 'Después de su Visita',
@@ -157,6 +160,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     confirmVirtualTitle: 'Confirmar Cita Virtual',
     cancel: 'Cancelar',
     confirm: 'Confirmar',
+    end: 'Ver Citas',
   },
   fr: {
     pageTitle: 'Après Votre Visite',
@@ -197,6 +201,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     confirmVirtualTitle: 'Confirmer Consultation Virtuelle',
     cancel: 'Annuler',
     confirm: 'Confirmer',
+    end: 'Voir les Rendez-vous',
   },
   zh: {
     pageTitle: '就诊后',
@@ -237,6 +242,7 @@ const localizedUI: Record<Language, Record<string, string>> = {
     confirmVirtualTitle: '确认虚拟预约',
     cancel: '取消',
     confirm: '确认',
+    end: '查看预约',
   },
 };
 
@@ -749,6 +755,17 @@ export default function SettingsScreen() {
             </View>
           </Card.Content>
         </Card>
+
+        <TouchableOpacity
+            style={[
+              styles.endSessionButton,
+            ]}
+            onPress={() => router.push("/history")}
+          >
+            <Text style={styles.endSessionText}>
+              {localizedUI[selectedLanguage as Language].end}
+                  </Text>
+        </TouchableOpacity>
 
         <Modal
           transparent
@@ -1656,6 +1673,24 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderBottomWidth: 1,
     borderBottomColor: '#e0e0e0',
+  },
+    endSessionButton: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#E6EEFF',
+    borderRadius: 22,
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    borderWidth: 1.2,
+    borderColor: '#d7e3ff',
+  },
+  endSessionText: {
+    color: '#0A4DA3',
+    fontWeight: '700',
+    fontSize: 16,
+    fontFamily: 'Montserrat-Bold',
   },
   pickerModalTitle: {
     fontSize: 18,

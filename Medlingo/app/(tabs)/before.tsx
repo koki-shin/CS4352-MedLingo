@@ -156,6 +156,7 @@ export default function BeforeAppointmentCondensed() {
     },
     outputTitle: {
       fontSize: 28,
+      paddingTop: 30,
       fontWeight: '800',
       color: '#0A4DA3',
       marginBottom: 24,
@@ -200,268 +201,270 @@ export default function BeforeAppointmentCondensed() {
   if (isOutputVisible) {
     return (
       <ScrollView style={styles.container}>
-        <View style={{ height: 30 }} />
-        <Text style={styles.outputTitle}>
-          {localizedUI[selectedLanguage as Language].beforeAppointmentTitle}
-        </Text>
+        <View style={{ paddingHorizontal: 10 }}>
+          <View style={{ height: 30 }} />
+          <Text style={styles.outputTitle}>
+            {localizedUI[selectedLanguage as Language].beforeAppointmentTitle}
+          </Text>
 
-        {/* Question: What brings you in today? */}
-        <Card
-          mode="outlined"
-          style={{
-            backgroundColor: 'white',
-            borderColor: '#d7e3ff',
-            borderWidth: 1.2,
-            borderRadius: 22,
-            marginBottom: 16,
-          }}
-        >
-          <Card.Content style={{ paddingVertical: 18 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '700',
-                color: '#0A4DA3',
-                marginBottom: 12,
-                fontFamily: 'Montserrat-Bold',
-              }}
-            >
-              {localizedQuestions["en"][0]}
-            </Text>
-            <Text
-              style={{
-                fontSize: 15,
-                color: '#1a1a1a',
-                fontFamily: 'Montserrat-Regular',
-              }}
-            >
-              {src_one || '—'}
-            </Text>
-          </Card.Content>
-        </Card>
-
-        {/* Question: List any current medications */}
-        <Card
-          mode="outlined"
-          style={{
-            backgroundColor: 'white',
-            borderColor: '#d7e3ff',
-            borderWidth: 1.2,
-            borderRadius: 22,
-            marginBottom: 16,
-          }}
-        >
-          <Card.Content style={{ paddingVertical: 18 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '700',
-                color: '#0A4DA3',
-                marginBottom: 12,
-                fontFamily: 'Montserrat-Bold',
-              }}
-            >
-              {localizedQuestions["en"][1]}
-            </Text>
-            <Text
-              style={{
-                fontSize: 15,
-                color: '#1a1a1a',
-                fontFamily: 'Montserrat-Regular',
-              }}
-            >
-              {src_two || '—'}
-            </Text>
-          </Card.Content>
-        </Card>
-
-        {/* Question: List any allergies */}
-        <Card
-          mode="outlined"
-          style={{
-            backgroundColor: 'white',
-            borderColor: '#d7e3ff',
-            borderWidth: 1.2,
-            borderRadius: 22,
-            marginBottom: 16,
-          }}
-        >
-          <Card.Content style={{ paddingVertical: 18 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '700',
-                color: '#0A4DA3',
-                marginBottom: 12,
-                fontFamily: 'Montserrat-Bold',
-              }}
-            >
-              {localizedQuestions["en"][2]}
-            </Text>
-            <Text
-              style={{
-                fontSize: 15,
-                color: '#1a1a1a',
-                fontFamily: 'Montserrat-Regular',
-              }}
-            >
-              {src_three || '—'}
-            </Text>
-          </Card.Content>
-        </Card>
-
-        {/* Consent */}
-        <Card
-          mode="outlined"
-          style={{
-            backgroundColor: 'white',
-            borderColor: '#d7e3ff',
-            borderWidth: 1.2,
-            borderRadius: 22,
-            marginBottom: 16,
-          }}
-        >
-          <Card.Content style={{ paddingVertical: 18 }}>
-            <Text
-              style={{
-                fontSize: 16,
-                fontWeight: '700',
-                color: '#0A4DA3',
-                marginBottom: 12,
-                fontFamily: 'Montserrat-Bold',
-              }}
-            >
-              CONSENT:
-            </Text>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 8,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: '#1a1a1a',
-                  flex: 1,
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {localizedQuestions["en"][3]}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: consentOne ? '#0A4DA3' : '#999',
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {consentOne ? '✓' : '○'}
-              </Text>
-            </View>
-            <View
-              style={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                marginBottom: 8,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: '#1a1a1a',
-                  flex: 1,
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {localizedQuestions["en"][4]}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: consentTwo ? '#0A4DA3' : '#999',
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {consentTwo ? '✓' : '○'}
-              </Text>
-            </View>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontSize: 15,
-                  color: '#1a1a1a',
-                  flex: 1,
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {localizedQuestions["en"][5]}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 16,
-                  color: consentThree ? '#0A4DA3' : '#999',
-                  fontFamily: 'Montserrat-Regular',
-                }}
-              >
-                {consentThree ? '✓' : '○'}
-              </Text>
-            </View>
-          </Card.Content>
-        </Card>
-
-        <View style={{ flexDirection: 'row', gap: 12, marginTop: -8, justifyContent: 'center' }}>
-          {/* Back Button */}
-          <TouchableOpacity
-            style={styles.bottom_button}
-            onPress={() => setIsOutputVisible(false)}
+          {/* Question: What brings you in today? */}
+          <Card
+            mode="outlined"
+            style={{
+              backgroundColor: 'white',
+              borderColor: '#d7e3ff',
+              borderWidth: 1.2,
+              borderRadius: 22,
+              marginBottom: 16,
+            }}
           >
-            <Text style={styles.button_text}>
-              {localizedUI[selectedLanguage as Language].back}
-            </Text>
-          </TouchableOpacity>
+            <Card.Content style={{ paddingVertical: 18 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '700',
+                  color: '#0A4DA3',
+                  marginBottom: 12,
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedQuestions["en"][0]}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: '#1a1a1a',
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {src_one || '—'}
+              </Text>
+            </Card.Content>
+          </Card>
 
-          {/* Print PDF Button */}
-          <TouchableOpacity
-            style={styles.bottom_button}
-            onPress={async () => {
-                const consentHtml = `
-                <p><b>CONSENT:</b></p>
-                <ul>
-                  <li>${localizedQuestions["en"][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
-                  <li>${localizedQuestions["en"][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
-                  <li>${localizedQuestions["en"][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
-                </ul>
-              `;
-
-                const htmlContent = `
-                <html>
-                  <body style="font-family: Arial; padding: 20px;">
-                    <h1 style="text-align: center;">${localizedUI["en"].beforeAppointmentTitle}</h1>
-                    <p><strong>${localizedQuestions["en"][0]}</strong><br>${src_one}</p>
-                    <p><strong>${localizedQuestions["en"][1]}</strong><br>${src_two}</p>
-                    <p><strong>${localizedQuestions["en"][2]}</strong><br>${src_three}</p>
-                    ${consentHtml}
-                  </body>
-                </html>
-              `;
-
-                try {
-                  const { uri: tempUri } = await Print.printToFileAsync({ html: htmlContent });
-                  const newPath = FileSystem.documentDirectory + `form-${Date.now()}.pdf`;
-                  await FileSystem.moveAsync({
-                    from: tempUri,
-                    to: newPath,
-                  });
-                  router.push({pathname: "/view",params: {uri: newPath,title: `Saved Form`,},});
-                } catch (error) {}
-              }}
+          {/* Question: List any current medications */}
+          <Card
+            mode="outlined"
+            style={{
+              backgroundColor: 'white',
+              borderColor: '#d7e3ff',
+              borderWidth: 1.2,
+              borderRadius: 22,
+              marginBottom: 16,
+            }}
           >
-            <Text style={styles.button_text}>
-              {localizedUI[selectedLanguage as Language].print}
-            </Text>
-          </TouchableOpacity>
+            <Card.Content style={{ paddingVertical: 18 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '700',
+                  color: '#0A4DA3',
+                  marginBottom: 12,
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedQuestions["en"][1]}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: '#1a1a1a',
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {src_two || '—'}
+              </Text>
+            </Card.Content>
+          </Card>
+
+          {/* Question: List any allergies */}
+          <Card
+            mode="outlined"
+            style={{
+              backgroundColor: 'white',
+              borderColor: '#d7e3ff',
+              borderWidth: 1.2,
+              borderRadius: 22,
+              marginBottom: 16,
+            }}
+          >
+            <Card.Content style={{ paddingVertical: 18 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '700',
+                  color: '#0A4DA3',
+                  marginBottom: 12,
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                {localizedQuestions["en"][2]}
+              </Text>
+              <Text
+                style={{
+                  fontSize: 15,
+                  color: '#1a1a1a',
+                  fontFamily: 'Montserrat-Regular',
+                }}
+              >
+                {src_three || '—'}
+              </Text>
+            </Card.Content>
+          </Card>
+
+          {/* Consent */}
+          <Card
+            mode="outlined"
+            style={{
+              backgroundColor: 'white',
+              borderColor: '#d7e3ff',
+              borderWidth: 1.2,
+              borderRadius: 22,
+              marginBottom: 16,
+            }}
+          >
+            <Card.Content style={{ paddingVertical: 18 }}>
+              <Text
+                style={{
+                  fontSize: 16,
+                  fontWeight: '700',
+                  color: '#0A4DA3',
+                  marginBottom: 12,
+                  fontFamily: 'Montserrat-Bold',
+                }}
+              >
+                CONSENT:
+              </Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: '#1a1a1a',
+                    flex: 1,
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {localizedQuestions["en"][3]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: consentOne ? '#0A4DA3' : '#999',
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {consentOne ? '✓' : '○'}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  marginBottom: 8,
+                }}
+              >
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: '#1a1a1a',
+                    flex: 1,
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {localizedQuestions["en"][4]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: consentTwo ? '#0A4DA3' : '#999',
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {consentTwo ? '✓' : '○'}
+                </Text>
+              </View>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: 15,
+                    color: '#1a1a1a',
+                    flex: 1,
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {localizedQuestions["en"][5]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: 16,
+                    color: consentThree ? '#0A4DA3' : '#999',
+                    fontFamily: 'Montserrat-Regular',
+                  }}
+                >
+                  {consentThree ? '✓' : '○'}
+                </Text>
+              </View>
+            </Card.Content>
+          </Card>
+
+          <View style={{ flexDirection: 'row', gap: 12, marginTop: -8, justifyContent: 'center' }}>
+            {/* Back Button */}
+            <TouchableOpacity
+              style={styles.bottom_button}
+              onPress={() => setIsOutputVisible(false)}
+            >
+              <Text style={styles.button_text}>
+                {localizedUI[selectedLanguage as Language].back}
+              </Text>
+            </TouchableOpacity>
+
+            {/* Print PDF Button */}
+            <TouchableOpacity
+              style={styles.bottom_button}
+              onPress={async () => {
+                  const consentHtml = `
+                  <p><b>CONSENT:</b></p>
+                  <ul>
+                    <li>${localizedQuestions["en"][3].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentOne ? '✓' : '○'}</li>
+                    <li>${localizedQuestions["en"][4].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentTwo ? '✓' : '○'}</li>
+                    <li>${localizedQuestions["en"][5].replace(/\n\s*CONSENT:|\n\s*/g, '').trim()} ${consentThree ? '✓' : '○'}</li>
+                  </ul>
+                `;
+
+                  const htmlContent = `
+                  <html>
+                    <body style="font-family: Arial; padding: 20px;">
+                      <h1 style="text-align: center;">${localizedUI["en"].beforeAppointmentTitle}</h1>
+                      <p><strong>${localizedQuestions["en"][0]}</strong><br>${src_one}</p>
+                      <p><strong>${localizedQuestions["en"][1]}</strong><br>${src_two}</p>
+                      <p><strong>${localizedQuestions["en"][2]}</strong><br>${src_three}</p>
+                      ${consentHtml}
+                    </body>
+                  </html>
+                `;
+
+                  try {
+                    const { uri: tempUri } = await Print.printToFileAsync({ html: htmlContent });
+                    const newPath = FileSystem.documentDirectory + `form-${Date.now()}.pdf`;
+                    await FileSystem.moveAsync({
+                      from: tempUri,
+                      to: newPath,
+                    });
+                    router.push({pathname: "/view",params: {uri: newPath,title: `Saved Form`,},});
+                  } catch (error) {}
+                }}
+            >
+              <Text style={styles.button_text}>
+                {localizedUI[selectedLanguage as Language].print}
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
 
@@ -483,7 +486,7 @@ export default function BeforeAppointmentCondensed() {
     <SafeAreaView className="flex-1 bg-white" edges={['top']}>
       <ScrollView
         className="flex-1 bg-white px-5 pt-6"
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ paddingBottom: 20, paddingHorizontal: 10 }}
       >
         <Text
           style={{

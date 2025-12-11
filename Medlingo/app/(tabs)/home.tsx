@@ -83,7 +83,7 @@ export default function HomeScreen() {
         </View>
 
         {/* Cards */}
-        <View>
+        <View style={{ paddingHorizontal: 10 }}>
           {/* Before Appointment */}
           <View style={{ marginBottom: 16 }}>
             <Link href="/before" asChild>
